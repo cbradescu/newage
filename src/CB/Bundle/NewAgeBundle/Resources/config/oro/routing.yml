@@ -1,0 +1,13 @@
+cb_newage:
+    resource: "@CBNewAgeBundle/Controller/"
+    type:     annotation
+    prefix:   /cb_newage
+
+cb_newage_bundle_api:
+    resource: "@CBNewAgeBundle/Resources/config/oro/routing_api.yml"
+    type: rest
+    prefix: api/rest/{version}
+    requirements:
+        version:  latest|v1
+    defaults:
+        version:  latest

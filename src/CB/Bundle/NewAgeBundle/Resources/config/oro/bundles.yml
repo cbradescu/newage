@@ -1,0 +1,2 @@
+bundles:
+    - { name: CB\Bundle\NewAgeBundle\CBNewAgeBundle, priority: 100 }

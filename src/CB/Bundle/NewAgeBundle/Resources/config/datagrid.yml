@@ -1,0 +1,161 @@
+
+datagrid: 
+    base-panel-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_panel_view
+            query:
+                select:
+                    - panel.id
+                    - panel.name
+                    - panel.lighting as isLighting
+                    - panel.dimensions
+                    - panel.gps
+                from:
+                    - { table: %cb_newage_panel.entity.class%, alias: panel }
+        columns:
+            id:
+                label:        cb.newage.panel.id.label
+            name:
+                label:        cb.newage.panel.name.label
+            isLighting:
+                label:        cb.newage.panel.lighting.label
+                frontend_type: boolean
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
+            gps:
+                label:        cb.newage.panel.gps.label
+        sorters:
+            columns:
+                id:
+                    data_name: panel.id
+                name:
+                    data_name: panel.name
+            default:
+                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: panel.name
+                    enabled: true
+        properties:
+            id: ~
+            view_link:
+                type:         url
+                route:        cb_newage_panel_view
+                params:       [ id ]
+            update_link:
+                type:         url
+                route:        cb_newage_panel_update
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_newage_panel_api_delete_panel
+                params:       [ id ]
+        actions:
+            view:
+                type:         navigate
+                acl_resource: cb_newage_panel_view
+                label:        oro.grid.action.view
+                icon:         eye-open
+                link:         view_link
+                rowAction:    true
+            update:
+                type:         navigate
+                acl_resource: cb_newage_panel_update
+                label:        oro.grid.action.update
+                icon:         edit
+                link:         update_link
+            delete:
+                type:         delete
+                acl_resource: cb_newage_panel_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+    panel-grid:
+        extends: base-panel-grid
+
+    base-panel_view-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_panel_view_view
+            query:
+                select:
+                    - panelView.id
+                    - panelView.name
+                    - panel.name as panelName
+                from:
+                    - { table: %cb_newage_panel_view.entity.class%, alias: panelView }
+                join:
+                    left:
+                        -
+                            join: panelView.panel
+                            alias: panel
+        columns:
+            name:
+                label:        cb.newage.panel_view.name.label
+        sorters:
+            columns:
+                name:
+                    data_name: panelView.name
+        properties:
+            id: ~
+            view_link:
+                type:         url
+                route:        cb_newage_panel_view_view
+                params:       [ id ]
+            update_link:
+                type:         url
+                route:        cb_newage_panel_view_update
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_newage_panel_view_api_delete_panel_view
+                params:       [ id ]
+        actions:
+            view:
+                type:         navigate
+                acl_resource: cb_newage_panel_view_view
+                label:        oro.grid.action.view
+                icon:         eye-open
+                link:         view_link
+                rowAction:    true
+            update:
+                type:         navigate
+                acl_resource: cb_newage_panel_view_update
+                label:        oro.grid.action.update
+                icon:         edit
+                link:         update_link
+            delete:
+                type:         delete
+                acl_resource: cb_newage_panel_view_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+    panel_view-grid:
+        extends: base-panel_view-grid
+        columns:
+            panelName:
+                label:        cb.newage.panel.entity_label
+        sorters:
+            columns:
+                panelName:
+                    data_name: panel.name
+        filters:
+            columns:
+                panelName:
+                    type: entity
+                    data_name: panelView.panel
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:Panel
+    panel-panel_views-grid:
+        extends: base-panel_view-grid
+        source:
+            query:
+                where:
+                    and:
+                        - ( panel.id = :panel_id)
+            bind_parameters:
+                - panel_id

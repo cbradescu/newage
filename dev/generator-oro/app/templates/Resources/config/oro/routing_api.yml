@@ -1,0 +1,3 @@
+<%= bundle_name%>_<%= entity_name%>_api:
+    resource:     "@<%= BundleName %>/Controller/Api/Rest/<%= EntityName %>Controller.php"
+    type:         rest

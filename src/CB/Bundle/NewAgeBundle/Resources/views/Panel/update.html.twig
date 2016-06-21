@@ -1,0 +1,59 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+
+{% oro_title_set({params : {"%entity.name%": entity.name, "%entityName%": 'cb.newage.panel.entity_label'|trans }}) %}
+
+{% set entityId = entity.id %}
+{% set formAction = entityId ? path('cb_newage_panel_update', { 'id': entityId}) : path('cb_newage_panel_create') %}
+
+{% block navButtons %}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if resource_granted('cb_newage_panel_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+    {{ UI.cancelButton(path('cb_newage_panel_index')) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entityId %}
+        {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('cb_newage_panel_index'),
+        'indexLabel': 'cb.newage.panel.entity_plural_label'|trans,
+        'entityTitle': entity.name
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.panel.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'panel-form' %}
+
+    {% set dataBlocks = [{
+    'title': 'cb.newage.panel.block.general'|trans,
+    'class': 'active',
+    'subblocks': [
+    {
+    'title': '',
+    'data': [
+    form_row(form.name),
+    form_row(form.lighting),
+    form_row(form.dimensions),
+    form_row(form.gps),
+    form_row(form.neighborhoods),
+
+    form.owner is defined ? form_row(form.owner) : '',
+    ]
+    }
+    ]
+    }] %}
+
+    {% set data = {
+    'formErrors': form_errors(form)? form_errors(form) : null,
+    'dataBlocks': dataBlocks,
+    } %}
+    {{ parent() }}
+{% endblock content_data %}

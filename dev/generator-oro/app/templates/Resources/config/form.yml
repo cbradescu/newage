@@ -1,0 +1,53 @@
+
+parameters:
+    <%= bundle_name %>_<%= entity_name %>.form.type.entity.class:                      <%= BundleNamespace %>\Form\Type\<%= EntityName %>Type
+    <%= bundle_name %>_<%= entity_name %>.form.type.entity.api.class:                  <%= BundleNamespace %>\Form\Type\<%= EntityName %>ApiType
+    <%= bundle_name %>_<%= entity_name %>.form.handler.entity.class:                   <%= BundleNamespace %>\Form\Handler\<%= EntityName %>Handler
+
+services:
+    <%= bundle_name %>_<%= entity_name %>.form.type.entity:
+        class: %<%= bundle_name %>_<%= entity_name %>.form.type.entity.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        tags:
+            - { name: form.type, alias: <%= bundle_name %>_<%= entity_name %> }
+
+    <%= bundle_name %>_<%= entity_name %>.form.handler.entity:
+        class: %<%= bundle_name %>_<%= entity_name %>.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @<%= bundle_name %>_<%= entity_name %>.form.entity
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    <%= bundle_name %>_<%= entity_name %>.form.entity:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - '<%= bundle_name %>_<%= entity_name %>_form'
+            - '<%= bundle_name %>_<%= entity_name %>'
+
+    <%= bundle_name %>_<%= entity_name %>.form.type.entity.api:
+        class: %<%= bundle_name %>_<%= entity_name %>.form.type.entity.api.class%
+        tags:
+            - { name: form.type, alias: <%= bundle_name %>_<%= entity_name %>_api }
+
+    <%= bundle_name %>_<%= entity_name %>.form.handler.entity.api:
+        class: %<%= bundle_name %>_<%= entity_name %>.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @<%= bundle_name %>_<%= entity_name %>.form.entity.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    <%= bundle_name %>_<%= entity_name %>.form.entity.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - '<%= entity_name %>'
+            - '<%= bundle_name %>_<%= entity_name %>_api'

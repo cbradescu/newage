@@ -1,0 +1,38 @@
+
+parameters:
+    cb_newage_panel.entity.class:               CB\Bundle\NewAgeBundle\Entity\Panel
+    cb_newage_panel.manager.class:              CB\Bundle\NewAgeBundle\Model\PanelManager
+    cb_newage_panel.manager.api.class:          CB\Bundle\NewAgeBundle\Model\PanelApiManager
+
+    cb_newage_panel_view.entity.class:               CB\Bundle\NewAgeBundle\Entity\PanelView
+    cb_newage_panel_view.manager.class:              CB\Bundle\NewAgeBundle\Model\PanelViewManager
+    cb_newage_panel_view.manager.api.class:          CB\Bundle\NewAgeBundle\Model\PanelViewApiManager
+
+services:
+    cb_newage_panel.manager:
+        class: %cb_newage_panel.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.acl_helper
+
+    cb_newage_panel.manager.api:
+        class: %cb_newage_panel.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %cb_newage_panel.entity.class%
+            - @doctrine.orm.entity_manager
+            - @cb_newage_panel.manager
+
+    cb_newage_panel_view.manager:
+        class: %cb_newage_panel_view.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.acl_helper
+
+    cb_newage_panel_view.manager.api:
+        class: %cb_newage_panel_view.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %cb_newage_panel_view.entity.class%
+            - @doctrine.orm.entity_manager
+            - @cb_newage_panel_view.manager

@@ -1,0 +1,6 @@
+cb_newage_panel_api:
+    resource:     "@CBNewAgeBundle/Controller/Api/Rest/PanelController.php"
+    type:         rest
+cb_newage_panel_view_api:
+    resource:     "@CBNewAgeBundle/Controller/Api/Rest/PanelViewController.php"
+    type:         rest

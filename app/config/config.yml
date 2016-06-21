@@ -81,7 +81,7 @@ fos_rest:
         default_format: json
 
 fos_js_routing:
-    routes_to_expose:         [oro_*]
+    routes_to_expose:         [oro_*, cb_*]
 
 be_simple_soap:
     cache:
@@ -118,7 +118,7 @@ genemu_form:
     autocomplete: ~
 
 a2lix_translation_form:
-    locales:                  [en, fr]
+    locales:                  [en, ro]
     templating:               "OroUIBundle:Form:translatable.html.twig"
 
 lexik_maintenance:

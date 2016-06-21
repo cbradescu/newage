@@ -1,0 +1,12 @@
+
+<%= bundle_name %>:
+            <%= entity_name %>:
+                 message.saved:            <%= EntityName %> saved
+<%= bundle._name %>.<%= entityname %>:
+            entity_label:                  <%= EntityName %>
+            entity_plural_label:           <%= EntityNames %>
+            block.general:                 <%= EntityName %>
+<%= bundle._name %>.<%= entity_name %>:
+            entity_label:                  <%= EntityName %>
+            entity_plural_label:           <%= EntityNames %>
+            block.general:                 <%= EntityName %>

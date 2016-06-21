@@ -1,0 +1,40 @@
+cb:
+  newage:
+      panel:
+            entity_label:                  Panel
+            entity_plural_label:           Panels
+            block:
+                general:                   Panel
+                panel_views:               Panel Views
+            message:
+                saved:                     Panel saved
+            id.label:                      Id
+            name.label:                    Name
+            code.label:                    Code
+            lighting.label:                Lighting
+            gps.label:                     GPS Coords
+            dimensions.label:              Dimensions
+            neighborhoods.label:           Neighborhoods
+            owner.label:                   Owner
+            organization.label:            Organization
+
+      panel_view:
+            entity_label:                  Panel View
+            entity_plural_label:           Panel Views
+            block.general:                 Panel View
+            message:
+                saved:                     Panel View saved
+            id.label:                      Id
+            name.label:                    Name
+            owner.label:                   Owner
+            organization.label:            Organization
+            add:
+                label:                     Add Panel View
+                title:                     Add Panel View
+            form:
+                choose_panel_view:         Choose Panel View
+
+      menu:
+          newage_tab.label:                 New Age
+          newage_tab_panel_link.label:      Panels
+          newage_tab_panel_view_link.label: Panel Views

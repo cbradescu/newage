@@ -1,0 +1,14 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set gridName = 'panel-grid' %}
+{% set pageTitle = 'cb.newage.panel.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if isDesktopVersion() and resource_granted('cb_newage_panel_create') %}
+        {{ UI.addButton({
+            'path':         path('cb_newage_panel_create'),
+            'entity_label': 'cb.newage.panel.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}

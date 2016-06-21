@@ -1,0 +1,2 @@
+bundles:
+    - { name: <%= BundleNamespace %>\<%= BundleName %>, priority: 100 }

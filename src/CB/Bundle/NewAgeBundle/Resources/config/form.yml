@@ -1,0 +1,104 @@
+
+parameters:
+    cb_newage_panel.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\PanelType
+    cb_newage_panel.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\PanelApiType
+    cb_newage_panel.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\PanelHandler
+
+    cb_newage_panel_view.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\PanelViewType
+    cb_newage_panel_view.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\PanelViewApiType
+    cb_newage_panel_view.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\PanelViewHandler
+
+services:
+    cb_newage_panel.form.type.entity:
+        class: %cb_newage_panel.form.type.entity.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        tags:
+            - { name: form.type, alias: cb_newage_panel }
+
+    cb_newage_panel.form.handler.entity:
+        class: %cb_newage_panel.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_panel.form.entity
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_panel.form.entity:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'cb_newage_panel_form'
+            - 'cb_newage_panel'
+
+    cb_newage_panel.form.type.entity.api:
+        class: %cb_newage_panel.form.type.entity.api.class%
+        tags:
+            - { name: form.type, alias: cb_newage_panel_api }
+
+    cb_newage_panel.form.handler.entity.api:
+        class: %cb_newage_panel.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_panel.form.entity.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_panel.form.entity.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'panel'
+            - 'cb_newage_panel_api'
+
+    cb_newage_panel_view.form.type.entity:
+        class: %cb_newage_panel_view.form.type.entity.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        tags:
+            - { name: form.type, alias: cb_newage_panel_view }
+
+    cb_newage_panel_view.form.handler.entity:
+        class: %cb_newage_panel_view.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_panel_view.form.entity
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_panel_view.form.entity:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'cb_newage_panel_view_form'
+            - 'cb_newage_panel_view'
+
+    cb_newage_panel_view.form.type.entity.api:
+        class: %cb_newage_panel_view.form.type.entity.api.class%
+        tags:
+            - { name: form.type, alias: cb_newage_panel_view_api }
+
+    cb_newage_panel_view.form.handler.entity.api:
+        class: %cb_newage_panel_view.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_panel_view.form.entity.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_panel_view.form.entity.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'panel_view'
+            - 'cb_newage_panel_view_api'

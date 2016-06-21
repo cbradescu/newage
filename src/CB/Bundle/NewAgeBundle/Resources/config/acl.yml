@@ -1,0 +1,55 @@
+cb_newage_panel_create:
+    type: entity
+    class: CBNewAgeBundle:Panel
+    permission: CREATE
+    group_name: ""
+    bindings: ~
+
+cb_newage_panel_view:
+    type: entity
+    class: CBNewAgeBundle:Panel
+    permission: VIEW
+    group_name: ""
+    bindings: ~
+
+cb_newage_panel_update:
+    type: entity
+    class: CBNewAgeBundle:Panel
+    permission: EDIT
+    group_name: ""
+    bindings: ~
+
+cb_newage_panel_delete:
+    type: entity
+    class: CBNewAgeBundle:Panel
+    permission: DELETE
+    group_name: ""
+    bindings: ~
+
+cb_newage_panel_view_create:
+    type: entity
+    class: CBNewAgeBundle:PanelView
+    permission: CREATE
+    group_name: ""
+    bindings: ~
+
+cb_newage_panel_view_view:
+    type: entity
+    class: CBNewAgeBundle:PanelView
+    permission: VIEW
+    group_name: ""
+    bindings: ~
+
+cb_newage_panel_view_update:
+    type: entity
+    class: CBNewAgeBundle:PanelView
+    permission: EDIT
+    group_name: ""
+    bindings: ~
+
+cb_newage_panel_view_delete:
+    type: entity
+    class: CBNewAgeBundle:PanelView
+    permission: DELETE
+    group_name: ""
+    bindings: ~

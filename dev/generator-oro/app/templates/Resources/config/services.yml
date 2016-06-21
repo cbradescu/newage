@@ -1,0 +1,20 @@
+
+parameters:
+    <%= bundle_name %>_<%= entity_name %>.entity.class:               <%= BundleNamespace %>\Entity\<%= EntityName %>
+    <%= bundle_name %>_<%= entity_name %>.manager.class:              <%= BundleNamespace %>\Model\<%= EntityName %>Manager
+    <%= bundle_name %>_<%= entity_name %>.manager.api.class:          <%= BundleNamespace %>\Model\<%= EntityName %>ApiManager
+
+services:
+    <%= bundle_name %>_<%= entity_name %>.manager:
+        class: %<%= bundle_name %>_<%= entity_name %>.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.acl_helper
+
+    <%= bundle_name %>_<%= entity_name %>.manager.api:
+        class: %<%= bundle_name %>_<%= entity_name %>.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %<%= bundle_name %>_<%= entity_name %>.entity.class%
+            - @doctrine.orm.entity_manager
+            - @<%= bundle_name %>_<%= entity_name %>.manager

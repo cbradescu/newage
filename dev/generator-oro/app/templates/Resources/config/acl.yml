@@ -1,0 +1,28 @@
+
+<%= bundle_name %>_<%=entity_name%>_create:
+    type: entity
+    class: <%= BundleName %>:<%=EntityName%>
+    permission: CREATE
+    group_name: ""
+    bindings: ~
+
+<%= bundle_name %>_<%=entity_name%>_view:
+    type: entity
+    class: <%= BundleName %>:<%=EntityName%>
+    permission: VIEW
+    group_name: ""
+    bindings: ~
+
+<%= bundle_name %>_<%=entity_name%>_update:
+    type: entity
+    class: <%= BundleName %>:<%=EntityName%>
+    permission: EDIT
+    group_name: ""
+    bindings: ~
+
+<%= bundle_name %>_<%=entity_name%>_delete:
+    type: entity
+    class: <%= BundleName %>:<%=EntityName%>
+    permission: DELETE
+    group_name: ""
+    bindings: ~
