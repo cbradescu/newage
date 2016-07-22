@@ -8,6 +8,9 @@
 
 namespace CB\Bundle\NewAgeBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -95,6 +98,13 @@ class PanelView
     protected $panel;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\Campaign", mappedBy="panelViews", cascade={"persist"})
+     */
+    protected $campaigns;
+
+    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -116,6 +126,12 @@ class PanelView
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
+
+
+    public function __construct()
+    {
+        $this->campaigns = new ArrayCollection();
+    }
 
     /**
      * @return string

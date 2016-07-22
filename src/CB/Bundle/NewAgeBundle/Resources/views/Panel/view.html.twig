@@ -84,6 +84,7 @@
     {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
     {% set gridName = 'panel-panel_views-grid' %}
     {% set params = {panel_id: entity.id} %}
+
     {%- set gridPanelViews -%}
     {% if gridName is defined %}
         {% if gridScope is defined %}

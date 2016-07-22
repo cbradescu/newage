@@ -1,25 +1,57 @@
 oro_menu_config:
     items:
+        customers_tab: ~
+        sales_tab: ~
+        activities_tab: ~
+        marketing_tab: ~
+
         newage_tab:
-            label: 'cb.newage.menu.newage_tab.label'
+            label: 'cb.newage.menu.available_tab.label'
             uri:   '#'
             extras:
                 position: 1
+        campaign_tab:
+            label: 'cb.newage.campaign.entity_plural_label'
+            route:   cb_newage_campaign_index
+            extras:
+                position: 2
+        panel_view_tab:
+            label: 'cb.newage.panel_view.entity_plural_label'
+            route:   cb_newage_panel_view_index
+            extras:
+                position: 3
+        panel_tab:
+            label: 'cb.newage.panel.entity_plural_label'
+            route:   cb_newage_panel_index
+            extras:
+                position: 4
 
         newage_tab_panel_link:
-            label: 'cb.newage.menu.newage_tab_panel_link.label'
+            label: 'cb.newage.panel.entity_plural_label'
             route: cb_newage_panel_index
         newage_tab_panel_view_link:
-            label: 'cb.newage.menu.newage_tab_panel_view_link.label'
+            label: 'cb.newage.panel_view.entity_plural_label'
             route: cb_newage_panel_view_index
+        newage_tab_campaign_link:
+            label: 'cb.newage.campaign.entity_plural_label'
+            route: cb_newage_campaign_index
+        newage_tab_available_link:
+            label: 'cb.newage.menu.available_tab_monthly_link.label'
+            route: cb_newage_available_monthly
 
     tree:
         application_menu:
             children:
                 newage_tab:
                     children:
-                        newage_tab_panel_link: ~
-                        newage_tab_panel_view_link: ~
+                        newage_tab_available_link: ~
+#                        newage_tab_panel_view_link: ~
+#                        newage_tab_campaign_link: ~
+#                        newage_tab_panel_link: ~
+                campaign_tab: ~
+                panel_view_tab: ~
+                panel_tab: ~
+
 oro_titles:
     cb_newage_panel_index: ~
     cb_newage_panel_view: '%%entity.name%%'
@@ -30,3 +62,8 @@ oro_titles:
     cb_newage_panel_view_view: '%%entity.name%%'
     cb_newage_panel_view_create: 'oro.ui.create_entity'
     cb_newage_panel_view_update: '%%entity.name%% - oro.ui.edit'
+
+    cb_newage_campaign_index: ~
+    cb_newage_campaign_view: '%%entity.name%%'
+    cb_newage_campaign_create: 'oro.ui.create_entity'
+    cb_newage_campaign_update: '%%entity.name%% - oro.ui.edit'

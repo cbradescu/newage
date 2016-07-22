@@ -1,0 +1,100 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+{% block stats %}
+{% endblock %}
+
+{% oro_title_set({params : {"%entity.name%": entity.title|default('N/A') }}) %}
+
+{% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+        'path' : path('cb_newage_campaign_update', { id: entity.id }),
+        'entity_label': 'cb.newage.campaign.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+        'dataUrl': path('cb_newage_campaign_api_delete_campaign', {'id': entity.id}),
+        'dataRedirect': path('cb_newage_campaign_index'),
+        'aCss': 'no-hash remove-button',
+        'id': 'btn-remove-user',
+        'dataId': entity.id,
+        'entity_label': 'cb.newage.campaign.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity': entity,
+    'indexPath': path('cb_newage_campaign_index'),
+    'indexLabel': 'cb.newage.campaign.entity_plural_label'|trans,
+    'entityTitle': entity.title
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <div class="pull-left">
+        {% if entity.confirmed %}
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'Confirmed'|trans }}</div>
+        {% else %}
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'Unconfirmed'|trans }}</div>
+        {% endif %}
+    </div>
+{% endblock breadcrumbs %}
+
+{% block content_data %}
+    {%- set campaignInformation -%}
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('cb.newage.campaign.title.label'|trans, entity.title) }}
+            {{ UI.renderHtmlProperty('cb.newage.campaign.description.label'|trans, entity.description|escape|nl2br) }}
+            {{ UI.renderProperty('cb.newage.campaign.start.label'|trans, entity.start|oro_format_date) }}
+            {{ UI.renderProperty('cb.newage.campaign.end.label'|trans, entity.end|oro_format_date) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(entity) }}
+        </div>
+    </div>
+    {%- endset -%}
+
+
+    {%- set panelViews -%}
+    {% for panelView in entity.panelViews %}
+        {% if resource_granted('cb_newage_panel_view_view') %}
+            <a href="{{ path('cb_newage_panel_view_view', {'id': panelView.id}) }}">
+                {{ panelView|escape }}{{ loop.last ? '' : ',' }}
+            </a>
+        {% else %}
+            {{ panelView|escape }}{{ loop.last ? '' : ',' }}
+        {% endif %}
+    {% endfor %}
+    {%- endset -%}
+
+    {% set dataBlocks = [
+        {
+            'title': 'cb.newage.campaign.block.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data' : [campaignInformation]}
+            ]
+        },
+        {
+            'title': 'cb.newage.campaign.block.panel_views'|trans,
+            'subblocks': [
+                {'data' : [panelViews]}
+            ]
+        }
+    ] %}
+
+
+    {% set id = 'campaignView' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+
+    {{ parent() }}
+{% endblock content_data %}

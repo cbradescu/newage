@@ -1,5 +1,5 @@
 
-datagrid: 
+datagrid:
     base-panel-grid:
         source:
             type: orm
@@ -159,3 +159,416 @@ datagrid:
                         - ( panel.id = :panel_id)
             bind_parameters:
                 - panel_id
+
+    base-campaign-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_campaign_view
+            query:
+                select:
+                    - campaign.id
+                    - campaign.title
+                    - campaign.start
+                    - campaign.end
+                    - campaign.confirmed
+                from:
+                    - { table: %cb_newage_campaign.entity.class%, alias: campaign }
+        columns:
+            id:
+                label: cb.newage.campaign.id.label
+            title:
+                label: cb.newage.campaign.title.label
+            start:
+                label: cb.newage.campaign.start.label
+                frontend_type: date
+            end:
+                label: cb.newage.campaign.end.label
+                frontend_type: date
+            confirmed:
+                label: cb.newage.campaign.confirmed.label
+                frontend_type: boolean
+
+        filters:
+            columns:
+                title:
+                    type: string
+                    data_name: campaign.title
+                start:
+                    type:      date
+                    data_name: campaign.start
+                end:
+                    type:      date
+                    data_name: campaign.end
+                confirmed:
+                    type: boolean
+                    data_name: campaign.confirmed
+
+        properties:
+            id: ~
+            view_link:
+                type:         url
+                route:        cb_newage_campaign_view
+                params:       [ id ]
+            update_link:
+                type:         url
+                route:        cb_newage_campaign_update
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_newage_campaign_api_delete_campaign
+                params:       [ id ]
+        actions:
+            view:
+                type:         navigate
+                acl_resource: cb_newage_campaign_view
+                label:        oro.grid.action.view
+                icon:         eye-open
+                link:         view_link
+                rowAction:    true
+            update:
+                type:         navigate
+                acl_resource: cb_newage_campaign_update
+                label:        oro.grid.action.update
+                icon:         edit
+                link:         update_link
+            delete:
+                type:         delete
+                acl_resource: cb_newage_campaign_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+    campaign-grid:
+        extends: base-campaign-grid
+
+
+    campaign-from-day-grid:
+        extends: base-campaign-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: campaign.panelViews, alias: panelView }
+
+                where:
+                    and:
+                        - panelView.id = :panel_view_id
+                        - campaign.start <= :current_day
+                        - campaign.end >= :current_day
+            bind_parameters:
+                - panel_view_id
+                - current_day
+
+        filters:
+
+        actions:
+
+        action_configuration:
+            delete: false
+
+        options:
+            toolbarOptions:
+                hide: true
+            mass_actions:
+                delete:
+                    enabled: false
+
+    base-campaign-to-panel-view-update-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_panel_view_view
+            query:
+                select:
+                    - panelView.id
+                    - panelView.name
+                    - panel.name as panelName
+                    - panel.dimensions as panelDimensions
+                from:
+                    - { table: %cb_newage_panel_view.entity.class%, alias: panelView }
+                join:
+                    left:
+                        -
+                            join: panelView.panel
+                            alias: panel
+            bind_parameters:
+                - campaign
+        sorters:
+            columns:
+                name:
+                    data_name: panelView.name
+
+    campaign-to-panel-view-update-grid:
+        extends: base-campaign-to-panel-view-update-grid
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN (:campaign IS NOT NULL) THEN
+                            CASE WHEN (panelView.id IN (:panel_views_ids) OR panelView.id IN (:data_in)) AND panelView.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                          ELSE
+                            CASE WHEN panelView.id IN (:data_in) AND panelView.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                          END) as hasPanelView
+            bind_parameters:
+                - campaign
+                - panel_views_ids
+        columns:
+            hasPanelView:
+                label:   cb.newage.campaign.datagrid.has_panel_view.label
+                editable: true
+                frontend_type: boolean
+            name:
+                label: cb.newage.panel_view.name.label
+                data_name: name
+            panelName:
+                label: cb.newage.panel.entity_label
+            panelDimensions:
+                label: cb.newage.panel.dimensions.label
+        properties:
+            id: ~
+        sorters:
+            columns:
+                hasPanelView: { data_name: hasPanelView }
+            default:
+                hasPanelView: DESC
+        filters:
+            columns:
+                hasPanelView:
+                    data_name: hasPanelView
+                    type:      boolean
+                panelName:
+                    type: entity
+                    data_name: panelView.panel
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:Panel
+                panelDimensions:
+                    type: string
+                    data_name: panel.dimensions
+        action_configuration:
+            delete: false
+        options:
+            routerEnabled: false
+            rowSelection:
+                dataField: id
+                columnName: hasPanelView
+                selectors:
+                    included: '#appendPanelViews'
+                    excluded: '#removePanelViews'
+            mass_actions:
+                delete:
+                    enabled: false
+
+
+    available-grid:
+        source:
+            type: available
+        columns:
+            panelViewId:
+                label: Id
+                data_name: panelViewId
+            panelViewName:
+                label: Panel View
+                data_name: panelViewName
+            panelName:
+                label: Panel
+                data_name: panelName
+            d1:
+                label: 1
+                data_name: d1
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d2:
+                label: 2
+                data_name: d2
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d3:
+                label: 3
+                data_name: d3
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d4:
+                label: 4
+                data_name: d4
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d5:
+                label: 5
+                data_name: d5
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d6:
+                label: 6
+                data_name: d6
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d7:
+                label: 07
+                data_name: d7
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d8:
+                label: 8
+                data_name: d8
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d9:
+                label: 9
+                data_name: d9
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d10:
+                label: 10
+                data_name: d10
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d11:
+                label: 11
+                data_name: d11
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d12:
+                label: 12
+                data_name: d12
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d13:
+                label: 13
+                data_name: d13
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d14:
+                label: 14
+                data_name: d14
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d15:
+                label: 15
+                data_name: d15
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d16:
+                label: 16
+                data_name: d16
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d17:
+                label: 17
+                data_name: d17
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d18:
+                label: 18
+                data_name: d18
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d19:
+                label: 19
+                data_name: d19
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d20:
+                label: 20
+                data_name: d20
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d21:
+                label: 21
+                data_name: d21
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d22:
+                label: 22
+                data_name: d22
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d23:
+                label: 23
+                data_name: d23
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d24:
+                label: 24
+                data_name: d24
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d25:
+                label: 25
+                data_name: d25
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d26:
+                label: 26
+                data_name: d26
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d27:
+                label: 27
+                data_name: d27
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d28:
+                label: 28
+                data_name: d28
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d29:
+                label: 29
+                data_name: d29
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d30:
+                label: 30
+                data_name: d30
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+            d31:
+                label: 31
+                data_name: d31
+                frontend_type: html
+                type: twig
+                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
+        properties: ~
+        sorters: ~
+        filters:
+            name:
+                type: string
+                data_name: name
+                enabled: true
+        options:
+            toolbarOptions:
+                hide: true
+#                pagination:
+#                    hide: true
+#                    onePage: true

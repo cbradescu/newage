@@ -34,7 +34,29 @@ cb:
             form:
                 choose_panel_view:         Choose Panel View
 
+      campaign:
+            entity_label:                  Campaign
+            entity_plural_label:           Campaigns
+            block:
+                general:                   Campaign
+                panel_views:               Panel Views
+            message:
+                saved:                     Campaign saved
+            id.label:                      Id
+            title.label:                   Title
+            description.label:             Description
+            start.label:                   Start
+            end.label:                     End
+            confirmed.label:                     Confirmed
+            owner.label:                   Owner
+            organization.label:            Organization
+            add.label:                     Add Campaign
+            datagrid:
+                has_panel_view.label:      Has Panel View
+
+      available:
+          monthly:                         Monthly Available
+
       menu:
-          newage_tab.label:                 New Age
-          newage_tab_panel_link.label:      Panels
-          newage_tab_panel_view_link.label: Panel Views
+          available_tab.label:              Available
+          available_tab_monthly_link.label: Monthly

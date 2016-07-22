@@ -7,7 +7,7 @@
 {% block navButtons %}
     {% if isDesktopVersion() and resource_granted('cb_newage_panel_create') %}
         {{ UI.addButton({
-            'path':         path('cb_newage_panel_create'),
+            'path': path('cb_newage_panel_create'),
             'entity_label': 'cb.newage.panel.entity_label'|trans
         }) }}
     {% endif %}

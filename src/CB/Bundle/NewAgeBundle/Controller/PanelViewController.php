@@ -41,6 +41,24 @@ class PanelViewController extends Controller
     }
 
     /**
+     * @Route("/info/{id}", name="cb_newage_panel_view_info", requirements={"id"="\d+"})
+     *
+     * @Template
+     * @AclAncestor("cb_newage_panel_view_view")
+     */
+    public function infoAction(PanelView $panelView)
+    {
+        if (!$this->getRequest()->get('_wid')) {
+            return $this->redirect($this->get('router')->generate('cb_newage_panel_view_view', ['id' => $panelView->getId()]));
+        }
+
+        return array(
+            'entity'  => $panelView,
+        );
+    }
+
+
+    /**
      * @Route("/create", name="cb_newage_panel_view_create")
      * @AclAncestor("cb_newage_panel_view_create")
      * @Template("CBNewAgeBundle:PanelView:update.html.twig")

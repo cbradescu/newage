@@ -1,0 +1,46 @@
+{#{%  if value == 1 %}#}
+    {#<i class="icon-bars" style="color: yellow"></i>#}
+{#{% elseif value == 2 %}#}
+    {#<i class="icon-bars" style="color: green"></i>#}
+{#{% elseif value == 3 %}#}
+    {#<i class="icon-bars" style="color: red"></i>#}
+{#{% else %}#}
+    {#<i class="icon-bars" style="color: lightgray"></i>#}
+{#{% endif %}#}
+
+<span class="cell">
+    <a href="{{ path('cb_newage_available_day', {'id': record.getValue('panelViewId'), 'day': value.day}) }}">
+        {%  if value.status == 1 %}
+            <i class="icon-bars" style="color: yellow"></i>
+        {% elseif value.status == 2 %}
+            <i class="icon-bars" style="color: green"></i>
+        {% elseif value.status == 3 %}
+            <i class="icon-bars" style="color: red"></i>
+        {% else %}
+            <i class="icon-bars" style="color: lightgray"></i>
+        {% endif %}
+    </a>
+</span>
+
+<script type="text/javascript">
+    require(['jquery', 'routing', 'oro/dialog-widget'],
+            function($, routing, DialogWidget) {
+                $('.cell').delegate('a', 'click', function(e) {
+                    var $el = $(this);
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    var widget = new DialogWidget({
+                        'url': $el.attr('href'),
+                        'title': 'Campaigns',
+                        stateEnabled: false,
+                        dialogOptions: {
+                            'modal': true,
+                            'allowMinimize': false,
+                            'width': 900,
+                            'autoResize':false
+                        }
+                    });
+                    widget.render();
+                });
+            });
+</script>
