@@ -1,39 +1,39 @@
 <?php
-/**
- * Created by orm-generator.
- * User: catalin
- * Date: 21/Jun/16
- * Time: 15:10
- */
 
-namespace CB\Bundle\NewAgeBundle\Entity;
+namespace CB\Bundle\SchedulerBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Entity\User;
+use CB\Bundle\NewAgeBundle\Entity\Campaign;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
+
+use CB\Bundle\SchedulerBundle\Model\ExtendSchedulerEvent;
+use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerEventRepository")
  * @ORM\Table(
- *      name="cb_newage_campaign"
+ *      name="cb_scheduler_event",
+ *      indexes={
+ *          @ORM\Index(name="cb_scheduler_event_idx", columns={"id", "start_at", "end_at"}),
+ *          @ORM\Index(name="cb_scheduler_event_up_idx", columns={"updated_at"})
+ *      }
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
- *      routeName="cb_newage_campaign_index",
- *      routeView="cb_newage_campaign_view",
+ *      routeName="cb_scheduler_view",
+ *      routeView="cb_scheduler_event_view",
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
  *          },
  *          "entity"={
- *              "icon"="icon-list-alt"
+ *              "icon"="icon-time"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -48,38 +48,32 @@ use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
  *      }
  * )
  */
-
-class Campaign
+class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
 {
-    const ACCEPTED             = 'accepted';
-    const DECLINED             = 'declined';
-    const WITHOUT_STATUS       = null;
+    use DatesAwareTrait;
 
-    protected $availableStatuses = [
-        Campaign::ACCEPTED,
-        Campaign::DECLINED
+    const OFFERED  = 'offered';
+    const RESERVED = 'reserved';
+    const ACCEPTED = 'accepted';
+
+    protected $statuses = [
+        SchedulerEvent::OFFERED,
+        SchedulerEvent::RESERVED,
+        SchedulerEvent::ACCEPTED
     ];
-    
+
     /**
-     * @var integer
-     *
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $id;
 
     /**
-     * @var string
+     * @var PanelView
      *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView", inversedBy="events")
+     * @ORM\JoinColumn(name="panel_view_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -88,12 +82,13 @@ class Campaign
      *      }
      * )
      */
-    protected $title;
+    protected $panelView;
 
     /**
-     * @var string
+     * @var Campaign
      *
-     * @ORM\Column(name="description", type="text", nullable=true)
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Campaign", inversedBy="events")
+     * @ORM\JoinColumn(name="campaign_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -102,12 +97,13 @@ class Campaign
      *      }
      * )
      */
-    protected $description;
+    protected $campaign;
+
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="start_at", type="date")
+     * @ORM\Column(name="start_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -121,7 +117,7 @@ class Campaign
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="end_at", type="date")
+     * @ORM\Column(name="end_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -133,16 +129,9 @@ class Campaign
     protected $end;
 
     /**
-     * @var ArrayCollection|SchedulerEvent[]
+     * @var string
      *
-     * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="campaign", cascade={"persist"})
-     */
-    protected $events;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(name="status", type="string", length=32, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -151,7 +140,7 @@ class Campaign
      *      }
      * )
      */
-    protected $confirmed = false;
+    protected $status;
 
     /**
      * @var User
@@ -176,22 +165,17 @@ class Campaign
      */
     protected $organization;
 
-
     public function __construct()
     {
-        $this->events = new ArrayCollection();
+        parent::__construct();
+
+        $this->status = SchedulerEvent::OFFERED;
     }
 
     /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string)$this->title;
-    }
-
-    /**
-     * @return integer
+     * Gets an scheduler event id.
+     *
+     * @return int
      */
     public function getId()
     {
@@ -199,57 +183,57 @@ class Campaign
     }
 
     /**
-     * Gets campaign title.
+     * Gets panel view
      *
-     * @return string
+     * @return PanelView View|null
      */
-    public function getTitle()
+    public function getPanelView()
     {
-        return $this->title;
+        return $this->panelView;
     }
 
     /**
-     * Sets campaign title.
+     * Sets panel view
      *
-     * @param string $title
+     * @param PanelView $panelView
      *
      * @return self
      */
-    public function setTitle($title)
+    public function setPanelView(PanelView $panelView = null)
     {
-        $this->title = $title;
+        $this->panelView = $panelView;
 
         return $this;
     }
 
     /**
-     * Gets campaign description.
+     * Gets owning campaign
      *
-     * @return string|null
+     * @return Campaign|null
      */
-    public function getDescription()
+    public function getCampaign()
     {
-        return $this->description;
+        return $this->campaign;
     }
 
     /**
-     * Sets campaign description.
+     * Sets owning campaign
      *
-     * @param  string $description
+     * @param Campaign $campaign
      *
      * @return self
      */
-    public function setDescription($description)
+    public function setCampaign(Campaign $campaign = null)
     {
-        $this->description = $description;
+        $this->campaign = $campaign;
 
         return $this;
     }
 
     /**
-     * Gets date/ a campaign begins.
+     * Gets date/time an event begins.
      *
-     * @return \Date
+     * @return \DateTime
      */
     public function getStart()
     {
@@ -257,9 +241,9 @@ class Campaign
     }
 
     /**
-     * Sets date a campaign begins.
+     * Sets date/time an event begins.
      *
-     * @param \Date $start
+     * @param \DateTime $start
      *
      * @return self
      */
@@ -271,9 +255,16 @@ class Campaign
     }
 
     /**
-     * Gets date a campaign ends.
+     * Gets date/time an event ends.
      *
-     * @return \Date
+     * If an event is all-day the end date is inclusive.
+     * This means an event with start Nov 10 and end Nov 12 will span 3 days on the scheduler.
+     *
+     * If an event is NOT all-day the end date is exclusive.
+     * This is only a gotcha when your end has time 00:00. It means your event ends on midnight,
+     * and it will not span through the next day.
+     *
+     * @return \DateTime
      */
     public function getEnd()
     {
@@ -281,9 +272,9 @@ class Campaign
     }
 
     /**
-     * Sets date a campaign ends.
+     * Sets date/time an event ends.
      *
-     * @param \Date $end
+     * @param \DateTime $end
      *
      * @return self
      */
@@ -295,29 +286,46 @@ class Campaign
     }
 
     /**
-     * {@inheritDoc}
+     * @return string|null
      */
-    public function isConfirmed()
+    public function getStatus()
     {
-        return $this->confirmed;
+        return $this->status;
     }
 
     /**
-     * @param  bool $confirmed
-     *
-     * @return Campaign
+     * @param string|null $status
      */
-    public function setConfirmed($confirmed)
+    public function setStatus($status)
     {
-        $this->confirmed = (boolean)$confirmed;
+        if ($this->isValid($status)) {
+            $this->status = $status;
+        } else {
+            throw new \LogicException(sprintf('Status "%s" is not supported', $status));
+        }
+    }
 
-        return $this;
+    /**
+     * @param string|null $status
+     * @return bool
+     */
+    protected function isValid($status)
+    {
+        return $status === self::OFFERED || in_array($status, $this->statuses);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getCampaign()->getTitle();
     }
 
     /**
      * @param User $owningUser
      *
-     * @return Campaign
+     * @return SchedulerEvent
      */
     public function setOwner($owningUser)
     {
@@ -338,7 +346,7 @@ class Campaign
      * Set organization
      *
      * @param Organization $organization
-     * @return Campaign
+     * @return SchedulerEvent
      */
     public function setOrganization(Organization $organization = null)
     {

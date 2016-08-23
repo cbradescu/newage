@@ -1,0 +1,2 @@
+bundles:
+    - { name: CB\Bundle\SchedulerBundle\CBSchedulerBundle, priority: 100 }

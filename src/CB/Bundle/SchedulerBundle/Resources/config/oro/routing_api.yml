@@ -1,0 +1,6 @@
+cb_scheduler_event_api:
+    resource: "@CBSchedulerBundle/Controller/Api/Rest/SchedulerEventController.php"
+    type:     rest
+cb_scheduler_connection_api:
+    resource: "@CBSchedulerBundle/Controller/Api/Rest/SchedulerConnectionController.php"
+    type:     rest

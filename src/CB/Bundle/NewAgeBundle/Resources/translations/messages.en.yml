@@ -51,6 +51,8 @@ cb:
             owner.label:                   Owner
             organization.label:            Organization
             add.label:                     Add Campaign
+            form:
+                choose_campaign:          Choose Campaign
             datagrid:
                 has_panel_view.label:      Has Panel View
 

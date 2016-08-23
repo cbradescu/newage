@@ -11,9 +11,9 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use Oro\Bundle\AvailableBundle\Entity\Calendar;
-use Oro\Bundle\AvailableBundle\Entity\Repository\CalendarRepository;
-use Oro\Bundle\AvailableBundle\Provider\CalendarDateTimeConfigProvider;
+use Oro\Bundle\AvailableBundle\Entity\Scheduler;
+use Oro\Bundle\AvailableBundle\Entity\Repository\SchedulerRepository;
+use Oro\Bundle\AvailableBundle\Provider\SchedulerDateTimeConfigProvider;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;

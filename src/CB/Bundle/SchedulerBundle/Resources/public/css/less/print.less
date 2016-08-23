@@ -1,0 +1,9 @@
+@media print {
+  #calendar {
+    /*
+     * compilation of oro.css uses it's internal file order
+     * so import instruction moved into #calendar selector to override desktop styles
+     */
+    @import "../../lib/fullcalendar-scheduler/lib/fullcalendar.print.css";
+  }
+}

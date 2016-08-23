@@ -1,0 +1,49 @@
+parameters:
+    cb_scheduler.scheduler_event.form.type.class:           CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventType
+    cb_scheduler.scheduler_event.form.handler.class:        CB\Bundle\SchedulerBundle\Form\Handler\SchedulerEventHandler
+    cb_scheduler.scheduler_event.form.type.api.class:       CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventApiType
+
+services:
+    cb_scheduler.scheduler.form.type:
+        class: %cb_scheduler.scheduler_event.form.type.class%
+        tags:
+            - { name: form.type, alias: cb_scheduler_event }
+
+    cb_scheduler.scheduler_event.form.handler:
+        class: "%cb_scheduler.scheduler_event.form.handler.class%"
+        scope: request
+        arguments:
+            - "@cb_scheduler.scheduler_event.form"
+            - "@request"
+            - "@doctrine.orm.entity_manager"
+            - "@event_dispatcher"
+
+    cb_scheduler.scheduler_event.form:
+        class:           Symfony\Component\Form\Form
+        factory_method:  createNamed
+        factory_service: form.factory
+        arguments:
+            - "cb_scheduler_event_form"
+            - "cb_scheduler_event"
+
+    cb_scheduler.scheduler_event.form.type.api:
+        class: %cb_scheduler.scheduler_event.form.type.api.class%
+        tags:
+            - { name: form.type, alias: cb_scheduler_event_view_api }
+
+    cb_scheduler.scheduler_event.form.handler.api:
+        class: %cb_scheduler.scheduler_event.form.handler.class%
+        scope: request
+        arguments:
+            - @cb_scheduler.scheduler_event.form.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_scheduler.scheduler_event.form.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'scheduler_event'
+            - 'cb_scheduler_event_view_api'

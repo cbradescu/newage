@@ -1,0 +1,16 @@
+cb:
+    scheduler:
+        entity_label:                  Scheduler
+        entity_plural_label:           Schedulers
+
+        menu:
+          available_tab_scheduler_link.label: Scheduler
+
+        scheduler_event:
+            entity_label:                  Scheduler
+            entity_plural_label:           Schedulers
+            owner.label:  Owner
+            title.label: Title
+            description.label: Description
+            start.label: Start
+            end.label: End

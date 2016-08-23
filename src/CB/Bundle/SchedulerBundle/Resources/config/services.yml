@@ -1,0 +1,54 @@
+parameters:
+    cb_scheduler.scheduler_manager.class:                         CB\Bundle\SchedulerBundle\Manager\SchedulerManager
+    cb_scheduler.scheduler_property_provider.class:               CB\Bundle\SchedulerBundle\Provider\SchedulerPropertyProvider
+    cb_scheduler.scheduler_provider.user.class:                   CB\Bundle\SchedulerBundle\Provider\CampaignSchedulerProvider
+    cb_scheduler.scheduler_event_normalizer.campaign.class:       CB\Bundle\SchedulerBundle\Provider\CampaignSchedulerEventNormalizer
+
+    cb_scheduler.scheduler_event.entity.class:                    CB\Bundle\SchedulerBundle\Entity\SchedulerEvent
+    cb_scheduler.scheduler_event.manager.class:                   CB\Bundle\SchedulerBundle\Model\SchedulerEventManager
+    cb_scheduler.scheduler_event.manager.api.class:               CB\Bundle\SchedulerBundle\Model\SchedulerEventApiManager
+
+
+services:
+    cb_scheduler.scheduler_manager:
+        class: %cb_scheduler.scheduler_manager.class%
+        arguments:
+            - '@cb_scheduler.scheduler_property_provider'
+
+    cb_scheduler.scheduler_property_provider:
+        class: %cb_scheduler.scheduler_property_provider.class%
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity_config.config_manager'
+            - '@oro_entity_extend.extend.field_type_helper'
+
+    cb_scheduler.scheduler_provider.user:
+        class: %cb_scheduler.scheduler_provider.user.class%
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.entity_name_resolver'
+            - '@cb_scheduler.scheduler_event_normalizer.campaign'
+        public: false
+        tags:
+            - { name: cb_scheduler.scheduler_provider, alias: campaign }
+
+    cb_scheduler.scheduler_event_normalizer.campaign:
+        class: %cb_scheduler.scheduler_event_normalizer.campaign.class%
+        arguments:
+            - '@oro_security.security_facade'
+            - '@oro_entity.doctrine_helper'
+
+
+    cb_scheduler.scheduler_event.manager:
+        class: "%cb_scheduler.scheduler_event.manager.class%"
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@oro_security.acl_helper"
+
+    cb_scheduler.scheduler_event.manager.api:
+        class: %cb_scheduler.scheduler_event.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %cb_scheduler.scheduler_event.entity.class%
+            - @doctrine.orm.entity_manager
+            - @cb_scheduler.scheduler_event.manager

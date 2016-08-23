@@ -1,0 +1,25 @@
+config:
+    shim:
+        'fullscheduler':
+            deps:
+                - 'jquery'
+                - 'moment'
+    paths:
+        'fullscheduler':  'bundles/cbscheduler/lib/fullcalendar-scheduler/scheduler.min.js'
+        'fullcalendar':   'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/fullcalendar.min.js'
+#        'scheduler': 'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/scheduler.js'
+#        'cbscheduler/js/scheduler-view': 'bundles/cbscheduler/js/scheduler-view.js'
+#        'cbscheduler/js/scheduler/event/collection': 'bundles/cbscheduler/js/scheduler/event/collection.js'
+#        'cbscheduler/js/scheduler/event/model': 'bundles/cbscheduler/js/scheduler/event/model.js'
+#        'cbscheduler/js/scheduler/event/view': 'bundles/cbscheduler/js/scheduler/event/view.js'
+#        'cbscheduler/js/form-validation': 'bundles/cbscheduler/js/form-validation.js'
+#        'cbscheduler/js/scheduler/color-manager': 'bundles/cbscheduler/js/scheduler/color-manager.js'
+#        'cbscheduler/js/app/views/change-status-view': 'bundles/cbscheduler/js/app/views/change-status-view.js'
+#        'cbscheduler/js/app/views/guest-notifier-view': 'bundles/cbscheduler/js/app/views/guest-notifier-view.js'
+#        'cbscheduler/js/app/views/scheduler-event-form-view': 'bundles/cbscheduler/js/app/views/scheduler-event-form-view.js'
+#        'cbscheduler/js/app/components/scheduler-component': 'bundles/cbscheduler/js/app/components/scheduler-component.js'
+#        'cbscheduler/js/app/components/dashboard-scheduler-component': 'bundles/cbscheduler/js/app/components/dashboard-scheduler-component.js'
+#        'cbscheduler/js/app/modules/scheduler-module': 'bundles/cbscheduler/js/app/modules/scheduler-module.js'
+#        'cbscheduler/js/validator/dateearlierthan': 'bundles/cbscheduler/js/validator/dateearlierthan.js'
+#    appmodules:
+#        - cbscheduler/js/app/modules/scheduler-module

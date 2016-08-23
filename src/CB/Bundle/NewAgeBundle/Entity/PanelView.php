@@ -8,6 +8,7 @@
 
 namespace CB\Bundle\NewAgeBundle\Entity;
 
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -98,11 +99,11 @@ class PanelView
     protected $panel;
 
     /**
-     * @var ArrayCollection
+     * @var ArrayCollection|SchedulerEvent[]
      *
-     * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\Campaign", mappedBy="panelViews", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="panelView", cascade={"persist"})
      */
-    protected $campaigns;
+    protected $events;
 
     /**
      * @var User
@@ -130,7 +131,7 @@ class PanelView
 
     public function __construct()
     {
-        $this->campaigns = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     /**

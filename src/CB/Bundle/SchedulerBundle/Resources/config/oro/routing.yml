@@ -1,0 +1,14 @@
+cb_scheduler:
+    resource: "@CBSchedulerBundle/Controller/"
+    type:     annotation
+    prefix:   /cb_scheduler
+
+cb_scheduler_api:
+    resource: "@CBSchedulerBundle/Resources/config/oro/routing_api.yml"
+    type: rest
+    prefix: api/rest/{version}
+    requirements:
+        version:  latest|v1
+        _format: json
+    defaults:
+        version:  latest
