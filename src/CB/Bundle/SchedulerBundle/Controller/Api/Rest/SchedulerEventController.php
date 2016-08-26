@@ -34,7 +34,7 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
 /**
- * @RouteResource("scheduler_event")
+ * @RouteResource("schedulerevent")
  * @NamePrefix("cb_api_")
  */
 class SchedulerEventController extends RestController implements ClassResourceInterface
@@ -146,10 +146,12 @@ class SchedulerEventController extends RestController implements ClassResourceIn
             foreach ($result as $row)
             {
                 $item['id'] = $row['id'];
-                $item['resourceId'] = $row['resourceId'];
+                $item['title'] = $row['campaignName'];
+                $item['panelView'] = $row['panelViewName'];
+                $item['resourceId'] = $row['panelViewId'];
                 $item['start'] = $row['start']->format('c');
                 $item['end'] = $row['end']->format('c');
-                $item['title'] = $row['title'];
+                $item['status'] = $row['status'];
 
                 $events[] = $item;
             }
@@ -255,7 +257,7 @@ class SchedulerEventController extends RestController implements ClassResourceIn
      *      description="Create new scheduler event",
      *      resource=true
      * )
-     * @AclAncestor("oro_scheduler_event_create")
+     * @AclAncestor("cb_scheduler_event_create")
      *
      * @return Response
      */
@@ -374,7 +376,9 @@ class SchedulerEventController extends RestController implements ClassResourceIn
         $isProcessed = false;
 
         $entity = call_user_func_array([$this, 'createEntity'], func_get_args());
+        error_log('ajungeeeee');
         try {
+//            $entity->setOwner( $this->get('oro_security.security_facade')->getLoggedUser() );
             $entity = $this->processForm($entity);
             if ($entity) {
                 $view        = $this->view($this->createResponseData($entity), Codes::HTTP_CREATED);

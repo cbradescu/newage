@@ -7,8 +7,7 @@ define([
     'oroui/js/app/views/loading-mask-view',
     'cbscheduler/js/form-validation',
     'oroui/js/delete-confirmation',
-    'oroform/js/formatter/field',
-    'oroactivity/js/app/components/activity-context-activity-component'
+    'oroform/js/formatter/field'
 ], function(
     _,
     Backbone,
@@ -18,8 +17,7 @@ define([
     LoadingMask,
     FormValidation,
     DeleteConfirmation,
-    fieldFormatter,
-    ActivityContextComponent
+    fieldFormatter
 ) {
     'use strict';
 
@@ -45,8 +43,7 @@ define([
             loadingMaskContent: '.loading-content',
             backgroundColor: 'input[name$="[backgroundColor]"]',
             schedulerUid: '[name*="schedulerUid"]',
-            invitedUsers: 'input[name$="[invitedUsers]"]',
-            contexts: 'input[name$="[contexts]"]'
+            invitedUsers: 'input[name$="[invitedUsers]"]'
         },
 
         /** @property {Array} */
@@ -298,20 +295,9 @@ define([
 
         getEventView: function() {
             // fetch scheduler related connection
-            var connection = this.options.connections.findWhere({schedulerUid: this.model.get('schedulerUid')});
             var $element = $(this.viewTemplate(_.extend(this.model.toJSON(), {
                 formatter: fieldFormatter,
-                connection: connection ? connection.toJSON() : null
             })));
-
-            var $contextsSource = $element.find('.activity-context-activity');
-            this.activityContext = new ActivityContextComponent({
-                _sourceElement: $contextsSource,
-                checkTarget: false,
-                activityClassAlias: 'schedulerevents',
-                entityId: this.model.originalId,
-                editable: this.model.get('editable')
-            });
 
             return $element;
         },
@@ -320,14 +306,14 @@ define([
             var modelData = this.model.toJSON();
             var templateData = _.extend(this.getEventFormTemplateData(!modelData.id), modelData);
             var form = this.fillForm(this.template(templateData), modelData);
-            var schedulerColors = this.options.colorManager.getSchedulerColors(this.model.get('schedulerUid'));
+            // var schedulerColors = this.options.colorManager.getSchedulerColors(this.model.get('schedulerUid'));
 
-            form.find(this.selectors.backgroundColor)
-                .data('page-component-options').emptyColor = schedulerColors.backgroundColor;
-            if (modelData.schedulerAlias !== 'user') {
-                this._showUserSchedulerOnlyFields(form, false);
-            }
-            this._toggleSchedulerUidByInvitedUsers(form);
+            // form.find(this.selectors.backgroundColor)
+            //     .data('page-component-options').emptyColor = schedulerColors.backgroundColor;
+            // if (modelData.schedulerAlias !== 'user') {
+            //     this._showUserSchedulerOnlyFields(form, false);
+            // }
+            // this._toggleSchedulerUidByInvitedUsers(form);
 
             form.find(this.selectors.schedulerUid).on('change', _.bind(function(e) {
                 var $emptyColor = form.find('.empty-color');
@@ -347,29 +333,6 @@ define([
             form.find(this.selectors.invitedUsers).on('change', _.bind(function(e) {
                 this._toggleSchedulerUidByInvitedUsers(form);
             }, this));
-
-            // Adds scheduler event activity contexts items to the form
-            if (this.model.originalId) {
-                var contexts = form.find(this.selectors.contexts);
-                $.ajax({
-                    url: routing.generate('oro_api_get_activity_context', {
-                        activity: 'schedulerevents', id: this.model.originalId
-                    }),
-                    type: 'GET',
-                    success: function(targets) {
-                        var targetsStrArray = [];
-                        targets.forEach(function(target) {
-                            var targetData = {
-                                entityClass: target.targetClassName.split('_').join('\\'),
-                                entityId: target.targetId
-                            };
-                            targetsStrArray.push(JSON.stringify(targetData));
-                        });
-                        contexts.val(targetsStrArray.join(';'));
-                        contexts.trigger('change');
-                    }
-                });
-            }
 
             return form;
         },
@@ -500,38 +463,11 @@ define([
         },
 
         getEventFormTemplateData: function(isNew) {
-            var templateType = '';
+            var templateType = 'single';
             var schedulers = [];
-            var ownScheduler = null;
-            var isOwnScheduler = function(item) {
-                return (item.get('schedulerAlias') === 'user' && item.get('scheduler') === item.get('targetScheduler'));
-            };
-
-            this.options.connections.each(function(item) {
-                var scheduler;
-                if (item.get('canAddEvent')) {
-                    scheduler = {uid: item.get('schedulerUid'), name: item.get('schedulerName')};
-                    if (!ownScheduler && isOwnScheduler(item)) {
-                        ownScheduler = scheduler;
-                    } else {
-                        schedulers.push(scheduler);
-                    }
-                }
-            }, this);
-
-            if (schedulers.length) {
-                if (isNew && schedulers.length === 1) {
-                    templateType = 'single';
-                } else {
-                    if (ownScheduler) {
-                        schedulers.unshift(ownScheduler);
-                    }
-                    templateType = 'multiple';
-                }
-            }
 
             return {
-                schedulerUidTemplateType: templateType,
+                schedulerUidTemplateType: '',
                 schedulers: schedulers
             };
         }

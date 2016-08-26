@@ -319,7 +319,10 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      */
     public function __toString()
     {
-        return (string)$this->getCampaign()->getTitle();
+        if ($this->campaign)
+            return (string)$this->getCampaign()->getTitle();
+        else
+            return 'default';
     }
 
     /**

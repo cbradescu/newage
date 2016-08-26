@@ -21,27 +21,19 @@ define([
         defaults: {
             // original id is copied to originalId property and this attribute is replaced with schedulerUid + originalId
             id: null,
-            title: null,
-            description: null,
+            campaign: null,
             start: null,
             end: null,
-            allDay: false,
-            backgroundColor: null,
-            reminders: {},
-            parentEventId: null,
-            invitationStatus: null,
-            invitedUsers: null,
+            resourceId: null,
+            allDay: true,
             editable: false,
-            removable: false,
-            schedulerAlias: null,
-            scheduler: null, // schedulerId
-            schedulerUid: null // calculated automatically, equals to schedulerAlias + schedulerId
+            removable: false
         },
 
         initialize: function() {
             this.urlRoot = routing.generate(this.route);
-            this._updateComputableAttributes();
-            this.on('change:id change:schedulerAlias change:scheduler', this._updateComputableAttributes, this);
+            // this._updateComputableAttributes();
+            // this.on('change:id change:schedulerAlias change:scheduler', this._updateComputableAttributes, this);
         },
 
         url: function() {

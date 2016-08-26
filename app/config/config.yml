@@ -139,7 +139,7 @@ oro_distribution:
 oro_ui:
     settings:
         organization_name:
-            value:            "OroCRM"
+            value:            "New Age"
 
 oro_require_js:
     config:

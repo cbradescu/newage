@@ -12,9 +12,9 @@ define(function(require) {
     var LoadingMask = require('oroui/js/app/views/loading-mask-view');
     var BaseView = require('oroui/js/app/views/base/view');
     var EventCollection = require('cbscheduler/js/scheduler/event/collection');
+    var ResourceCollection = require('cbscheduler/js/scheduler/resource/collection');
     var EventModel = require('cbscheduler/js/scheduler/event/model');
     var EventView = require('cbscheduler/js/scheduler/event/view');
-    var ConnectionView = require('cbscheduler/js/scheduler/connection/view');
     var eventDecorator = require('cbscheduler/js/scheduler/event-decorator');
     var ColorManager = require('cbscheduler/js/scheduler/color-manager');
     var colorUtil = require('oroui/js/tools/color-util');
@@ -22,7 +22,7 @@ define(function(require) {
     var localeSettings = require('orolocale/js/locale-settings');
     var PluginManager = require('oroui/js/app/plugins/plugin-manager');
     var GuestsPlugin = require('cbscheduler/js/app/plugins/scheduler/guests-plugin');
-    require('jquery.fullscheduler');
+    require('fullscheduler');
 
     SchedulerView = BaseView.extend({
         MOMENT_BACKEND_FORMAT: dateTimeFormatter.getBackendDateTimeFormat(),
@@ -61,9 +61,17 @@ define(function(require) {
                 scrollTime: '00:00',
                 allDayDefault: true,
 
+                resourceColumns: [
+                    {
+                        labelText: 'Fata panou',
+                        field: 'name'
+                    }
+                ],
+
                 editable: true,
                 removable: true,
                 collection: null,
+                resourceCollection: null,
                 fixedWeekCount: false, // http://fullcalendar.io/docs/display/fixedWeekCount/
                 itemViewTemplateSelector: null,
                 itemFormTemplateSelector: null,
@@ -80,10 +88,6 @@ define(function(require) {
                 monthNamesShort: localeSettings.getCalendarMonthNames('abbreviated', true),
                 dayNames: localeSettings.getCalendarDayOfWeekNames('wide', true),
                 dayNamesShort: localeSettings.getCalendarDayOfWeekNames('abbreviated', true)
-            },
-            connectionsOptions: {
-                collection: null,
-                containerTemplateSelector: null
             },
             colorManagerOptions: {
                 colors: null
@@ -130,6 +134,9 @@ define(function(require) {
             this.collection.setScheduler(this.options.calendar);
             this.collection.subordinate = this.options.eventsOptions.subordinate;
 
+            // init resource collection
+            this.resourceCollection = this.resourceCollection || new ResourceCollection();
+
             // set options for new events
             this.options.newEventEditable = this.options.eventsOptions.editable;
             this.options.newEventRemovable = this.options.eventsOptions.removable;
@@ -173,15 +180,11 @@ define(function(require) {
 
         getEventView: function(eventModel) {
             if (!this.eventView) {
-                var connectionModel = this.getConnectionCollection().findWhere(
-                    {calendarUid: eventModel.get('calendarUid')}
-                );
-                var options = connectionModel.get('options') || {};
+                var options =  {};
                 // create a view for event details
                 this.eventView = new EventView(_.extend({}, options, {
                     model: eventModel,
                     calendar: this.options.calendar,
-                    connections: this.getConnectionCollection(),
                     viewTemplateSelector: this.options.eventsOptions.itemViewTemplateSelector,
                     formTemplateSelector: this.options.eventsOptions.itemFormTemplateSelector,
                     colorManager: this.colorManager
@@ -213,10 +216,6 @@ define(function(require) {
 
         getCollection: function() {
             return this.collection;
-        },
-
-        getConnectionCollection: function() {
-            return this.options.connectionsOptions.collection;
         },
 
         getCalendarElement: function() {
@@ -545,6 +544,37 @@ define(function(require) {
             }
         },
 
+        loadResources: function(callback) {
+            var onResourcesLoad = _.bind(function() {
+                var fcResources;
+
+                // prepare them for full calendar
+                fcResources = _.map(this.resourceCollection.models, function(resourceModel) {
+                    return this.createResourceViewModel(resourceModel);
+                }, this);
+
+                this._hideMask();
+                callback(fcResources);
+            }, this);
+
+            try {
+                this.resourceCollection.setUrl();
+
+                // load events from a server
+                this.resourceCollection.fetch({
+                    reset: true,
+                    success: onResourcesLoad,
+                    error: _.bind(function(collection, response) {
+                        callback({});
+                        this.showLoadResourcesError(response.responseJSON || {});
+                    }, this)
+                });
+            } catch (err) {
+                callback({});
+                this.showLoadResourcesError(err);
+            }
+        },
+
         /**
          * Performs filtration of calendar events before they are rendered
          *
@@ -575,7 +605,7 @@ define(function(require) {
         createViewModel: function(eventModel) {
             var fcEvent = _.pick(
                 eventModel.attributes,
-                ['id', 'title', 'start', 'end', 'allDay', 'backgroundColor', 'calendarUid', 'editable']
+                ['id', 'title', 'panelView', 'start', 'end', 'resourceId', 'allDay', 'backgroundColor', 'calendarUid', 'editable']
             );
 
             // var colors = this.colorManager.getCalendarColors(fcEvent.calendarUid);
@@ -598,8 +628,21 @@ define(function(require) {
             if (fcEvent.end && fcEvent.end.diff(fcEvent.start) === 0) {
                 fcEvent.end = null;
             }
-            console.log(fcEvent);
             return fcEvent;
+        },
+
+        /**
+         * Creates resource entry for rendering in calendar plugin from the given resource model
+         *
+         * @param {Object} resourceModel
+         */
+        createResourceViewModel: function(resourceModel) {
+            var fcResource = _.pick(
+                resourceModel.attributes,
+                ['id', 'name']
+            );
+
+            return fcResource;
         },
 
         showSavingMask: function() {
@@ -637,6 +680,10 @@ define(function(require) {
             messenger.showErrorMessage(message, err);
         },
 
+        showLoadResourcesError: function(err) {
+            this._showError(__('Sorry, calendar resources were not loaded correctly'), err);
+        },
+
         initCalendarContainer: function() {
             // init events container
             var eventsContainer = this.$el.find(this.options.eventsOptions.containerSelector);
@@ -658,6 +705,7 @@ define(function(require) {
                 timezone: this.options.timezone,
                 selectHelper: true,
                 events: _.bind(this.loadEvents, this),
+                resources: _.bind(this.loadResources, this),
                 select: _.bind(this.onFcSelect, this),
                 eventClick: _.bind(this.onFcEventClick, this),
                 eventDragStart: _.bind(this.onFcEventDragStart, this),
@@ -678,7 +726,7 @@ define(function(require) {
                 'slotMinutes', 'snapMinutes', 'minTime', 'maxTime', 'scrollTime', 'slotEventOverlap',
                 'firstDay', 'firstHour', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort',
                 'aspectRatio', 'defaultAllDayEventDuration', 'defaultTimeEventDuration',
-                'fixedWeekCount', 'displayEventTime', 'weekNumbers', 'allDayDefault', 'slotDuration'
+                'fixedWeekCount', 'displayEventTime', 'weekNumbers', 'allDayDefault', 'slotDuration', 'schedulerLicenseKey', 'resourceColumns'
             ];
             _.extend(options, _.pick(this.options.eventsOptions, keys));
             if (!_.isUndefined(options.defaultDate)) {
@@ -764,54 +812,9 @@ define(function(require) {
             this.enableEventLoading = true;
         },
 
-        initializeConnectionsView: function() {
-            var connectionsContainer;
-            var connectionsTemplate;
-            // init connections container
-            connectionsContainer = this.$el.find(this.options.connectionsOptions.containerSelector);
-            if (connectionsContainer.length === 0) {
-                throw new Error('Cannot find "' + this.options.connectionsOptions.containerSelector + '" element.');
-            }
-            connectionsContainer.empty();
-            connectionsTemplate = _.template($(this.options.connectionsOptions.containerTemplateSelector).html());
-            connectionsContainer.append($(connectionsTemplate()));
-
-            // create a view for a list of connections
-            this.connectionsView = new ConnectionView({
-                el: connectionsContainer,
-                collection: this.options.connectionsOptions.collection,
-                calendar: this.options.calendar,
-                itemTemplateSelector: this.options.connectionsOptions.itemTemplateSelector,
-                colorManager: this.colorManager
-            });
-
-            this.listenTo(this.connectionsView, 'connectionAdd', this.onConnectionAdded);
-            this.listenTo(this.connectionsView, 'connectionChange', this.onConnectionChanged);
-            this.listenTo(this.connectionsView, 'connectionRemove', this.onConnectionDeleted);
-        },
-
-        loadConnectionColors: function() {
-            var lastBackgroundColor = null;
-            this.getConnectionCollection().each(_.bind(function(connection) {
-                var obj = connection.toJSON();
-                this.colorManager.applyColors(obj, function() {
-                    return lastBackgroundColor;
-                });
-                this.colorManager.setCalendarColors(obj.calendarUid, obj.backgroundColor);
-                if (['user', 'system', 'public'].indexOf(obj.calendarAlias) !== -1) {
-                    lastBackgroundColor = obj.backgroundColor;
-                }
-            }, this));
-        },
-
         render: function() {
             // init views
             this.initCalendarContainer();
-            if (_.isUndefined(this.options.connectionsOptions.containerTemplateSelector)) {
-                // this.loadConnectionColors();
-            } else {
-                // this.initializeConnectionsView();
-            }
             // initialize jQuery FullCalendar control
             this.initializeFullCalendar();
 

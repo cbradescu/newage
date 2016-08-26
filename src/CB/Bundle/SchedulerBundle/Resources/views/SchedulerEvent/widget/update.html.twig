@@ -11,7 +11,7 @@
                             mediator.trigger('widget_success:' + widget.getAlias());
                             mediator.trigger('widget_success:' + widget.getWid());
                             widget.remove();
-                            $('#fullCalendar').fullCalendar( 'refetchEvents', 'rerenderEvents' );
+                            mediator.trigger('fullCalendar').fullCalendar( 'refetchEvents', 'rerenderEvents' );
                         });
                     });
         </script>
@@ -34,6 +34,7 @@
                     {{ form_row(form.end) }}
 
                     {{ form_rest(form) }}
+
 
                     <div class="widget-actions form-actions">
                         <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>

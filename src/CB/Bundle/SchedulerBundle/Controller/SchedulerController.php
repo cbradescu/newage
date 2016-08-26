@@ -2,19 +2,22 @@
 
 namespace CB\Bundle\SchedulerBundle\Controller;
 
+use CB\Bundle\SchedulerBundle\CBSchedulerBundle;
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+//use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerRepository;
+//use Oro\Bundle\UserBundle\Entity\User;
+//use Oro\Bundle\OrganizationBundle\Entity\Organization;
+//use CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerRepository;
 
-use CB\Bundle\NewAgeBundle\Entity\PanelView;
+//use CB\Bundle\NewAgeBundle\Entity\PanelView;
+use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;
 
 
 class SchedulerController extends Controller
@@ -26,59 +29,39 @@ class SchedulerController extends Controller
      */
     public function viewAction()
     {
+        // !!! Este nevoie de o entitate pentru view.
+        $entity = new SchedulerEvent();
+
         /** @var SecurityFacade $securityFacade */
-        $securityFacade = $this->get('oro_security.security_facade');
+//        $securityFacade = $this->get('oro_security.security_facade');
 
         /** @var CalendarDateTimeConfigProvider $schedulerConfigProvider */
         $schedulerConfigProvider = $this->get('oro_calendar.provider.calendar_config');
 
         /** @var Organization $organization */
-        $organization = $this->get('oro_security.security_facade')->getOrganization();
+//        $organization = $this->get('oro_security.security_facade')->getOrganization();
 
-        $em = $this->getDoctrine()->getManager();
+//        $em = $this->getDoctrine()->getManager();
 
-        $campaigns = $em->getRepository('CBNewAgeBundle:Campaign')->findAll();
-        $campaign = array_shift($campaigns);
+//        $campaigns = $em->getRepository('CBNewAgeBundle:Campaign')->findAll();
+//        $campaign = array_shift($campaigns);
 
         /** @var SchedulerRepository $repo */
-        $repo     = $em->getRepository('CBSchedulerBundle:Scheduler');
+//        $repo     = $em->getRepository('CBSchedulerBundle:Scheduler');
 
-        $scheduler = $repo->findDefaultScheduler($campaign->getId(), $organization->getId());
+//        $scheduler = $repo->findDefaultScheduler($campaign->getId(), $organization->getId());
 
         $dateRange = $schedulerConfigProvider->getDateRange();
 
         return [
+            'entity' => $entity,
             'event_form' => $this->get('cb_scheduler.scheduler_event.form')->createView(),
-            'user_select_form' => $this->get('form.factory')
-                ->createNamed(
-                    'new_scheduler',
-                    'oro_user_select',
-                    null,
-                    array(
-                        'autocomplete_alias' => 'user_calendars',
-
-                        'configs' => array(
-                            'entity_id'               => $scheduler->getId(),
-                            'entity_name'             => 'OroCalendarBundle:Calendar',
-                            'excludeCurrent'          => true,
-                            'component'               => 'acl-user-autocomplete',
-                            'permission'              => 'VIEW',
-                            'placeholder'             => 'oro.scheduler.form.choose_user_to_add_scheduler',
-                            'result_template_twig'    => 'OroCalendarBundle:Calendar:Autocomplete/result.html.twig',
-                            'selection_template_twig' => 'OroCalendarBundle:Calendar:Autocomplete/selection.html.twig',
-                        ),
-
-                        'grid_name' => 'users-scheduler-select-grid-exclude-owner',
-                        'random_id' => false,
-                        'required'  => true,
-                    )
-                )
-                ->createView(),
-            'entity' => $scheduler,
+//            'entity' => $scheduler,
             'scheduler' => array(
-                'selectable' => $securityFacade->isGranted('cb_scheduler_event_create'),
-                'editable' => $securityFacade->isGranted('cb_scheduler_event_update'),
-                'removable' => $securityFacade->isGranted('cb_scheduler_event_delete')
+                'selectable' => true
+//                'selectable' => $securityFacade->isGranted('cb_scheduler_event_create'),
+//                'editable' => $securityFacade->isGranted('cb_scheduler_event_update'),
+//                'removable' => $securityFacade->isGranted('cb_scheduler_event_delete')
 //                'timezoneOffset' => $schedulerConfigProvider->getTimezoneOffset()
             ),
             'startDate' => $dateRange['startDate'],

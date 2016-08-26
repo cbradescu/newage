@@ -35,16 +35,16 @@ oro_menu_config:
         newage_tab_campaign_link:
             label: 'cb.newage.campaign.entity_plural_label'
             route: cb_newage_campaign_index
-        newage_tab_available_link:
-            label: 'cb.newage.menu.available_tab_monthly_link.label'
-            route: cb_newage_available_monthly
+#        newage_tab_available_link:
+#            label: 'cb.newage.menu.available_tab_monthly_link.label'
+#            route: cb_newage_available_monthly
 
     tree:
         application_menu:
             children:
                 newage_tab:
                     children:
-                        newage_tab_available_link: ~
+#                        newage_tab_available_link: ~
 #                        newage_tab_panel_view_link: ~
 #                        newage_tab_campaign_link: ~
 #                        newage_tab_panel_link: ~

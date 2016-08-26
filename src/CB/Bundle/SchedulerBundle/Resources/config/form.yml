@@ -1,13 +1,20 @@
 parameters:
     cb_scheduler.scheduler_event.form.type.class:           CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventType
-    cb_scheduler.scheduler_event.form.handler.class:        CB\Bundle\SchedulerBundle\Form\Handler\SchedulerEventHandler
     cb_scheduler.scheduler_event.form.type.api.class:       CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventApiType
+    cb_scheduler.scheduler_event.form.handler.class:        CB\Bundle\SchedulerBundle\Form\Handler\SchedulerEventHandler
 
 services:
     cb_scheduler.scheduler.form.type:
         class: %cb_scheduler.scheduler_event.form.type.class%
         tags:
             - { name: form.type, alias: cb_scheduler_event }
+
+    cb_scheduler.scheduler_event.form.type.api:
+        class: %cb_scheduler.scheduler_event.form.type.api.class%
+        arguments:
+            - '@cb_scheduler.scheduler_event.manager'
+        tags:
+            - { name: form.type, alias: cb_scheduler_event_api }
 
     cb_scheduler.scheduler_event.form.handler:
         class: "%cb_scheduler.scheduler_event.form.handler.class%"
@@ -26,11 +33,6 @@ services:
             - "cb_scheduler_event_form"
             - "cb_scheduler_event"
 
-    cb_scheduler.scheduler_event.form.type.api:
-        class: %cb_scheduler.scheduler_event.form.type.api.class%
-        tags:
-            - { name: form.type, alias: cb_scheduler_event_view_api }
-
     cb_scheduler.scheduler_event.form.handler.api:
         class: %cb_scheduler.scheduler_event.form.handler.class%
         scope: request
@@ -46,4 +48,4 @@ services:
         factory_service: form.factory
         arguments:
             - 'scheduler_event'
-            - 'cb_scheduler_event_view_api'
+            - 'cb_scheduler_event_api'

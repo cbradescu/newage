@@ -15,8 +15,6 @@ define([
         options: {},
 
         events: {
-            'change input[name$="[contexts]"]': 'onContextChange',
-            'select2-data-loaded input[name$="[contexts]"]': 'onContextChange'
         },
 
         /**
