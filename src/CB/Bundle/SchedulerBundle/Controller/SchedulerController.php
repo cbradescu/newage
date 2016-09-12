@@ -58,7 +58,9 @@ class SchedulerController extends Controller
             'event_form' => $this->get('cb_scheduler.scheduler_event.form')->createView(),
 //            'entity' => $scheduler,
             'scheduler' => array(
-                'selectable' => true
+                'selectable' => true,
+                'editable' => true,
+                'removable' => true
 //                'selectable' => $securityFacade->isGranted('cb_scheduler_event_create'),
 //                'editable' => $securityFacade->isGranted('cb_scheduler_event_update'),
 //                'removable' => $securityFacade->isGranted('cb_scheduler_event_delete')

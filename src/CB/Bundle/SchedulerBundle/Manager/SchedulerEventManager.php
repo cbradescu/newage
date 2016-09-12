@@ -2,8 +2,12 @@
 
 namespace CB\Bundle\SchedulerBundle\Manager;
 
+use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\PanelView;
+use CB\Bundle\NewAgeBundle\Entity\Repository\CampaignRepository;
+use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
+
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
-use CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerEventRepository;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
@@ -43,48 +47,97 @@ class SchedulerEventManager
     }
 
     /**
-     * Gets a list of system calendars for which it is granted to add events
-     *
-     * @return array of [id, name, public]
-     */
-    public function getSystemCalendars()
-    {
-        /** @var SystemCalendarRepository $repo */
-        $repo      = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:SystemCalendar');
-        $calendars = $repo->getCalendarsQueryBuilder($this->securityFacade->getOrganizationId())
-            ->select('sc.id, sc.name, sc.public')
-            ->getQuery()
-            ->getArrayResult();
-
-        // @todo: check ACL here. will be done in BAP-6575
-
-        return $calendars;
-    }
-
-    /**
-     * Gets a list of user's calendars for which it is granted to add events
+     * Gets a list of panelViews
      *
      * @return array of [id, name]
      */
-    public function getUserCalendars()
+    public function getPanelViews()
     {
-        /** @var CalendarRepository $repo */
-        $repo      = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar');
-        $calendars = $repo->getUserCalendarsQueryBuilder(
-            $this->securityFacade->getOrganizationId(),
-            $this->securityFacade->getLoggedUserId()
-        )
+        /** @var PanelViewRepository $repo */
+        $repo      = $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:PanelView');
+        $panelViews = $repo->getPanelViewsQueryBuilder($this->securityFacade->getOrganizationId())
             ->select('c.id, c.name')
             ->getQuery()
             ->getArrayResult();
-        foreach ($calendars as &$calendar) {
-            if (empty($calendar['name'])) {
-                $calendar['name'] = $this->entityNameResolver->getName($this->securityFacade->getLoggedUser());
-            }
+
+        return $panelViews;
+    }
+
+    /**
+     * Gets a list of campaigns
+     *
+     * @return array of [id, name]
+     */
+    public function getCampaigns()
+    {
+        /** @var CampaignRepository $repo */
+        $repo      = $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:Campaign');
+        $campaigns = $repo->getCampaignsQueryBuilder($this->securityFacade->getOrganizationId())
+            ->select('c.id, c.title as name')
+            ->getQuery()
+            ->getArrayResult();
+
+        return $campaigns;
+    }
+
+    /**
+     * Links an event with a campaign by its id
+     *
+     * @param SchedulerEvent $event
+     * @param int           $campaignId
+     *
+     * @throws \LogicException
+     * @throws ForbiddenException
+     */
+    public function setCampaign(SchedulerEvent $event, $campaignId)
+    {
+        $campaign = $event->getCampaign();
+        if (!$campaign || $campaign->getId() !== $campaignId) {
+            $event->setCampaign($this->findCampaign($campaignId));
         }
 
-        return $calendars;
     }
+
+    /**
+     * @param int $campaignId
+     *
+     * @return Campaign|null
+     */
+    protected function findCampaign($campaignId)
+    {
+        return $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:Campaign')
+            ->find($campaignId);
+    }
+
+    /**
+     * Links an event with a panelView by its id
+     *
+     * @param SchedulerEvent $event
+     * @param int           $panelViewId
+     *
+     * @throws \LogicException
+     * @throws ForbiddenException
+     */
+    public function setPanelView(SchedulerEvent $event, $panelViewId)
+    {
+        $panelView = $event->getPanelView();
+        if (!$panelView || $panelView->getId() !== $panelViewId) {
+            $event->setPanelView($this->findPanelView($panelViewId));
+        }
+
+    }
+
+    /**
+     * @param int $panelViewId
+     *
+     * @return PanelView|null
+     */
+    protected function findPanelView($panelViewId)
+    {
+        return $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:PanelView')
+            ->find($panelViewId);
+    }
+
 
 
     /**
@@ -116,27 +169,5 @@ class SchedulerEventManager
             substr($calendarUid, 0, $delim),
             (int)substr($calendarUid, $delim + 1)
         ];
-    }
-
-    /**
-     * @param int $calendarId
-     *
-     * @return Calendar|null
-     */
-    protected function findCalendar($calendarId)
-    {
-        return $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar')
-            ->find($calendarId);
-    }
-
-    /**
-     * @param int $calendarId
-     *
-     * @return SystemCalendar|null
-     */
-    protected function findSystemCalendar($calendarId)
-    {
-        return $this->doctrineHelper->getEntityRepository('OroCalendarBundle:SystemCalendar')
-            ->find($calendarId);
     }
 }

@@ -4,6 +4,8 @@ namespace CB\Bundle\SchedulerBundle\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use CB\Bundle\SchedulerBundle\Manager\SchedulerEventManager;
@@ -30,23 +32,19 @@ class SchedulerEventApiType extends SchedulerEventType
             ->add('id', 'hidden', array('mapped' => false))
             ->add(
                 'panelView',
-                'entity',
-                array(
-                    'label'       => 'cb.newage.panel_view.entity_label',
-                    'class'       => 'CBNewAgeBundle:PanelView',
-                    'property'    => 'name',
-                    'empty_value' => 'cb.newage.panel_view.form.choose_panel_view'
-                )
+                'integer',
+                [
+                    'required' => true,
+                    'mapped'   => false
+                ]
             )
             ->add(
                 'campaign',
-                'entity',
-                array(
-                    'label'       => 'cb.newage.campaign.entity_label',
-                    'class'       => 'CBNewAgeBundle:Campaign',
-                    'property'    => 'title',
-                    'empty_value' => 'cb.newage.campaign.form.choose_campaign'
-                )
+                'integer',
+                [
+                    'required' => true,
+                    'mapped'   => false
+                ]
             )
             ->add(
                 'start',
@@ -78,6 +76,7 @@ class SchedulerEventApiType extends SchedulerEventType
                     'model_timezone' => 'UTC'
                 ]
             );
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmitData']);
     }
 
     /**
@@ -90,10 +89,38 @@ class SchedulerEventApiType extends SchedulerEventType
                 'data_class'           => 'CB\Bundle\SchedulerBundle\Entity\SchedulerEvent',
                 'intention'            => 'scheduler_event',
                 'csrf_protection'      => false,
-                'ownership_disable'    => true,
                 'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             )
         );
+    }
+
+    /**
+     * POST_SUBMIT event handler
+     *
+     * @param FormEvent $event
+     */
+    public function postSubmitData(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        /** @var SchedulerEvent $data */
+        $data = $form->getData();
+        if (empty($data)) {
+            return;
+        }
+
+        $campaignId = $form->get('campaign')->getData();
+        if (empty($campaignId)) {
+            return;
+        }
+
+        $panelViewId = $form->get('panelView')->getData();
+        if (empty($panelViewId)) {
+            return;
+        }
+
+        $this->schedulerEventManager->setCampaign($data, (int)$campaignId);
+        $this->schedulerEventManager->setPanelView($data, (int)$panelViewId);
     }
 
     /**

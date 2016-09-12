@@ -37,17 +37,24 @@
     } %}
 
 {#<div class="row-fluid form-horizontal" id="calendar"#}
-<div class="oro-page clearfix" id="calendar"
+<div class="oro-page collapsible-sidebar clearfix" id="calendar"
     data-page-component-module="cbscheduler/js/app/components/scheduler-component"
     data-page-component-options="{{ schedulerOptions | json_encode }}">
 
-    {#<div class="responsive-block">#}
-    <style>
+
+    <style type="text/css">
+        .oro-page-sidebar {
+            display: none;
+        }
         .oro-page .oro-page-body {
             width: 100%;
         }
     </style>
-    <div class="oro-page-body search-results-column">
+
+    <div class="oro-page-sidebar"></div>
+
+    <div class="oro-page-body">
+    {#<div class="responsive-block">#}
         <div class="calendar-events"></div>
     </div>
 

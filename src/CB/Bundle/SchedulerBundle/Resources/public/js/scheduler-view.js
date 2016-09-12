@@ -12,7 +12,8 @@ define(function(require) {
     var LoadingMask = require('oroui/js/app/views/loading-mask-view');
     var BaseView = require('oroui/js/app/views/base/view');
     var EventCollection = require('cbscheduler/js/scheduler/event/collection');
-    var ResourceCollection = require('cbscheduler/js/scheduler/resource/collection');
+    var ResourceCollection = require('cbscheduler/js/scheduler/panelView/collection');
+    var CampaignCollection = require('cbscheduler/js/scheduler/campaign/collection');
     var EventModel = require('cbscheduler/js/scheduler/event/model');
     var EventView = require('cbscheduler/js/scheduler/event/view');
     var eventDecorator = require('cbscheduler/js/scheduler/event-decorator');
@@ -20,8 +21,6 @@ define(function(require) {
     var colorUtil = require('oroui/js/tools/color-util');
     var dateTimeFormatter = require('orolocale/js/formatter/datetime');
     var localeSettings = require('orolocale/js/locale-settings');
-    var PluginManager = require('oroui/js/app/plugins/plugin-manager');
-    var GuestsPlugin = require('cbscheduler/js/app/plugins/scheduler/guests-plugin');
     require('fullscheduler');
 
     SchedulerView = BaseView.extend({
@@ -61,23 +60,25 @@ define(function(require) {
                 scrollTime: '00:00',
                 allDayDefault: true,
 
+                resourceAreaWidth: '15%',
                 resourceColumns: [
                     {
-                        labelText: 'Fata panou',
+                        labelText: 'Panel View',
                         field: 'name'
                     }
                 ],
 
                 editable: true,
                 removable: true,
+                eventDurationEditable: false, // disable event resize
+                eventStartEditable: false, // disable event drag drop
                 collection: null,
                 resourceCollection: null,
+                campaignCollection: null,
                 fixedWeekCount: false, // http://fullcalendar.io/docs/display/fixedWeekCount/
                 itemViewTemplateSelector: null,
                 itemFormTemplateSelector: null,
                 itemFormDeleteButtonSelector: null,
-                calendar: null,
-                subordinate: true,
                 defaultTimedEventDuration: moment.duration('00:30:00'),
                 defaultAllDayEventDuration: moment.duration('24:00:00'),
                 header: {
@@ -129,13 +130,17 @@ define(function(require) {
                 _.defaults(options.eventsOptions, this.options.eventsOptions);
             }
             this.options = _.defaults(options || {}, this.options);
+
             // init event collection
             this.collection = this.collection || new EventCollection();
-            this.collection.setScheduler(this.options.calendar);
-            this.collection.subordinate = this.options.eventsOptions.subordinate;
 
             // init resource collection
             this.resourceCollection = this.resourceCollection || new ResourceCollection();
+
+            // init campaign collection
+            this.campaignCollection = this.campaignCollection || new CampaignCollection();
+            this.campaignCollection.setUrl();
+            this.campaignCollection.fetch();
 
             // set options for new events
             this.options.newEventEditable = this.options.eventsOptions.editable;
@@ -147,8 +152,8 @@ define(function(require) {
             this.listenTo(this.collection, 'destroy', this.onEventDeleted);
             this.colorManager = new ColorManager(this.options.colorManagerOptions);
 
-            this.pluginManager = new PluginManager(this);
-            this.pluginManager.enable(GuestsPlugin);
+            // this.pluginManager = new PluginManager(this);
+            // this.pluginManager.enable(GuestsPlugin);
         },
 
         onWindowResize: function() {
@@ -184,7 +189,7 @@ define(function(require) {
                 // create a view for event details
                 this.eventView = new EventView(_.extend({}, options, {
                     model: eventModel,
-                    calendar: this.options.calendar,
+//                    calendar: this.options.calendar,
                     viewTemplateSelector: this.options.eventsOptions.itemViewTemplateSelector,
                     formTemplateSelector: this.options.eventsOptions.itemFormTemplateSelector,
                     colorManager: this.colorManager
@@ -236,6 +241,7 @@ define(function(require) {
         addEventToCalendar: function(eventModel) {
             var fcEvent = this.createViewModel(eventModel);
             this.getCalendarElement().fullCalendar('renderEvent', fcEvent);
+            // this.getCalendarElement().fullCalendar('refetchEvents');
         },
 
         getCalendarEvents: function(calendarUid) {
@@ -245,34 +251,38 @@ define(function(require) {
         },
 
         onEventAdded: function(eventModel) {
-            var connectionModel = this.getConnectionCollection()
-                .findWhere({calendarUid: eventModel.get('calendarUid')});
+            if(eventModel.get('campaign')) {
+                var campaign = this.campaignCollection.get(eventModel.attributes.campaign);
+                var resource = this.resourceCollection.get(eventModel.attributes.panelView);
 
-            eventModel.set('editable', connectionModel.get('canEditEvent'), {silent: true});
-            eventModel.set('removable', connectionModel.get('canDeleteEvent'), {silent: true});
-
+                _.extend(eventModel.attributes, {
+                    title: campaign.get('title'),
+                    resourceId: resource.id,
+                    resourceName: resource.get('name')
+                });
+            }
             // trigger before view update
             this.trigger('event:added', eventModel);
 
             this.addEventToCalendar(eventModel);
-
-            // make sure that a calendar is visible when a new event is added to it
-            if (!connectionModel.get('visible')) {
-                this.connectionsView.showCalendar(connectionModel);
-            }
         },
 
         onEventChanged: function(eventModel) {
-            var connectionModel = this.getConnectionCollection()
-                .findWhere({calendarUid: eventModel.get('calendarUid')});
             var calendarElement = this.getCalendarElement();
             var fcEvent;
 
-            eventModel.set('editable', connectionModel.get('canEditEvent'));
-            eventModel.set('removable', connectionModel.get('canDeleteEvent'), {silent: true});
-
             // find and update fullCalendar event model
             fcEvent = calendarElement.fullCalendar('clientEvents', eventModel.id)[0];
+
+            var campaign = this.campaignCollection.get(eventModel.attributes.campaign);
+            var resource = this.resourceCollection.get(eventModel.attributes.panelView);
+
+            _.extend(eventModel.attributes, {
+                title: campaign.get('title'),
+                resourceId: resource.id,
+                resourceName: resource.get('name')
+            });
+
             _.extend(fcEvent, this.createViewModel(eventModel));
 
             // trigger before view update
@@ -282,40 +292,14 @@ define(function(require) {
             // NOTE: cannot update single event due to fullcalendar bug
             //       please check that after updating fullcalendar
             //       calendarElement.fullCalendar('updateEvent', fcEvent);
-            calendarElement.fullCalendar('rerenderEvents');
+            // calendarElement.fullCalendar('rerenderEvents');
+
+            calendarElement.fullCalendar('updateEvent', fcEvent);
         },
 
         onEventDeleted: function(eventModel) {
             this.getCalendarElement().fullCalendar('removeEvents', eventModel.id);
             this.trigger('event:deleted', eventModel);
-        },
-
-        onConnectionAdded: function() {
-            this.updateEvents();
-            this.updateLayout();
-        },
-
-        onConnectionChanged: function(connectionModel) {
-            if (connectionModel.reloadEventsRequest !== null) {
-                if (connectionModel.reloadEventsRequest === true) {
-                    this.updateEvents();
-                }
-                connectionModel.reloadEventsRequest = null;
-                return;
-            }
-
-            var changes = connectionModel.changedAttributes();
-            var calendarUid = connectionModel.get('calendarUid');
-            if (changes.visible && !this.eventsLoaded[calendarUid]) {
-                this.updateEvents();
-            } else {
-                this.updateEventsWithoutReload();
-            }
-        },
-
-        onConnectionDeleted: function() {
-            this.updateEvents();
-            this.updateLayout();
         },
 
         /**
@@ -338,8 +322,6 @@ define(function(require) {
                     attrs.start = attrs.start.clone().utc().format(this.MOMENT_BACKEND_FORMAT);
                     attrs.end = attrs.end.clone().utc().format(this.MOMENT_BACKEND_FORMAT);
                     _.extend(attrs, {
-                        calendarAlias: 'user',
-                        calendar: this.options.calendar,
                         editable: this.options.newEventEditable,
                         removable: this.options.newEventRemovable
                     });
@@ -351,11 +333,12 @@ define(function(require) {
             }
         },
 
-        onFcSelect: function(start, end) {
+        onFcSelect: function(start, end, jsEvent, calendar, resource) {
             var attrs = {
                 allDay: start.time().as('ms') === 0 && end.time().as('ms') === 0,
                 start: start.clone().tz(this.options.timezone, true),
-                end: end.clone().tz(this.options.timezone, true)
+                end: end.clone().tz(this.options.timezone, true),
+                panelView: resource.id
             };
             this.showAddEventDialog(attrs);
         },
@@ -364,6 +347,7 @@ define(function(require) {
             if (!this.eventView) {
                 try {
                     var eventModel = this.collection.get(fcEvent.id);
+
                     this.getEventView(eventModel).render();
                 } catch (err) {
                     this.showMiscError(err);
@@ -424,6 +408,7 @@ define(function(require) {
         },
 
         saveFcEvent: function(fcEvent) {
+            console.log(fcEvent);
             var promises = [];
             var eventModel;
             var attrs;
@@ -553,7 +538,7 @@ define(function(require) {
                     return this.createResourceViewModel(resourceModel);
                 }, this);
 
-                this._hideMask();
+                // this._hideMask();
                 callback(fcResources);
             }, this);
 
@@ -572,6 +557,37 @@ define(function(require) {
             } catch (err) {
                 callback({});
                 this.showLoadResourcesError(err);
+            }
+        },
+
+        loadCampaigns: function(callback) {
+            var onCampaignsLoad = _.bind(function() {
+                var fcCampaigns;
+
+                // prepare them for full calendar
+                fcCampaigns = _.map(this.campaignCollection.models, function(campaignModel) {
+                    return this.createCampaignViewModel(campaignModel);
+                }, this);
+
+                // this._hideMask();
+                callback(fcCampaigns);
+            }, this);
+
+            try {
+                this.campaignCollection.setUrl();
+
+                // load campaigns from a server
+                this.campaignCollection.fetch({
+                    reset: true,
+                    success: onCampaignsLoad,
+                    error: _.bind(function(collection, response) {
+                        callback({});
+                        this.showLoadCampaignsError(response.responseJSON || {});
+                    }, this)
+                });
+            } catch (err) {
+                callback({});
+                this.showLoadCampaignsError(err);
             }
         },
 
@@ -605,18 +621,10 @@ define(function(require) {
         createViewModel: function(eventModel) {
             var fcEvent = _.pick(
                 eventModel.attributes,
-                ['id', 'title', 'panelView', 'start', 'end', 'resourceId', 'allDay', 'backgroundColor', 'calendarUid', 'editable']
+                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'backgroundColor', 'editable', 'removable']
             );
 
-            // var colors = this.colorManager.getCalendarColors(fcEvent.calendarUid);
-
-            // set an event text and background colors the same as the owning calendar
-            // fcEvent.color = colors.backgroundColor;
-            // if (fcEvent.backgroundColor) {
-            //     fcEvent.textColor = colorUtil.getContrastColor(fcEvent.backgroundColor);
-            // } else {
-            //     fcEvent.textColor = colors.color;
-            // }
+            fcEvent.textColor = colorUtil.getContrastColor(fcEvent.backgroundColor);
 
             if (fcEvent.start !== null && !moment.isMoment(fcEvent.start)) {
                 fcEvent.start = $.fullCalendar.moment(fcEvent.start).tz(this.options.timezone);
@@ -628,6 +636,7 @@ define(function(require) {
             if (fcEvent.end && fcEvent.end.diff(fcEvent.start) === 0) {
                 fcEvent.end = null;
             }
+
             return fcEvent;
         },
 
@@ -643,6 +652,15 @@ define(function(require) {
             );
 
             return fcResource;
+        },
+
+        createCampaignViewModel: function(campaignModel) {
+            var fcCampaign = _.pick(
+                campaignModel.attributes,
+                ['id', 'name']
+            );
+
+            return fcCampaign;
         },
 
         showSavingMask: function() {
@@ -684,6 +702,10 @@ define(function(require) {
             this._showError(__('Sorry, calendar resources were not loaded correctly'), err);
         },
 
+        showLoadCampaignsError: function(err) {
+            this._showError(__('Sorry, calendar campaigns were not loaded correctly'), err);
+        },
+
         initCalendarContainer: function() {
             // init events container
             var eventsContainer = this.$el.find(this.options.eventsOptions.containerSelector);
@@ -708,9 +730,9 @@ define(function(require) {
                 resources: _.bind(this.loadResources, this),
                 select: _.bind(this.onFcSelect, this),
                 eventClick: _.bind(this.onFcEventClick, this),
-                eventDragStart: _.bind(this.onFcEventDragStart, this),
-                eventDrop: _.bind(this.onFcEventDrop, this),
-                eventResize: _.bind(this.onFcEventResize, this),
+                // eventDragStart: _.bind(this.onFcEventDragStart, this),
+                // eventDrop: _.bind(this.onFcEventDrop, this),
+                // eventResize: _.bind(this.onFcEventResize, this),
                 loading: _.bind(function(show) {
                     if (show) {
                         this.showLoadingMask();
@@ -726,7 +748,8 @@ define(function(require) {
                 'slotMinutes', 'snapMinutes', 'minTime', 'maxTime', 'scrollTime', 'slotEventOverlap',
                 'firstDay', 'firstHour', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort',
                 'aspectRatio', 'defaultAllDayEventDuration', 'defaultTimeEventDuration',
-                'fixedWeekCount', 'displayEventTime', 'weekNumbers', 'allDayDefault', 'slotDuration', 'schedulerLicenseKey', 'resourceColumns'
+                'fixedWeekCount', 'displayEventTime', 'weekNumbers', 'allDayDefault', 'slotDuration',
+                'schedulerLicenseKey', 'resourceAreaWidth', 'resourceColumns', 'eventDurationEditable', 'eventStartEditable'
             ];
             _.extend(options, _.pick(this.options.eventsOptions, keys));
             if (!_.isUndefined(options.defaultDate)) {

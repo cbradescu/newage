@@ -35,13 +35,6 @@ use Oro\Bundle\UserBundle\Entity\User;
  *          "entity"={
  *              "icon"="icon-time"
  *          },
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
  *          "security"={
  *              "type"="ACL"
  *          }
@@ -141,29 +134,6 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      * )
      */
     protected $status;
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *      }
-     * )
-     */
-    protected $owner;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
 
     public function __construct()
     {
@@ -323,48 +293,5 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
             return (string)$this->getCampaign()->getTitle();
         else
             return 'default';
-    }
-
-    /**
-     * @param User $owningUser
-     *
-     * @return SchedulerEvent
-     */
-    public function setOwner($owningUser)
-    {
-        $this->owner = $owningUser;
-
-        return $this;
-    }
-
-    /**
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * Set organization
-     *
-     * @param Organization $organization
-     * @return SchedulerEvent
-     */
-    public function setOrganization(Organization $organization = null)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * Get organization
-     *
-     * @return Organization
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
     }
 }

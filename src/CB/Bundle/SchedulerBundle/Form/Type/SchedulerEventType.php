@@ -19,28 +19,8 @@ class SchedulerEventType extends AbstractType
     {
         $builder
             ->add(
-                'panelView',
-                'entity',
-                array(
-                    'label'       => 'cb.newage.panel_view.entity_label',
-                    'class'       => 'CBNewAgeBundle:PanelView',
-                    'property'    => 'name',
-                    'empty_value' => 'cb.newage.panel_view.form.choose_panel_view'
-                )
-            )
-            ->add(
-                'campaign',
-                'entity',
-                array(
-                    'label'       => 'cb.newage.campaign.entity_label',
-                    'class'       => 'CBNewAgeBundle:Campaign',
-                    'property'    => 'title',
-                    'empty_value' => 'cb.newage.campaign.form.choose_campaign'
-                )
-            )
-            ->add(
                 'start',
-                'oro_date',
+                'oro_datetime',
                 [
                     'required' => true,
                     'label'    => 'cb.scheduler.scheduler_event.start.label',
@@ -49,7 +29,7 @@ class SchedulerEventType extends AbstractType
             )
             ->add(
                 'end',
-                'oro_date',
+                'oro_datetime',
                 [
                     'required' => true,
                     'label'    => 'cb.scheduler.scheduler_event.end.label',
@@ -57,6 +37,7 @@ class SchedulerEventType extends AbstractType
                 ]
             );
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
@@ -79,12 +60,49 @@ class SchedulerEventType extends AbstractType
             [
                 'data_class'            => 'CB\Bundle\SchedulerBundle\Entity\SchedulerEvent',
                 'intention'             => 'scheduler_event',
-                'cascade_validation' => true,
-                'ownership_disabled' => true
+                'cascade_validation'    => true
             ]
         );
     }
 
+    /**
+     * PRE_SET_DATA event handler
+     *
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $form   = $event->getForm();
+
+        /** @var SchedulerEvent $data */
+        $data = $event->getData();
+        $form->add(
+            $form->getConfig()->getFormFactory()->createNamed(
+                'campaign',
+                'cb_campaign_choice',
+                $data ? $data->getCampaign() : null,
+                [
+                    'required'        => true,
+                    'mapped'          => false,
+                    'auto_initialize' => false,
+                    'label'           => 'cb.newage.campaign.entity_label'
+                ]
+            )
+        );
+        $form->add(
+            $form->getConfig()->getFormFactory()->createNamed(
+                'panelView',
+                'cb_panel_view_choice',
+                $data ? $data->getCampaign() : null,
+                [
+                    'required'        => false,
+                    'mapped'          => false,
+                    'auto_initialize' => false,
+                    'label'           => 'cb.newage.panel_view.entity_label'
+                ]
+            )
+        );
+    }
 
     /**
      * {@inheritdoc}

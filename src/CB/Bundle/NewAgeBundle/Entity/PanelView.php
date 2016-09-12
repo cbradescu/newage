@@ -20,7 +20,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository")
  * @ORM\Table(
  *      name="cb_newage_panel_view"
  * )

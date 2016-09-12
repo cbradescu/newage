@@ -2,6 +2,9 @@ parameters:
     cb_scheduler.scheduler_event.form.type.class:           CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventType
     cb_scheduler.scheduler_event.form.type.api.class:       CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventApiType
     cb_scheduler.scheduler_event.form.handler.class:        CB\Bundle\SchedulerBundle\Form\Handler\SchedulerEventHandler
+    cb_scheduler.scheduler_event.form.handler.api.class:    CB\Bundle\SchedulerBundle\Form\Handler\SchedulerEventApiHandler
+    cb_scheduler.campaign_choice.form.type.class:           CB\Bundle\SchedulerBundle\Form\Type\CampaignChoiceType
+    cb_scheduler.panel_view_choice.form.type.class:         CB\Bundle\SchedulerBundle\Form\Type\PanelViewChoiceType
 
 services:
     cb_scheduler.scheduler.form.type:
@@ -34,7 +37,7 @@ services:
             - "cb_scheduler_event"
 
     cb_scheduler.scheduler_event.form.handler.api:
-        class: %cb_scheduler.scheduler_event.form.handler.class%
+        class: %cb_scheduler.scheduler_event.form.handler.api.class%
         scope: request
         arguments:
             - @cb_scheduler.scheduler_event.form.api
@@ -47,5 +50,21 @@ services:
         factory_method: createNamed
         factory_service: form.factory
         arguments:
-            - 'scheduler_event'
+            - ~
             - 'cb_scheduler_event_api'
+
+    cb_scheduler.campaign_choice.form.type:
+        class: %cb_scheduler.campaign_choice.form.type.class%
+        arguments:
+            - '@cb_scheduler.scheduler_event.manager'
+            - '@translator'
+        tags:
+            - { name: form.type, alias: cb_campaign_choice }
+
+    cb_scheduler.panel_view_choice.form.type:
+        class: %cb_scheduler.panel_view_choice.form.type.class%
+        arguments:
+            - '@cb_scheduler.scheduler_event.manager'
+            - '@translator'
+        tags:
+            - { name: form.type, alias: cb_panel_view_choice }

@@ -5,14 +5,14 @@ define([
 ], function(_, Backbone, routing) {
     'use strict';
 
-    var ResourceModel;
+    var PanelViewModel;
 
     /**
      * @export  cbscheduler/js/scheduler/resource/model
      * @class   cbscheduler.scheduler.resource.Model
      * @extends Backbone.Model
      */
-    ResourceModel = Backbone.Model.extend({
+    PanelViewModel = Backbone.Model.extend({
         route: 'cb_newage_panel_view_api_get_panel_views',
         urlRoot: null,
 
@@ -37,5 +37,5 @@ define([
         }
     });
 
-    return ResourceModel;
+    return PanelViewModel;
 });

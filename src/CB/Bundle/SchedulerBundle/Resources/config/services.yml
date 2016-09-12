@@ -2,6 +2,7 @@ parameters:
     cb_scheduler.scheduler_event.entity.class:                    CB\Bundle\SchedulerBundle\Entity\SchedulerEvent
     cb_scheduler.scheduler_event.manager.class:                   CB\Bundle\SchedulerBundle\Manager\SchedulerEventManager
     cb_scheduler.scheduler_event.manager.api.class:               Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    cb_scheduler.scheduler_event.handler.delete.class:            CB\Bundle\SchedulerBundle\Handler\SchedulerEventDeleteHandler
 
 services:
     cb_scheduler.scheduler_event.manager:
@@ -19,3 +20,9 @@ services:
         arguments:
             - %cb_scheduler.scheduler_event.entity.class%
             - @doctrine.orm.entity_manager
+
+    cb_scheduler.scheduler_event.handler.delete:
+        class: %cb_scheduler.scheduler_event.handler.delete.class%
+        parent: oro_soap.handler.delete.abstract
+        calls:
+            - [setSecurityFacade, ['@oro_security.security_facade']]

@@ -31,9 +31,6 @@ define([
     return Backbone.View.extend({
         /** @property {Object} */
         options: {
-            scheduler: null,
-            connections: null,
-            colorManager: null,
             widgetRoute: null,
             widgetOptions: null
         },
@@ -41,16 +38,7 @@ define([
         /** @property {Object} */
         selectors: {
             loadingMaskContent: '.loading-content',
-            backgroundColor: 'input[name$="[backgroundColor]"]',
-            schedulerUid: '[name*="schedulerUid"]',
-            invitedUsers: 'input[name$="[invitedUsers]"]'
         },
-
-        /** @property {Array} */
-        userSchedulerOnlyFields: [
-            {fieldName: 'reminders', emptyValue: {}, selector: '.reminders-collection'},
-            {fieldName: 'invitedUsers', emptyValue: '', selector: 'input[name$="[invitedUsers]"]'}
-        ],
 
         initialize: function(options) {
             this.options = _.defaults(_.pick(options || {}, _.keys(this.options)), this.options);
@@ -64,10 +52,7 @@ define([
         remove: function() {
             this.trigger('remove');
             this._hideMask();
-            if (this.activityContext) {
-                this.activityContext.dispose();
-                delete this.activityContext;
-            }
+
             Backbone.View.prototype.remove.apply(this, arguments);
         },
 
@@ -120,7 +105,7 @@ define([
 
             if (this.options.widgetRoute) {
                 defaultOptions.el = $('<div></div>');
-                defaultOptions.url = routing.generate(this.options.widgetRoute, {id: this.model.originalId});
+                defaultOptions.url = routing.generate(this.options.widgetRoute, {id: this.model.id});
                 defaultOptions.type = 'Scheduler';
             } else {
                 defaultOptions.el = this.model.isNew() ? this.getEventForm() : this.getEventView();
@@ -231,13 +216,6 @@ define([
             var inputs = form.find('[name]');
             var fieldNameRegex = /\[(\w+)\]/g;
 
-            // show loading mask if child events users should be updated
-            if (!_.isEmpty(modelData.invitedUsers)) {
-                this.eventDialog.once('renderComplete', function() {
-                    self.showLoadingMask();
-                });
-            }
-
             _.each(inputs, function(input) {
                 input = $(input);
                 var name = input.attr('name');
@@ -260,13 +238,6 @@ define([
                         input.val(value);
                     }
                     input.change();
-                }
-
-                // hide loading mask if child events users should be updated
-                if (name.indexOf('[invitedUsers]') !== -1 && !_.isEmpty(modelData.invitedUsers)) {
-                    input.on('select2-data-loaded', function() {
-                        self._hideMask();
-                    });
                 }
             });
 
@@ -306,39 +277,12 @@ define([
             var modelData = this.model.toJSON();
             var templateData = _.extend(this.getEventFormTemplateData(!modelData.id), modelData);
             var form = this.fillForm(this.template(templateData), modelData);
-            // var schedulerColors = this.options.colorManager.getSchedulerColors(this.model.get('schedulerUid'));
-
-            // form.find(this.selectors.backgroundColor)
-            //     .data('page-component-options').emptyColor = schedulerColors.backgroundColor;
-            // if (modelData.schedulerAlias !== 'user') {
-            //     this._showUserSchedulerOnlyFields(form, false);
-            // }
-            // this._toggleSchedulerUidByInvitedUsers(form);
-
-            form.find(this.selectors.schedulerUid).on('change', _.bind(function(e) {
-                var $emptyColor = form.find('.empty-color');
-                var $selector = $(e.currentTarget);
-                var tagName = $selector.prop('tagName').toUpperCase();
-                var schedulerUid = tagName === 'SELECT' || $selector.is(':checked') ?
-                    $selector.val() : this.model.get('schedulerUid');
-                var colors = this.options.colorManager.getSchedulerColors(schedulerUid);
-                var newScheduler = this.parseSchedulerUid(schedulerUid);
-                $emptyColor.css({'background-color': colors.backgroundColor, 'color': colors.color});
-                if (newScheduler.schedulerAlias === 'user') {
-                    this._showUserSchedulerOnlyFields(form);
-                } else {
-                    this._showUserSchedulerOnlyFields(form, false);
-                }
-            }, this));
-            form.find(this.selectors.invitedUsers).on('change', _.bind(function(e) {
-                this._toggleSchedulerUidByInvitedUsers(form);
-            }, this));
 
             return form;
         },
 
         getEventFormData: function() {
-            var fieldNameFilterRegex = /^oro_scheduler_event_form/;
+            var fieldNameFilterRegex = /^cb_scheduler_event_form/;
             var fieldNameRegex = /\[(\w+)\]/g;
             var data = {};
             var formData = this.eventDialog.form.serializeArray().filter(function(item) {
@@ -360,78 +304,31 @@ define([
                 }
             }, this);
 
-            if (data.hasOwnProperty('schedulerUid')) {
-                if (data.schedulerUid) {
-                    _.extend(data, this.parseSchedulerUid(data.schedulerUid));
-                    if (data.schedulerAlias !== 'user') {
-                        _.each(this.userSchedulerOnlyFields, function(item) {
-                            if (item.fieldName) {
-                                data[item.fieldName] = item.emptyValue;
-                            }
-                        });
-                    }
-                }
-                delete data.schedulerUid;
-            }
+            // if (data.hasOwnProperty('schedulerUid')) {
+            //     if (data.schedulerUid) {
+            //         _.extend(data, this.parseSchedulerUid(data.schedulerUid));
+            //         if (data.schedulerAlias !== 'user') {
+            //             _.each(this.userSchedulerOnlyFields, function(item) {
+            //                 if (item.fieldName) {
+            //                     data[item.fieldName] = item.emptyValue;
+            //                 }
+            //             });
+            //         }
+            //     }
+            //     delete data.schedulerUid;
+            // }
 
-            if (data.hasOwnProperty('invitedUsers')) {
-                data.invitedUsers = _.map(data.invitedUsers ? data.invitedUsers.split(',') : [], function(item) {
-                    return parseInt(item);
-                });
-            }
+            // if (data.hasOwnProperty('invitedUsers')) {
+            //     data.invitedUsers = _.map(data.invitedUsers ? data.invitedUsers.split(',') : [], function(item) {
+            //         return parseInt(item);
+            //     });
+            // }
 
-            if (!data.hasOwnProperty('reminders')) {
-                data.reminders = {};
-            }
+            // if (!data.hasOwnProperty('reminders')) {
+            //     data.reminders = {};
+            // }
 
             return data;
-        },
-
-        parseSchedulerUid: function(schedulerUid) {
-            return {
-                schedulerAlias: schedulerUid.substr(0, schedulerUid.lastIndexOf('_')),
-                scheduler: parseInt(schedulerUid.substr(schedulerUid.lastIndexOf('_') + 1))
-            };
-        },
-
-        _showUserSchedulerOnlyFields: function(form, visible) {
-            _.each(this.userSchedulerOnlyFields, function(item) {
-                if (item.selector) {
-                    if (_.isUndefined(visible) || visible) {
-                        form.find(item.selector).closest('.control-group').show();
-                    } else {
-                        form.find(item.selector).closest('.control-group').hide();
-                    }
-                }
-            });
-        },
-
-        _toggleSchedulerUidByInvitedUsers: function(form) {
-            var $schedulerUid = form.find(this.selectors.schedulerUid);
-            if (!$schedulerUid.length) {
-                return;
-            }
-            if (form.find(this.selectors.invitedUsers).val()) {
-                $schedulerUid.attr('disabled', 'disabled');
-                $schedulerUid.parent().attr('title', __('The scheduler cannot be changed because the event has guests'));
-                // fix select2 dynamic change disabled
-                if (!$schedulerUid.parent().hasClass('disabled')) {
-                    $schedulerUid.parent().addClass('disabled');
-                }
-                if ($schedulerUid.prop('tagName').toUpperCase() !== 'SELECT') {
-                    $schedulerUid.parent().find('label').addClass('disabled');
-                }
-            } else {
-                $schedulerUid.removeAttr('disabled');
-                $schedulerUid.removeAttr('title');
-                // fix select2 dynamic change disabled
-                if ($schedulerUid.parent().hasClass('disabled')) {
-                    $schedulerUid.parent().removeClass('disabled');
-                }
-                if ($schedulerUid.prop('tagName').toUpperCase() !== 'SELECT') {
-                    $schedulerUid.parent().find('label').removeClass('disabled');
-                }
-            }
         },
 
         setValueByPath: function(obj, value, path) {
@@ -464,11 +361,9 @@ define([
 
         getEventFormTemplateData: function(isNew) {
             var templateType = 'single';
-            var schedulers = [];
 
             return {
-                schedulerUidTemplateType: '',
-                schedulers: schedulers
+                schedulerUidTemplateType: 'single',
             };
         }
     });

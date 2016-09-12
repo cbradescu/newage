@@ -19,30 +19,27 @@ define([
         originalId: null, // original id received from a server
 
         defaults: {
-            // original id is copied to originalId property and this attribute is replaced with schedulerUid + originalId
             id: null,
-            campaign: null,
+            title: null, // campaign name
             start: null,
             end: null,
-            resourceId: null,
-            allDay: true,
+            resourceId: null, // panel view id
+            resourceName: null, //panel view name
+            panelView: null,
+            campaign: null,
+            backgroundColor: null,
             editable: false,
             removable: false
         },
 
         initialize: function() {
             this.urlRoot = routing.generate(this.route);
-            // this._updateComputableAttributes();
-            // this.on('change:id change:schedulerAlias change:scheduler', this._updateComputableAttributes, this);
         },
 
         url: function() {
             var url;
-            var id = this.id;
 
-            this.id = this.originalId;
             url = Backbone.Model.prototype.url.call(this, arguments);
-            this.id = id;
 
             return url;
         },
@@ -61,14 +58,13 @@ define([
             }
 
             modelData = _.extend(
-                {id: this.originalId},
+                {},
                 _.omit(
                     this.toJSON(),
-                    ['id', 'editable', 'removable', 'schedulerUid', 'parentEventId', 'invitationStatus']
+                    ['id', 'title', 'resourceId', 'resourceName', 'editable', 'removable', 'allDay', 'backgroundColor']
                 ),
                 attrs || {}
             );
-            modelData.invitedUsers = modelData.invitedUsers ? modelData.invitedUsers.join(',') : undefined;
 
             options.contentType = 'application/json';
             options.data = JSON.stringify(modelData);
@@ -76,36 +72,18 @@ define([
             Backbone.Model.prototype.save.call(this, attrs, options);
         },
 
-        _updateComputableAttributes: function() {
-            var schedulerAlias = this.get('schedulerAlias');
-            var schedulerId = this.get('scheduler');
-            var schedulerUid = schedulerAlias && schedulerId ? schedulerAlias + '_' + schedulerId : null;
-
-            this.set('schedulerUid', schedulerUid);
-
-            if (!this.originalId && this.id && schedulerUid) {
-                this.originalId = this.id;
-                this.set('id', schedulerUid + '_' + this.originalId);
-            }
-        },
-
         validate: function(attrs) {
             var errors = [];
 
+            if (!attrs.campaign) {
+                errors.push('cb.scheduler.error_message.scheduler_event_model.campaign_not_blank');
+            }
+
             if (moment(attrs.end).diff(attrs.start) < 0) {
-                errors.push('oro.scheduler.error_message.event_model.end_date_earlier_than_start');
+                errors.push('cb.scheduler.error_message.event_model.end_date_earlier_than_start');
             }
 
             return errors.length ? errors : null;
-        },
-
-        getInvitationStatus: function() {
-            var invitationStatus = this.get('invitationStatus');
-            var invitedUsers = this.get('invitedUsers');
-            if (!invitationStatus && invitedUsers && invitedUsers.length) {
-                invitationStatus = 'accepted';
-            }
-            return invitationStatus;
         }
     });
 

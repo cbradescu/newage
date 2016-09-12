@@ -1,19 +1,19 @@
 define([
     'backbone',
     'routing',
-    'cbscheduler/js/scheduler/resource/model'
-], function(Backbone, routing, ResourceModel) {
+    'cbscheduler/js/scheduler/panelView/model'
+], function(Backbone, routing, PanelViewModel) {
     'use strict';
 
     /**
-     * @export  cbscheduler/js/scheduler/event/collection
-     * @class   cbscheduler.scheduler.event.Collection
+     * @export  cbscheduler/js/scheduler/panelView/collection
+     * @class   cbscheduler.scheduler.panelView.Collection
      * @extends Backbone.Collection
      */
     return Backbone.Collection.extend({
         route: 'cb_newage_panel_view_api_get_panel_views',
         url: null,
-        model: ResourceModel,
+        model: PanelViewModel,
 
         setUrl: function() {
             this.url = routing.generate(

@@ -19,7 +19,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="CB\Bundle\NewAgeBundle\Entity\Repository\CampaignRepository")
  * @ORM\Table(
  *      name="cb_newage_campaign"
  * )

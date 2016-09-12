@@ -32,7 +32,8 @@ use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-
+use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\PanelView;
 /**
  * @RouteResource("schedulerevent")
  * @NamePrefix("cb_api_")
@@ -135,10 +136,10 @@ class SchedulerEventController extends RestController implements ClassResourceIn
         /** @var SchedulerEventRepository $repo */
         $repo  = $this->getManager()->getRepository();
         $qb = $repo->getEventListQueryBuilder();
-        $page  = (int)$this->getRequest()->get('page', 1);
-        $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
-        $qb->setMaxResults($limit)
-            ->setFirstResult($page > 0 ? ($page - 1) * $limit : 0);
+//        $page  = (int)$this->getRequest()->get('page', 1);
+//        $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
+//        $qb->setMaxResults($limit)
+//            ->setFirstResult($page > 0 ? ($page - 1) * $limit : 0);
 
             $result = $qb->getQuery()->getResult();
 
@@ -147,11 +148,34 @@ class SchedulerEventController extends RestController implements ClassResourceIn
             {
                 $item['id'] = $row['id'];
                 $item['title'] = $row['campaignName'];
-                $item['panelView'] = $row['panelViewName'];
-                $item['resourceId'] = $row['panelViewId'];
                 $item['start'] = $row['start']->format('c');
                 $item['end'] = $row['end']->format('c');
-                $item['status'] = $row['status'];
+                $item['resourceId'] = $row['panelViewId'];
+                $item['resourceName'] = $row['panelViewName'];
+                $item['panelView'] = $row['panelViewId'];
+                $item['campaign'] = $row['campaignId'];
+
+                switch ($row['status']) {
+                    case SchedulerEvent::OFFERED:
+                        $item['backgroundColor'] = '#ffff99';
+                        break;
+                    case SchedulerEvent::ACCEPTED:
+                        $item['backgroundColor'] = '#84e184';
+                        break;
+                    case SchedulerEvent::RESERVED :
+                        $item['backgroundColor'] = '#99ccff';
+                        break;
+                }
+
+                if ($this->get('oro_security.security_facade')->isGranted('cb_scheduler_event_update'))
+                    $item['editable'] = true;
+                else
+                    $item['editable'] = false;
+
+                if ($this->get('oro_security.security_facade')->isGranted('cb_scheduler_event_delete'))
+                    $item['removable'] = true;
+                else
+                    $item['removable'] = false;
 
                 $events[] = $item;
             }
@@ -376,9 +400,7 @@ class SchedulerEventController extends RestController implements ClassResourceIn
         $isProcessed = false;
 
         $entity = call_user_func_array([$this, 'createEntity'], func_get_args());
-        error_log('ajungeeeee');
         try {
-//            $entity->setOwner( $this->get('oro_security.security_facade')->getLoggedUser() );
             $entity = $this->processForm($entity);
             if ($entity) {
                 $view        = $this->view($this->createResponseData($entity), Codes::HTTP_CREATED);
