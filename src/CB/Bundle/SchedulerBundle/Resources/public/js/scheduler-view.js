@@ -172,7 +172,6 @@ define(function(require) {
                 // fullscreen layout has side effects, need to clean up
                 this.setLayout('default');
             }
-            this.pluginManager.dispose();
             clearInterval(this.timelineUpdateIntervalId);
             if (this.getCalendarElement().data('fullCalendar')) {
                 this.getCalendarElement().fullCalendar('destroy');
@@ -261,6 +260,7 @@ define(function(require) {
                     resourceName: resource.get('name')
                 });
             }
+
             // trigger before view update
             this.trigger('event:added', eventModel);
 
@@ -408,7 +408,6 @@ define(function(require) {
         },
 
         saveFcEvent: function(fcEvent) {
-            console.log(fcEvent);
             var promises = [];
             var eventModel;
             var attrs;
@@ -473,11 +472,6 @@ define(function(require) {
 
         updateEventsLoadedCache: function() {
             this.eventsLoaded = {};
-            // this.options.connectionsOptions.collection.each(function(connectionModel) {
-            //     if (connectionModel.get('visible')) {
-            //         this.eventsLoaded[connectionModel.get('calendarUid')] = true;
-            //     }
-            // }, this);
         },
 
         updateEventsWithoutReload: function() {
@@ -560,37 +554,6 @@ define(function(require) {
             }
         },
 
-        loadCampaigns: function(callback) {
-            var onCampaignsLoad = _.bind(function() {
-                var fcCampaigns;
-
-                // prepare them for full calendar
-                fcCampaigns = _.map(this.campaignCollection.models, function(campaignModel) {
-                    return this.createCampaignViewModel(campaignModel);
-                }, this);
-
-                // this._hideMask();
-                callback(fcCampaigns);
-            }, this);
-
-            try {
-                this.campaignCollection.setUrl();
-
-                // load campaigns from a server
-                this.campaignCollection.fetch({
-                    reset: true,
-                    success: onCampaignsLoad,
-                    error: _.bind(function(collection, response) {
-                        callback({});
-                        this.showLoadCampaignsError(response.responseJSON || {});
-                    }, this)
-                });
-            } catch (err) {
-                callback({});
-                this.showLoadCampaignsError(err);
-            }
-        },
-
         /**
          * Performs filtration of calendar events before they are rendered
          *
@@ -598,18 +561,6 @@ define(function(require) {
          * @returns {Array}
          */
         filterEvents: function(events) {
-            // var visibleConnectionIds = [];
-            // // collect visible connections
-            // this.options.connectionsOptions.collection.each(function(connectionModel) {
-            //     if (connectionModel.get('visible')) {
-            //         visibleConnectionIds.push(connectionModel.get('calendarUid'));
-            //     }
-            // }, this);
-            // // filter visible events
-            // events = _.filter(events, function(event) {
-            //     return -1 !== _.indexOf(visibleConnectionIds, event.get('calendarUid'));
-            // });
-
             return events;
         },
 
@@ -621,9 +572,10 @@ define(function(require) {
         createViewModel: function(eventModel) {
             var fcEvent = _.pick(
                 eventModel.attributes,
-                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'backgroundColor', 'editable', 'removable']
+                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'status', 'editable', 'removable']
             );
 
+            fcEvent.backgroundColor = this.getBackgroundColor(fcEvent.status);
             fcEvent.textColor = colorUtil.getContrastColor(fcEvent.backgroundColor);
 
             if (fcEvent.start !== null && !moment.isMoment(fcEvent.start)) {
@@ -965,6 +917,20 @@ define(function(require) {
             }
             $calendarEl.fullCalendar('option', 'height', height);
             $calendarEl.fullCalendar('option', 'contentHeight', contentHeight);
+        },
+
+        getBackgroundColor: function(status) {
+            switch (parseInt(status))
+            {
+                case 1:
+                    return '#99ccff';
+                    break;
+                case 2:
+                    return '#84e184';
+                    break;
+                default:
+                    return '#ffff99';
+            }
         }
     });
 

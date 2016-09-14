@@ -102,6 +102,19 @@ class SchedulerEventType extends AbstractType
                 ]
             )
         );
+        $form->add(
+            $form->getConfig()->getFormFactory()->createNamed(
+                'status',
+                'cb_status_choice',
+                $data ? $data->getStatus() : null,
+                [
+                    'required'        => true,
+                    'mapped'          => false,
+                    'auto_initialize' => false,
+                    'label'           => 'cb.scheduler.scheduler_event.status.label'
+                ]
+            )
+        );
     }
 
     /**

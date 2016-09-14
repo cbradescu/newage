@@ -154,28 +154,17 @@ class SchedulerEventController extends RestController implements ClassResourceIn
                 $item['resourceName'] = $row['panelViewName'];
                 $item['panelView'] = $row['panelViewId'];
                 $item['campaign'] = $row['campaignId'];
+                $item['status'] = $row['status'];
 
-                switch ($row['status']) {
-                    case SchedulerEvent::OFFERED:
-                        $item['backgroundColor'] = '#ffff99';
-                        break;
-                    case SchedulerEvent::ACCEPTED:
-                        $item['backgroundColor'] = '#84e184';
-                        break;
-                    case SchedulerEvent::RESERVED :
-                        $item['backgroundColor'] = '#99ccff';
-                        break;
-                }
-
+                $item['editable'] = false;
                 if ($this->get('oro_security.security_facade')->isGranted('cb_scheduler_event_update'))
-                    $item['editable'] = true;
-                else
-                    $item['editable'] = false;
+                    if ($row['status']!=2 || $this->get('oro_security.security_facade')->isGranted('ROLE_AVAILABLE'))
+                        $item['editable'] = true;
 
+                $item['removable'] = false;
                 if ($this->get('oro_security.security_facade')->isGranted('cb_scheduler_event_delete'))
-                    $item['removable'] = true;
-                else
-                    $item['removable'] = false;
+                    if ($row['status']!=2 || $this->get('oro_security.security_facade')->isGranted('ROLE_AVAILABLE'))
+                        $item['removable'] = true;
 
                 $events[] = $item;
             }

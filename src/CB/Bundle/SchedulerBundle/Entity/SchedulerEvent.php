@@ -45,14 +45,14 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
-    const OFFERED  = 'offered';
-    const RESERVED = 'reserved';
-    const ACCEPTED = 'accepted';
+    const OFFERED  = 0;
+    const RESERVED = 1;
+    const ACCEPTED = 2;
 
-    protected $statuses = [
-        SchedulerEvent::OFFERED,
-        SchedulerEvent::RESERVED,
-        SchedulerEvent::ACCEPTED
+    static $statuses = [
+        self::OFFERED => 'Ofertat34',
+        self::RESERVED => 'Reservat',
+        self::ACCEPTED => 'Acceptat'
     ];
 
     /**
@@ -124,7 +124,7 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="status", type="string", length=32, nullable=true)
+     * @ORM\Column(name="status", type="integer")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -140,6 +140,31 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
         parent::__construct();
 
         $this->status = SchedulerEvent::OFFERED;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStatuses()
+    {
+        return self::$statuses;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusLabel()
+    {
+        return self::getStatusLabelForIndex($this->status);
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    public static function getStatusLabelForIndex($value)
+    {
+        return self::$statuses[$value];
     }
 
     /**
@@ -268,11 +293,11 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      */
     public function setStatus($status)
     {
-        if ($this->isValid($status)) {
+//        if ($this->isValid($status)) {
             $this->status = $status;
-        } else {
-            throw new \LogicException(sprintf('Status "%s" is not supported', $status));
-        }
+//        } else {
+//            throw new \LogicException(sprintf('Status "%s" is not supported', $status));
+//        }
     }
 
     /**
@@ -281,7 +306,7 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      */
     protected function isValid($status)
     {
-        return $status === self::OFFERED || in_array($status, $this->statuses);
+        return $status === self::OFFERED || in_array($status, SchedulerEvent::getStatuses());
     }
 
     /**

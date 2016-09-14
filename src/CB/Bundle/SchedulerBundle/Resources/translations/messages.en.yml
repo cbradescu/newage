@@ -14,3 +14,9 @@ cb:
             description.label: Description
             start.label: Start
             end.label: End
+            status:
+                label: Status
+
+cb.scheduler.scheduler_event.status.offered.label:  Offered
+cb.scheduler.scheduler_event.status.reserved.label: Reserved
+cb.scheduler.scheduler_event.status.accepted.label: Accepted

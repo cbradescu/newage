@@ -2,6 +2,8 @@
 
 namespace CB\Bundle\SchedulerBundle\Form\Type;
 
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -12,21 +14,20 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use CB\Bundle\SchedulerBundle\Manager\SchedulerEventManager;
 
-class PanelViewChoiceType extends AbstractType
+class StatusChoiceType extends AbstractType
 {
-    /** @var SchedulerEventManager */
-    protected $schedulerEventManager;
+    /** @var SecurityFacade */
+    protected $securityFacade;
 
     /** @var TranslatorInterface */
     protected $translator;
 
     /**
-     * @param SchedulerEventManager $schedulerEventManager
      * @param TranslatorInterface  $translator
      */
-    public function __construct(SchedulerEventManager $schedulerEventManager, TranslatorInterface $translator)
+    public function __construct(SecurityFacade $securityFacade, TranslatorInterface $translator)
     {
-        $this->schedulerEventManager = $schedulerEventManager;
+        $this->securityFacade       = $securityFacade;
         $this->translator           = $translator;
     }
 
@@ -48,7 +49,7 @@ class PanelViewChoiceType extends AbstractType
                 'choices'              => function (Options $options) {
                     return $this->getChoices();
                 },
-                'expanded'               => false,
+                'expanded' => false,
                 'translatable_options' => false
             )
         );
@@ -70,11 +71,29 @@ class PanelViewChoiceType extends AbstractType
     }
 
     /**
+     * @return array key , value
+     */
+    protected function getChoices()
+    {
+        $choices[0] = $this->translator->trans('cb.scheduler.scheduler_event.status.offered.label');
+        if ($this->securityFacade->isGranted('cb_scheduler_event_update')) {
+            $choices[1] = $this->translator->trans('cb.scheduler.scheduler_event.status.reserved.label');
+
+            if ($this->securityFacade->isGranted('ROLE_AVAILABLE'))
+            {
+                $choices[2] = $this->translator->trans('cb.scheduler.scheduler_event.status.accepted.label');
+            }
+        }
+
+        return $choices;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
     {
-        return 'cb_panel_view_choice';
+        return 'cb_status_choice';
     }
 
     /**
@@ -83,26 +102,5 @@ class PanelViewChoiceType extends AbstractType
     public function getParent()
     {
         return 'choice';
-    }
-
-    /**
-     * @return array key = schedulerUid, value = scheduler name
-     */
-    protected function getChoices()
-    {
-        $panelViews = $this->schedulerEventManager->getPanelViews();
-        usort(
-            $panelViews,
-            function ($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
-            }
-        );
-
-        $choices = [];
-        foreach ($panelViews as $panelView) {
-            $choices[$panelView['id']] = $panelView['name'];
-        }
-
-        return $choices;
     }
 }

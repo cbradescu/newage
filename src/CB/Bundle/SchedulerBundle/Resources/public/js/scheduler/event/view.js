@@ -17,7 +17,8 @@ define([
     LoadingMask,
     FormValidation,
     DeleteConfirmation,
-    fieldFormatter
+    fieldFormatter,
+    statusFormatter
 ) {
     'use strict';
 

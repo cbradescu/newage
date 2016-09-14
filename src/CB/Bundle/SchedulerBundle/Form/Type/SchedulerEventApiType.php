@@ -67,6 +67,14 @@ class SchedulerEventApiType extends SchedulerEventType
                 ]
             )
             ->add(
+                'status',
+                'integer',
+                [
+                    'required' => true,
+                    'mapped'   => false
+                ]
+            )
+            ->add(
                 'createdAt',
                 'datetime',
                 [
@@ -119,8 +127,14 @@ class SchedulerEventApiType extends SchedulerEventType
             return;
         }
 
+        $status = (int) $form->get('status')->getData();
+        if (is_null($status)) {
+            return;
+        }
+
         $this->schedulerEventManager->setCampaign($data, (int)$campaignId);
         $this->schedulerEventManager->setPanelView($data, (int)$panelViewId);
+        $this->schedulerEventManager->setStatus($data, (int)$status);
     }
 
     /**

@@ -5,6 +5,7 @@ parameters:
     cb_scheduler.scheduler_event.form.handler.api.class:    CB\Bundle\SchedulerBundle\Form\Handler\SchedulerEventApiHandler
     cb_scheduler.campaign_choice.form.type.class:           CB\Bundle\SchedulerBundle\Form\Type\CampaignChoiceType
     cb_scheduler.panel_view_choice.form.type.class:         CB\Bundle\SchedulerBundle\Form\Type\PanelViewChoiceType
+    cb_scheduler.status_choice.form.type.class:             CB\Bundle\SchedulerBundle\Form\Type\StatusChoiceType
 
 services:
     cb_scheduler.scheduler.form.type:
@@ -68,3 +69,11 @@ services:
             - '@translator'
         tags:
             - { name: form.type, alias: cb_panel_view_choice }
+
+    cb_scheduler.status_choice.form.type:
+        class: %cb_scheduler.status_choice.form.type.class%
+        arguments:
+            - '@oro_security.security_facade'
+            - '@translator'
+        tags:
+            - { name: form.type, alias: cb_status_choice }

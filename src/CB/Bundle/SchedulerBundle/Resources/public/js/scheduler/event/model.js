@@ -16,7 +16,6 @@ define([
     EventModel = Backbone.Model.extend({
         route: 'cb_api_get_schedulerevents',
         urlRoot: null,
-        originalId: null, // original id received from a server
 
         defaults: {
             id: null,
@@ -27,7 +26,8 @@ define([
             resourceName: null, //panel view name
             panelView: null,
             campaign: null,
-            backgroundColor: null,
+            status: 0,
+            backgroundColor: '#ffff99',
             editable: false,
             removable: false
         },

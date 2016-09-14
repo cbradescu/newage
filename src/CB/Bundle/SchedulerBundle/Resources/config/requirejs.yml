@@ -25,5 +25,6 @@ config:
 #        'cbscheduler/js/app/components/dashboard-scheduler-component': 'bundles/cbscheduler/js/app/components/dashboard-scheduler-component.js'
         'cbscheduler/js/app/modules/scheduler-module': 'bundles/cbscheduler/js/app/modules/scheduler-module.js'
         'cbscheduler/js/validator/dateearlierthan': 'bundles/cbscheduler/js/validator/dateearlierthan.js'
+
     appmodules:
         - cbscheduler/js/app/modules/scheduler-module

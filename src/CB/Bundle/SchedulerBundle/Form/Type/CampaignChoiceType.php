@@ -48,17 +48,12 @@ class CampaignChoiceType extends AbstractType
                 'choices'              => function (Options $options) {
                     return $this->getChoices();
                 },
+                'expanded' => false,
                 'translatable_options' => false
             )
         );
         $resolver->setNormalizers(
             array(
-                'expanded'    => function (Options $options, $expanded) {
-                    return count($options['choices']) === 1;
-                },
-                'multiple'    => function (Options $options, $multiple) {
-                    return count($options['choices']) === 1;
-                },
                 'empty_value' => function (Options $options, $emptyValue) {
                     return count($options['choices']) !== 1 ? 'cb.newage.campaign.form.choose_campaign' : null;
                 },
@@ -79,18 +74,6 @@ class CampaignChoiceType extends AbstractType
         if (empty($data)) {
             return;
         }
-        if (is_array($data)) {
-            $data = reset($data);
-        }
-
-//        /** @var SchedulerEvent $parentData */
-//        $parentData = $form->getParent()->getData();
-//        if (!$parentData) {
-//            return;
-//        }
-//
-//        list($schedulerAlias, $schedulerId) = $this->schedulerEventManager->parseSchedulerUid($data);
-//        $this->schedulerEventManager->setScheduler($parentData, $schedulerAlias, $schedulerId);
     }
 
     /**

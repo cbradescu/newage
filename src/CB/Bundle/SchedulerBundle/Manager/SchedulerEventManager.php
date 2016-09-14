@@ -124,7 +124,6 @@ class SchedulerEventManager
         if (!$panelView || $panelView->getId() !== $panelViewId) {
             $event->setPanelView($this->findPanelView($panelViewId));
         }
-
     }
 
     /**
@@ -138,36 +137,8 @@ class SchedulerEventManager
             ->find($panelViewId);
     }
 
-
-
-    /**
-     * Gets UID of a calendar this event belongs to
-     * The calendar UID is a string includes a calendar alias and id in the following format: {alias}_{id}
-     *
-     * @param string $calendarAlias
-     * @param int    $calendarId
-     *
-     * @return string
-     */
-    public function getCalendarUid($calendarAlias, $calendarId)
+    public function setStatus(SchedulerEvent $event, $status)
     {
-        return sprintf('%s_%d', $calendarAlias, $calendarId);
-    }
-
-    /**
-     * Extracts calendar alias and id from a calendar UID
-     *
-     * @param string $calendarUid
-     *
-     * @return array [$calendarAlias, $calendarId]
-     */
-    public function parseCalendarUid($calendarUid)
-    {
-        $delim = strrpos($calendarUid, '_');
-
-        return [
-            substr($calendarUid, 0, $delim),
-            (int)substr($calendarUid, $delim + 1)
-        ];
+        $event->setStatus($status);
     }
 }
