@@ -167,3 +167,6 @@ oro_help:
 
 oro_theme:
     active_theme: oro
+    themes:
+        oro:
+          logo: '/bundles/cbnewage/img/logo.png'
