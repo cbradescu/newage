@@ -7,8 +7,8 @@
             <div class="responsive-block">
                 {{ UI.renderHtmlProperty('cb.newage.panel_view.entity_label'|trans, '<%= formatter.string(resourceName) %>') }}
                 {{ UI.renderHtmlProperty('cb.newage.campaign.entity_label'|trans, '<%= formatter.string(title) %>') }}
-                {{ UI.renderHtmlProperty('cb.scheduler.scheduler_event.start.label'|trans, '<%= formatter.dateTime(start) %>') }}
-                {{ UI.renderHtmlProperty('cb.scheduler.scheduler_event.end.label'|trans, '<%= formatter.dateTime(end) %>') }}
+                {{ UI.renderHtmlProperty('cb.scheduler.scheduler_event.start.label'|trans, '<%= formatter.date(start) %>') }}
+                {{ UI.renderHtmlProperty('cb.scheduler.scheduler_event.end.label'|trans, '<%= formatter.date(end) %>') }}
 
                 <div class="widget-actions form-actions" style="display: none;">
                     <% if (id != null && removable) { %>

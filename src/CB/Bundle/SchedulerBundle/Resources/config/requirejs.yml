@@ -22,7 +22,6 @@ config:
 #        'cbscheduler/js/app/views/guest-notifier-view': 'bundles/cbscheduler/js/app/views/guest-notifier-view.js'
 #        'cbscheduler/js/app/views/scheduler-event-form-view': 'bundles/cbscheduler/js/app/views/scheduler-event-form-view.js'
         'cbscheduler/js/app/components/scheduler-component': 'bundles/cbscheduler/js/app/components/scheduler-component.js'
-#        'cbscheduler/js/app/components/dashboard-scheduler-component': 'bundles/cbscheduler/js/app/components/dashboard-scheduler-component.js'
         'cbscheduler/js/app/modules/scheduler-module': 'bundles/cbscheduler/js/app/modules/scheduler-module.js'
         'cbscheduler/js/validator/dateearlierthan': 'bundles/cbscheduler/js/validator/dateearlierthan.js'
 

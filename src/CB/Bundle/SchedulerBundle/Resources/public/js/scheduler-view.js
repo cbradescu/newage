@@ -17,13 +17,13 @@ define(function(require) {
     var EventModel = require('cbscheduler/js/scheduler/event/model');
     var EventView = require('cbscheduler/js/scheduler/event/view');
     var eventDecorator = require('cbscheduler/js/scheduler/event-decorator');
-    var ColorManager = require('cbscheduler/js/scheduler/color-manager');
     var colorUtil = require('oroui/js/tools/color-util');
     var dateTimeFormatter = require('orolocale/js/formatter/datetime');
     var localeSettings = require('orolocale/js/locale-settings');
     require('fullscheduler');
 
     SchedulerView = BaseView.extend({
+        // MOMENT_BACKEND_FORMAT: dateTimeFormatter.getBackendDateTimeFormat(),
         MOMENT_BACKEND_FORMAT: dateTimeFormatter.getBackendDateTimeFormat(),
         /** @property */
         eventsTemplate: _.template(
@@ -89,9 +89,6 @@ define(function(require) {
                 monthNamesShort: localeSettings.getCalendarMonthNames('abbreviated', true),
                 dayNames: localeSettings.getCalendarDayOfWeekNames('wide', true),
                 dayNamesShort: localeSettings.getCalendarDayOfWeekNames('abbreviated', true)
-            },
-            colorManagerOptions: {
-                colors: null
             }
         },
 
@@ -103,7 +100,6 @@ define(function(require) {
         fullCalendar: null,
         eventView: null,
         loadingMask: null,
-        colorManager: null,
 
         /**
          * This property can be used to prevent unnecessary reloading of calendar events.
@@ -150,7 +146,6 @@ define(function(require) {
             this.listenTo(this.collection, 'add', this.onEventAdded);
             this.listenTo(this.collection, 'change', this.onEventChanged);
             this.listenTo(this.collection, 'destroy', this.onEventDeleted);
-            this.colorManager = new ColorManager(this.options.colorManagerOptions);
 
             // this.pluginManager = new PluginManager(this);
             // this.pluginManager.enable(GuestsPlugin);
@@ -191,7 +186,6 @@ define(function(require) {
 //                    calendar: this.options.calendar,
                     viewTemplateSelector: this.options.eventsOptions.itemViewTemplateSelector,
                     formTemplateSelector: this.options.eventsOptions.itemFormTemplateSelector,
-                    colorManager: this.colorManager
                 }));
                 // subscribe to event view collection events
                 this.listenTo(this.eventView, 'addEvent', this.handleEventViewAdd);
@@ -321,6 +315,7 @@ define(function(require) {
                 try {
                     attrs.start = attrs.start.clone().utc().format(this.MOMENT_BACKEND_FORMAT);
                     attrs.end = attrs.end.clone().utc().format(this.MOMENT_BACKEND_FORMAT);
+
                     _.extend(attrs, {
                         editable: this.options.newEventEditable,
                         removable: this.options.newEventRemovable
@@ -335,7 +330,7 @@ define(function(require) {
 
         onFcSelect: function(start, end, jsEvent, calendar, resource) {
             var attrs = {
-                allDay: start.time().as('ms') === 0 && end.time().as('ms') === 0,
+                // allDay: start.time().as('ms') === 0 && end.time().as('ms') === 0,
                 start: start.clone().tz(this.options.timezone, true),
                 end: end.clone().tz(this.options.timezone, true),
                 panelView: resource.id
@@ -361,7 +356,7 @@ define(function(require) {
 
         onFcEventDragStart: function(fcEvent) {
             fcEvent._beforeDragState = {
-                allDay: fcEvent.allDay,
+                // allDay: fcEvent.allDay,
                 start: fcEvent.start.clone(),
                 end: fcEvent.end ? fcEvent.end.clone() : null
             };
@@ -381,7 +376,7 @@ define(function(require) {
                 isDroppedOnDayGrid = !$(jsEvent.target).parents('.fc-time-grid-event').length;
             }
 
-            fcEvent.allDay = (currentView.name === 'month') ? oldState.allDay : isDroppedOnDayGrid;
+            // fcEvent.allDay = (currentView.name === 'month') ? oldState.allDay : isDroppedOnDayGrid;
             if (isDroppedOnDayGrid) {
                 if (oldState.allDay) {
                     if (fcEvent.end === null && oldState.end === null) {
@@ -412,7 +407,7 @@ define(function(require) {
             var eventModel;
             var attrs;
             attrs = {
-                allDay: fcEvent.allDay,
+                // allDay: fcEvent.allDay,
                 start: fcEvent.start.clone().tz(this.options.timezone, true),
                 end: (fcEvent.end !== null) ? fcEvent.end.clone().tz(this.options.timezone, true) : null
             };
@@ -701,7 +696,8 @@ define(function(require) {
                 'firstDay', 'firstHour', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort',
                 'aspectRatio', 'defaultAllDayEventDuration', 'defaultTimeEventDuration',
                 'fixedWeekCount', 'displayEventTime', 'weekNumbers', 'allDayDefault', 'slotDuration',
-                'schedulerLicenseKey', 'resourceAreaWidth', 'resourceColumns', 'eventDurationEditable', 'eventStartEditable'
+                'schedulerLicenseKey', 'resourceAreaWidth', 'resourceColumns', 'eventDurationEditable',
+                'eventStartEditable', 'nextDayThreshold'
             ];
             _.extend(options, _.pick(this.options.eventsOptions, keys));
             if (!_.isUndefined(options.defaultDate)) {

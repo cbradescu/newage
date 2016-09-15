@@ -3,6 +3,7 @@
 namespace CB\Bundle\SchedulerBundle\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -58,7 +59,7 @@ class SchedulerEventApiType extends SchedulerEventType
             )
             ->add(
                 'end',
-                'datetime',
+                'date',
                 [
                     'required'       => true,
                     'widget'         => 'single_text',

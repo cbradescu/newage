@@ -21,7 +21,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerEventRepository;
-use CB\Bundle\SchedulerBundle\Provider\SystemSchedulerConfig;
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
