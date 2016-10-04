@@ -69,6 +69,12 @@ class SchedulerEventController extends RestController implements ClassResourceIn
      *      description="End date in RFC 3339. For example: 2009-11-05T13:15:30Z."
      * )
      * @QueryParam(
+     *      name="panelView",
+     *      requirements="\d+",
+     *      nullable=true,
+     *      description="Panel View id."
+     * )
+     * @QueryParam(
      *     name="createdAt",
      *     requirements="\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?",
      *     nullable=true,
@@ -139,6 +145,12 @@ class SchedulerEventController extends RestController implements ClassResourceIn
 //        $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
 //        $qb->setMaxResults($limit)
 //            ->setFirstResult($page > 0 ? ($page - 1) * $limit : 0);
+
+        $panelViewId  = (int)$this->getRequest()->get('panelView', 0);
+
+        if ($panelViewId > 0)
+            $qb->andWhere('pv.id=:panelViewId')
+                ->setParameter('panelViewId', $panelViewId);
 
             $result = $qb->getQuery()->getResult();
 

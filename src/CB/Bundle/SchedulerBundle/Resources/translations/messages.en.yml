@@ -7,15 +7,15 @@ cb:
           available_tab_scheduler_link.label: Scheduler
 
         scheduler_event:
-            entity_label:                  Scheduler
-            entity_plural_label:           Schedulers
+            entity_label:                  Scheduler Event
+            entity_plural_label:           Scheduler Events
             owner.label:  Owner
-            title.label: Title
-            description.label: Description
-            start.label: Start
-            end.label: End
-            status:
-                label: Status
+            id.label: Id
+            title.label:  Title
+            description.label:  Description
+            start.label:  Start
+            end.label:  End
+            status.label: Status
 
 cb.scheduler.scheduler_event.status.offered.label:  Offered
 cb.scheduler.scheduler_event.status.reserved.label: Reserved

@@ -20,6 +20,7 @@ define(function(require) {
     var colorUtil = require('oroui/js/tools/color-util');
     var dateTimeFormatter = require('orolocale/js/formatter/datetime');
     var localeSettings = require('orolocale/js/locale-settings');
+
     require('fullscheduler');
 
     SchedulerView = BaseView.extend({
@@ -138,6 +139,8 @@ define(function(require) {
             this.campaignCollection.setUrl();
             this.campaignCollection.fetch();
 
+            this.filters = [];
+
             // set options for new events
             this.options.newEventEditable = this.options.eventsOptions.editable;
             this.options.newEventRemovable = this.options.eventsOptions.removable;
@@ -147,8 +150,25 @@ define(function(require) {
             this.listenTo(this.collection, 'change', this.onEventChanged);
             this.listenTo(this.collection, 'destroy', this.onEventDeleted);
 
+            mediator.on('setSchedulerCollection', this.setSchedulerCollection, this);
+            mediator.on('setSchedulerFilters', this.setSchedulerFilters, this);
+
             // this.pluginManager = new PluginManager(this);
             // this.pluginManager.enable(GuestsPlugin);
+        },
+
+        setSchedulerCollection: function (response) {
+            this.collection.reset(response);
+
+            this.updateEventsLoadedCache();
+            this.updateEventsWithoutReload();
+        },
+
+        setSchedulerFilters: function (activeFilters) {
+            this.filters = activeFilters;
+
+            this.updateEventsLoadedCache();
+            this.updateEventsWithoutReload();
         },
 
         onWindowResize: function() {
@@ -556,6 +576,12 @@ define(function(require) {
          * @returns {Array}
          */
         filterEvents: function(events) {
+            _.each(this.filters, function (filter) {
+                events = _.filter(events, function(event) {
+                    return event.get(filter.name)==filter.value;
+                })
+            });
+
             return events;
         },
 

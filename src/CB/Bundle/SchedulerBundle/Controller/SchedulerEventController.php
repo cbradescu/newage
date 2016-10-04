@@ -12,7 +12,9 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 
-
+/**
+ * @Route("/scheduler_event")
+ */
 class SchedulerEventController extends Controller
 {
 
@@ -49,5 +51,15 @@ class SchedulerEventController extends Controller
             'entity' => $schedulerEvent,
             'form' => $this->get('cb_scheduler.scheduler_event.form')->createView()
         );
+    }
+
+    /**
+     * @Route("/index", name="cb_scheduler_scheduler_event_index")
+     * @Template()
+     * @AclAncestor("cb_scheduler_event_view")
+     */
+    public function indexAction()
+    {
+        return array();
     }
 }

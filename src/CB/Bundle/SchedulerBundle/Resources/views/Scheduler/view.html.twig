@@ -1,22 +1,47 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
+{#{% extends 'OroUIBundle:actions:view.html.twig' %}#}
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 {% import 'CBSchedulerBundle::templates.html.twig' as schedulerTemplates %}
 
-{% oro_title_set({params : {"%schedulername%": 'Scheduler'|trans }}) %}
+{#{% oro_title_set({params : {"%schedulername%": 'Scheduler'|trans }}) %}#}
+{% set gridName = 'scheduler_event-grid' %}
 
 {% block navButtons %}{% endblock navButtons %}
+{#{% block breadcrumb %}{% endblock breadcrumb %}#}
 
-{% block breadcrumb %}{% endblock breadcrumb %}
+{#{% block pageHeader %}#}
+    {#{% if breadcrumbs is not defined %}#}
+        {#{% set breadcrumbs = {'entityTitle': 'cb.scheduler.entity_label'|trans } %}#}
+    {#{% endif %}#}
+    {#{{ parent() }}#}
+{#{% endblock pageHeader %}#}
 
-{% block pageHeader %}
-    {% if breadcrumbs is not defined %}
-        {% set breadcrumbs = {'entityTitle': 'cb.scheduler.entity_label'|trans } %}
-    {% endif %}
-    {{ parent() }}
-{% endblock pageHeader %}
+{#{% block stats %}{% endblock stats %}#}
 
-{% block stats %}{% endblock stats %}
+{#{% block content_data %}#}
+{% block content %}
+    {% block content_datagrid %}
+        {% if gridName is defined %}
+            {% if gridScope is defined %}
+                {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+            {% endif %}
+            {% set renderParams = {
+            'enableFullScreenLayout': true,
+            'enableViews': true,
+            'showViewsInNavbar': true,
+            }
+            |merge(renderParams|default({})) %}
+            {{ dataGrid.renderGrid(gridName, params|default({}), renderParams) }}
 
-{% block content_data %}
+            {# Only grids on index pages will be tagged #}
+            <script type="text/javascript">
+                require(['oronavigation/js/content/grid-builder'], function (GridTagBuilder) {
+                    GridTagBuilder.allowTracking({{ gridName|json_encode|raw }});
+                });
+            </script>
+        {% endif %}
+    {% endblock content_datagrid %}
+
     {% set schedulerOptions = {
         schedulerOptions: scheduler,
         eventsItemsJson: render(path('cb_api_get_schedulerevents', {scheduler: null, start: startDate|date('c'), end: endDate|date('c'), subordinate: true})),
@@ -36,7 +61,6 @@
         }
     } %}
 
-{#<div class="row-fluid form-horizontal" id="calendar"#}
 <div class="oro-page collapsible-sidebar clearfix" id="calendar"
     data-page-component-module="cbscheduler/js/app/components/scheduler-component"
     data-page-component-options="{{ schedulerOptions | json_encode }}">
@@ -54,95 +78,36 @@
     <div class="oro-page-sidebar"></div>
 
     <div class="oro-page-body">
-    {#<div class="responsive-block">#}
         <div class="calendar-events"></div>
     </div>
 
     {{ schedulerTemplates.scheduler_event_view_template('template-view-scheduler-event') }}
     {{ schedulerTemplates.scheduler_event_form_template('template-scheduler-event', event_form) }}
+
+    <script type="text/javascript">
+        require(['oroui/js/mediator', 'oroui/js/widget-manager', 'underscore'],
+                function(mediator, widgetManager, _) {
+                    mediator.bind('current_active_filters', function(filters) {
+                        var url = '{{ path('cb_api_get_schedulerevents', { scheduler: null, start: startDate|date('c'), end: endDate|date('c'), subordinate: true})|raw }}';
+
+                        _.each(filters, function(filter) {
+                            url = url + '&' + filter.name + '=' + filter.value;
+                        });
+
+                        $.ajax({
+                            url: url,
+                            type: 'GET',
+                            success: function(response) {
+                                mediator.trigger('setSchedulerCollection', response);
+                            },
+                            error: function(xhr) {
+                            }
+                        });
+                    });
+                });
+    </script>
 </div>
+{#{% endblock content_data %}#}
 
 
-
-    {# ************** de aici *************** #}
-
-
-
-    {#<div class="row-fluid form-horizontal">#}
-        {#<div class="responsive-block">#}
-
-            {#<div id="calendar"></div>#}
-        {#</div>#}
-    {#</div>#}
-
-    {#<script type="text/javascript">#}
-        {#require(['jquery', 'moment', 'fullscheduler', 'fullcalendar', 'routing', 'oro/dialog-widget'],#}
-                {#function ($, moment, fullscheduler, fullcalendar, routing, DialogWidget) {#}
-
-                    {#$(window).load(function() { // document ready#}
-                        {#$('#calendar').fullCalendar({#}
-
-                            {#aspectRatio: 1.9,#}
-                            {#slotDuration: {days: 1},#}
-                            {#allDayDefault: true,#}
-                            {#weekNumbers: true,#}
-
-                            {#schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',#}
-
-                            {#header: {#}
-                                {#left: 'today prev,next',#}
-                                {#center: 'title',#}
-                                {#right: 'timelineDay,timelineWeek,timelineMonth,timelineYear'#}
-                            {#},#}
-
-                            {#defaultView: 'timelineMonth',#}
-
-                            {#eventClick: function(calEvent, jsEvent, view) {#}
-
-                                {#alert('Event: ' + calEvent.title);#}
-                                {#alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);#}
-                                {#alert('View: ' + view.name);#}
-
-                                {#// change the border color just for fun#}
-                                {#$(this).css('border-color', 'red');#}
-
-                            {#},#}
-
-                            {#dayClick: function(date, jsEvent, view, resource) {#}
-
-                                {#var widget = new DialogWidget({#}
-                                    {#'url': routing.generate('cb_scheduler_event_add', {panelView: resource.id, start: date.format()}),#}
-                                    {#'title': 'Add Event',#}
-                                    {#stateEnabled: false,#}
-                                    {#dialogOptions: {#}
-                                        {#'modal': true,#}
-                                        {#'allowMinimize': false,#}
-                                        {#'width': 900,#}
-                                        {#'autoResize':false#}
-                                    {#}#}
-                                {#});#}
-                                {#widget.render();#}
-
-                                {#alert('Clicked on: ' + date.format() + ' resource: ' + resource.id);#}
-                            {#},#}
-
-                            {#views: {#}
-                            {#},#}
-                            {#resourceAreaWidth: '15%',#}
-                            {#resourceColumns: [#}
-                                {#{#}
-                                    {#labelText: 'Fata panou',#}
-                                    {#field: 'name'#}
-                                {#}#}
-                            {#],#}
-                            {#resources: {#}
-                                {#url: routing.generate('cb_newage_panel_view_api_get_panel_views')#}
-                            {#},#}
-
-                            {#events: routing.generate('cb_api_get_scheduler_events')#}
-                        {#});#}
-                    {#});#}
-                {#}#}
-        {#);#}
-    {#</script>#}
-{% endblock content_data %}
+{% endblock content %}
