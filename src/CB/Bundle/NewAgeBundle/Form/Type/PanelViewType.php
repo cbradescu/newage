@@ -35,14 +35,14 @@ class PanelViewType extends AbstractType
                     'label'       => 'cb.newage.panel.entity_label',
                     'class'       => 'CBNewAgeBundle:Panel',
                     'property'    => 'name',
-                    'empty_value' => 'cb.newage.panel_view.form.choose_panel_view'
+                    'empty_value' => 'cb.newage.panelview.form.choose_panel_view'
                 )
             )
             ->add(
                 'name',
                 'text',
                 [
-                    'label' => 'cb.newage.panel_view.name.label',
+                    'label' => 'cb.newage.panelview.name.label',
                     'required' => true
                 ]
             )

@@ -3,10 +3,9 @@ oro_menu_config:
         newage_tab_scheduler_link:
             label: 'cb.scheduler.menu.available_tab_scheduler_link.label'
             route: cb_scheduler_view
-
+            extras:
+                position: 1
     tree:
         application_menu:
             children:
-                newage_tab:
-                    children:
-                        newage_tab_scheduler_link: ~
+                newage_tab_scheduler_link: ~

@@ -6,8 +6,8 @@
     {% if true or resource_granted('cb_newage_panel_view_create') %}
         {{ UI.addButton({
             'path' : path('cb_newage_panel_view_create'),
-            'label': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.panel_view.entity_label'|trans}),
-            'title': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.panel_view.entity_label'|trans})
+            'label': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.panelview.entity_label'|trans}),
+            'title': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.panelview.entity_label'|trans})
         }) }}
     {% endif %}
 {% endblock %}

@@ -60,6 +60,7 @@ define(function(require) {
                 slotDuration: {days: 1},
                 scrollTime: '00:00',
                 allDayDefault: true,
+                lazyFetching: false, // FORCE DATABASE REFRESH
 
                 resourceAreaWidth: '15%',
                 resourceColumns: [
@@ -723,7 +724,7 @@ define(function(require) {
                 'aspectRatio', 'defaultAllDayEventDuration', 'defaultTimeEventDuration',
                 'fixedWeekCount', 'displayEventTime', 'weekNumbers', 'allDayDefault', 'slotDuration',
                 'schedulerLicenseKey', 'resourceAreaWidth', 'resourceColumns', 'eventDurationEditable',
-                'eventStartEditable', 'nextDayThreshold'
+                'eventStartEditable', 'nextDayThreshold', 'lazyFetching'
             ];
             _.extend(options, _.pick(this.options.eventsOptions, keys));
             if (!_.isUndefined(options.defaultDate)) {

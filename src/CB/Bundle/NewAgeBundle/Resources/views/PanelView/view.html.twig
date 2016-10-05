@@ -11,7 +11,7 @@
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
         'path' : path('cb_newage_panel_view_update', { id: entity.id }),
-        'entity_label': 'cb.newage.panel_view.entity_label'|trans
+        'entity_label': 'cb.newage.panelview.entity_label'|trans
         }) }}
     {% endif %}
     {% if resource_granted('DELETE', entity) %}
@@ -21,7 +21,7 @@
         'aCss': 'no-hash remove-button',
         'id': 'btn-remove-user',
         'dataId': entity.id,
-        'entity_label': 'cb.newage.panel_view.entity_label'|trans
+        'entity_label': 'cb.newage.panelview.entity_label'|trans
         }) }}
     {% endif %}
 {% endblock navButtons %}
@@ -30,7 +30,7 @@
     {% set breadcrumbs = {
     'entity': entity,
     'indexPath': path('cb_newage_panel_view_index'),
-    'indexLabel': 'cb.newage.panel_view.entity_plural_label'|trans,
+    'indexLabel': 'cb.newage.panelview.entity_plural_label'|trans,
     'entityTitle': entity.name
     } %}
 
@@ -53,7 +53,7 @@
             {{ UI.renderHtmlProperty('cb.newage.panel.entity_label'|trans, panelData) }}
 
 
-            {{ UI.renderProperty('cb.newage.panel_view.name.label'|trans, entity.name) }}
+            {{ UI.renderProperty('cb.newage.panelview.name.label'|trans, entity.name) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
@@ -62,7 +62,7 @@
     {%- endset -%}
     {% set dataBlocks = [
     {
-    'title': 'cb.newage.panel_view.block.general'|trans,
+    'title': 'cb.newage.panelview.block.general'|trans,
     'class': 'active',
     'subblocks': [
     {'data' : [panelViewInformation]}

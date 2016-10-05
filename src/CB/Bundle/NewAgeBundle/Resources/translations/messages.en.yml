@@ -19,6 +19,9 @@ cb:
             organization.label:            Organization
 
       panel_view:
+            entity_plural_label:           Panel Views
+
+      panelview:
             entity_label:                  Panel View
             entity_plural_label:           Panel Views
             block.general:                 Panel View
@@ -28,6 +31,10 @@ cb:
             name.label:                    Name
             owner.label:                   Owner
             organization.label:            Organization
+            # ORM relations
+            campaigns.label:               Campaigns
+            events.label:                  Events
+            panel.label:                   Panel
             add:
                 label:                     Add Panel View
                 title:                     Add Panel View

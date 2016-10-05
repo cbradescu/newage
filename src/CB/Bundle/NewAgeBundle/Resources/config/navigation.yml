@@ -5,18 +5,13 @@ oro_menu_config:
         activities_tab: ~
         marketing_tab: ~
 
-        newage_tab:
-            label: 'cb.newage.menu.available_tab.label'
-            uri:   '#'
-            extras:
-                position: 1
         campaign_tab:
             label: 'cb.newage.campaign.entity_plural_label'
             route:   cb_newage_campaign_index
             extras:
                 position: 2
         panel_view_tab:
-            label: 'cb.newage.panel_view.entity_plural_label'
+            label: 'cb.newage.panelview.entity_plural_label'
             route:   cb_newage_panel_view_index
             extras:
                 position: 3
@@ -30,24 +25,15 @@ oro_menu_config:
             label: 'cb.newage.panel.entity_plural_label'
             route: cb_newage_panel_index
         newage_tab_panel_view_link:
-            label: 'cb.newage.panel_view.entity_plural_label'
+            label: 'cb.newage.panelview.entity_plural_label'
             route: cb_newage_panel_view_index
         newage_tab_campaign_link:
             label: 'cb.newage.campaign.entity_plural_label'
             route: cb_newage_campaign_index
-#        newage_tab_available_link:
-#            label: 'cb.newage.menu.available_tab_monthly_link.label'
-#            route: cb_newage_available_monthly
 
     tree:
         application_menu:
             children:
-                newage_tab:
-                    children:
-#                        newage_tab_available_link: ~
-#                        newage_tab_panel_view_link: ~
-#                        newage_tab_campaign_link: ~
-#                        newage_tab_panel_link: ~
                 campaign_tab: ~
                 panel_view_tab: ~
                 panel_tab: ~

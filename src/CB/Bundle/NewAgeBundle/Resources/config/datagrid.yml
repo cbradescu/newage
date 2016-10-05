@@ -94,7 +94,7 @@ datagrid:
                             alias: panel
         columns:
             name:
-                label:        cb.newage.panel_view.name.label
+                label:        cb.newage.panelview.name.label
         sorters:
             columns:
                 name:
@@ -318,7 +318,7 @@ datagrid:
                 editable: true
                 frontend_type: boolean
             name:
-                label: cb.newage.panel_view.name.label
+                label: cb.newage.panelview.name.label
                 data_name: name
             panelName:
                 label: cb.newage.panel.entity_label

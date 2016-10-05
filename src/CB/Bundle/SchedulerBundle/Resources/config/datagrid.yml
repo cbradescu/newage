@@ -1,0 +1,80 @@
+datagrid:
+    base-scheduler_event-grid:
+        source:
+            type: orm
+            acl_resource: cb_scheduler_event_view
+            query:
+                select:
+                    - se.id
+                    - se.start
+                    - se.end
+                    - se.status
+                    - pv.name as panelView
+                    - c.title as campaign
+                    - p.name as panel
+                    - p.lighting
+                from:
+                    - { table: %cb_scheduler.scheduler_event.entity.class%, alias: se }
+                join:
+                    left:
+                        -
+                            join: se.panelView
+                            alias: pv
+                        -
+                            join: se.campaign
+                            alias: c
+                        -
+                            join: pv.panel
+                            alias: p
+        columns:
+            id:
+                label:  cb.scheduler.scheduler_event.id.label
+            start:
+                label:  cb.scheduler.scheduler_event.start.label
+                frontend_type: date
+            end:
+                label:  cb.scheduler.scheduler_event.end.label
+                frontend_type: date
+            status:
+                label:  cb.scheduler.scheduler_event.status.label
+            panel:
+                label:  cb.newage.panel.entity_label
+            panelView:
+                label:  cb.newage.panelview.entity_label
+            campaign:
+                label:  cb.newage.campaign.entity_label
+            lighting:
+                label:  cb.newage.panel.lighting.label
+                renderable: false
+
+        sorters:
+            columns:
+        properties:
+            id: ~
+        action_configuration:
+            delete: false
+    scheduler_event-grid:
+        extends: base-scheduler_event-grid
+        filters:
+            columns:
+                panel:
+                    type: entity
+                    data_name: pv.panel
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:Panel
+                panelView:
+                    type: entity
+                    data_name: se.panelView
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:PanelView
+                campaign:
+                    type: entity
+                    data_name: se.campaign
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:Campaign
+                lighting:
+                    type: boolean
+                    data_name: p.lighting

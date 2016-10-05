@@ -17,6 +17,10 @@ cb:
             end.label:  End
             status.label: Status
 
+        schedulerevent:
+            entity_label:                  Scheduler Event
+
 cb.scheduler.scheduler_event.status.offered.label:  Offered
 cb.scheduler.scheduler_event.status.reserved.label: Reserved
 cb.scheduler.scheduler_event.status.accepted.label: Accepted
+
