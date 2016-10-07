@@ -4,15 +4,18 @@ cb:
             entity_label:                  Panel
             entity_plural_label:           Panels
             block:
-                general:                   Panel
+                general:                   General
                 panel_views:               Panel Views
+                address_book:              Address Book
             message:
                 saved:                     Panel saved
             id.label:                      Id
             name.label:                    Name
             code.label:                    Code
             lighting.label:                Lighting
-            gps.label:                     GPS Coords
+            address:
+                latitude.label:                  Latitude
+                longitude.label:                 Longitude
             dimensions.label:              Dimensions
             neighborhoods.label:           Neighborhoods
             owner.label:                   Owner

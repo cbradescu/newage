@@ -30,15 +30,15 @@
         'aCss': 'no-hash',
         'iCss': 'icon-plus-sign',
         'dataId': entity.id,
-        'title' : 'cb.newage.panel_view.add.title'|trans,
-        'label' : 'cb.newage.panel_view.add.label'|trans,
+        'title' : 'cb.newage.panelview.add.title'|trans,
+        'label' : 'cb.newage.panelview.add.label'|trans,
         'widget' : {
             'type' : 'dialog',
             'multiple' : false,
             'options' : {
             'stateEnabled': false,
             'dialogOptions' : {
-                'title' : 'cb.newage.panel_view.add.label'|trans,
+                'title' : 'cb.newage.panelview.add.label'|trans,
                 'modal' : true,
                 'allowMaximize': false,
                 'allowMinimize': false,
@@ -71,7 +71,6 @@
             {{ UI.renderProperty('cb.newage.panel.code.label'|trans, entity.name) }}
             {{ UI.renderProperty('cb.newage.panel.lighting.label'|trans, entity.isLighting ? 'Yes'|trans : 'No'|trans) }}
             {{ UI.renderProperty('cb.newage.panel.dimensions.label'|trans, entity.dimensions) }}
-            {{ UI.renderProperty('cb.newage.panel.gps.label'|trans, entity.gps) }}
             {{ UI.renderHtmlProperty('cb.newage.panel.neighborhoods.label'|trans, entity.neighborhoods|escape|nl2br) }}
         </div>
         <div class="responsive-block">
@@ -79,6 +78,15 @@
         </div>
     </div>
     {%- endset -%}
+
+    {% set addressBookWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'contentClasses': [],
+            'url': path('cb_newage_panel_address_book', {id: entity.id}),
+            'title': 'cb.newage.panel.block.address_book'|trans
+        }) }}
+    {% endset %}
 
 
     {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
@@ -104,7 +112,8 @@
     'title': 'cb.newage.panel.block.general'|trans,
     'class': 'active',
     'subblocks': [
-    {'data' : [panelInformation]}
+    {'data' : [panelInformation]},
+    {'data' : [addressBookWidget]},
     ]
     },
     {

@@ -53,14 +53,6 @@ class PanelType extends AbstractType
                 ]
             )
             ->add(
-                'gps',
-                'text',
-                [
-                    'label' => 'cb.newage.panel.gps.label',
-                    'required' => false
-                ]
-            )
-            ->add(
                 'neighborhoods',
                 'textarea',
                 [
@@ -68,7 +60,16 @@ class PanelType extends AbstractType
                     'required' => false
                 ]
             )
-
+            ->add(
+                'addresses',
+                'oro_address_collection',
+                array(
+                    'label'    => '',
+                    'type'     => 'cb_panel_address',
+                    'required' => true,
+                    'options'  => array('data_class' => 'CB\Bundle\NewAgeBundle\Entity\PanelAddress')
+                )
+            )
         ;
     }
 

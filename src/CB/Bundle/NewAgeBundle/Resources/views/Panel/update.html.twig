@@ -42,10 +42,15 @@
     form_row(form.name),
     form_row(form.lighting),
     form_row(form.dimensions),
-    form_row(form.gps),
     form_row(form.neighborhoods),
 
     form.owner is defined ? form_row(form.owner) : '',
+    ]
+    },
+    {
+    'title': 'cb.newage.panel.addresses.label'|trans,
+    'data': [
+    form_widget(form.addresses),
     ]
     }
     ]

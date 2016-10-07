@@ -10,7 +10,7 @@ datagrid:
                     - panel.name
                     - panel.lighting as isLighting
                     - panel.dimensions
-                    - panel.gps
+#                    - panel.gps
                 from:
                     - { table: %cb_newage_panel.entity.class%, alias: panel }
         columns:
@@ -23,8 +23,8 @@ datagrid:
                 frontend_type: boolean
             dimensions:
                 label:        cb.newage.panel.dimensions.label
-            gps:
-                label:        cb.newage.panel.gps.label
+#            gps:
+#                label:        cb.newage.panel.gps.label
         sorters:
             columns:
                 id:

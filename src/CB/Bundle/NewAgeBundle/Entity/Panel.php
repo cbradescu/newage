@@ -8,7 +8,10 @@
 
 namespace CB\Bundle\NewAgeBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -96,34 +99,6 @@ class Panel
     /**
      * @var string
      *
-     * @ORM\Column(name="dimensions", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $dimensions;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="gps", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $gps;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="neighborhoods", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
@@ -134,6 +109,20 @@ class Panel
      * )
      */
     protected $neighborhoods;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="dimensions", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $dimensions;
 
     /**
      * @var User
@@ -158,10 +147,28 @@ class Panel
      */
     protected $organization;
 
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelAddress",
+     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"primary" = "DESC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "full"=true,
+     *              "order"=250
+     *          }
+     *      }
+     * )
+     */
+    protected $addresses;
 
     public function __construct()
     {
         $this->lighting = false;
+        $this->addresses = new ArrayCollection();
     }
 
     /**
@@ -234,22 +241,6 @@ class Panel
     /**
      * @return string
      */
-    public function getGps()
-    {
-        return $this->gps;
-    }
-
-    /**
-     * @param string $gps
-     */
-    public function setGps($gps)
-    {
-        $this->gps = $gps;
-    }
-
-    /**
-     * @return string
-     */
     public function getNeighborhoods()
     {
         return $this->neighborhoods;
@@ -304,5 +295,54 @@ class Panel
     public function getOrganization()
     {
         return $this->organization;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAddresses()
+    {
+        return $this->addresses;
+    }
+
+    /**
+     * @param Collection $addresses
+     */
+    public function setAddresses($addresses)
+    {
+        $this->addresses = $addresses;
+    }
+
+    /**
+     * Add address
+     *
+     * @param AbstractAddress $address
+     *
+     * @return Panel
+     */
+    public function addAddress(AbstractAddress $address)
+    {
+        /** @var PanelAddress $address */
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove address
+     *
+     * @param AbstractAddress $address
+     * @return Panel
+     */
+    public function removeAddress(AbstractAddress $address)
+    {
+        if ($this->addresses->contains($address)) {
+            $this->addresses->removeElement($address);
+        }
+
+        return $this;
     }
 }
