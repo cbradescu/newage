@@ -73,12 +73,20 @@
         {%- endif -%}
     {%- endset -%}
 
+    {%- set lightingTypeInformation -%}
+        {%- if entity.lightingType -%}
+            <a href="{{ path('cb_newage_lighting_type_view', {'id': entity.lightingType.id}) }}">
+                {{ entity.lightingType }}
+            </a>
+        {%- endif -%}
+    {%- endset -%}
+
     {%- set panelInformation -%}
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('cb.newage.panel.code.label'|trans, entity.name) }}
             {{ UI.renderHtmlProperty('cb.newage.supporttype.entity_label'|trans, supportTypeInformation) }}
-            {{ UI.renderProperty('cb.newage.panel.lighting.label'|trans, entity.isLighting ? 'Yes'|trans : 'No'|trans) }}
+            {{ UI.renderHtmlProperty('cb.newage.lightingtype.entity_label'|trans, lightingTypeInformation) }}
             {{ UI.renderProperty('cb.newage.panel.dimensions.label'|trans, entity.dimensions) }}
             {{ UI.renderHtmlProperty('cb.newage.panel.neighborhoods.label'|trans, entity.neighborhoods|escape|nl2br) }}
         </div>

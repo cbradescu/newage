@@ -24,6 +24,9 @@ oro_menu_config:
         panel_tab_support_type_index_link:
             label: 'cb.newage.support_type.entity_plural_label'
             route: cb_newage_support_type_index
+        panel_tab_lighting_type_index_link:
+            label: 'cb.newage.lighting_type.entity_plural_label'
+            route: cb_newage_lighting_type_index
         panel_tab_index_link:
             label: 'cb.newage.panel.entity_plural_label'
             route: cb_newage_panel_index
@@ -42,6 +45,7 @@ oro_menu_config:
                 panel_tab:
                     children:
                         panel_tab_support_type_index_link: ~
+                        panel_tab_lighting_type_index_link: ~
 oro_titles:
     cb_newage_panel_index: ~
     cb_newage_panel_view: '%%entity.name%%'
@@ -62,3 +66,8 @@ oro_titles:
     cb_newage_support_type_view: '%%entity.name%%'
     cb_newage_support_type_create: 'oro.ui.create_entity'
     cb_newage_support_type_update: '%%entity.name%% - oro.ui.edit'
+
+    cb_newage_lighting_type_index: ~
+    cb_newage_lighting_type_view: '%%entity.name%%'
+    cb_newage_lighting_type_create: 'oro.ui.create_entity'
+    cb_newage_lighting_type_update: '%%entity.name%% - oro.ui.edit'

@@ -14,3 +14,6 @@ cb_newage_campaign_api:
 cb_newage_support_type_api:
     resource:     "@CBNewAgeBundle/Controller/Api/Rest/SupportTypeController.php"
     type:         rest
+cb_newage_lighting_type_api:
+    resource:     "@CBNewAgeBundle/Controller/Api/Rest/LightingTypeController.php"
+    type:         rest

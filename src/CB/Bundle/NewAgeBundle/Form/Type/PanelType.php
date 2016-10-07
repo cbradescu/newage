@@ -43,15 +43,19 @@ class PanelType extends AbstractType
                     'label'       => 'cb.newage.supporttype.entity_label',
                     'class'       => 'CBNewAgeBundle:SupportType',
                     'property'    => 'name',
-                    'empty_value' => 'cb.newage.supporttype.form.choose_support_type'
+                    'empty_value' => 'cb.newage.supporttype.form.choose_support_type',
+                    'required'    => true
                 )
             )
             ->add(
-                'lighting',
-                'checkbox',
+                'lightingType',
+                'entity',
                 array(
-                    'label' => 'cb.newage.panel.lighting.label',
-                    'required' => false
+                    'label'       => 'cb.newage.lightingtype.entity_label',
+                    'class'       => 'CBNewAgeBundle:LightingType',
+                    'property'    => 'name',
+                    'empty_value' => 'cb.newage.lightingtype.form.choose_lighting_type',
+                    'required'    => true
                 )
             )
             ->add(

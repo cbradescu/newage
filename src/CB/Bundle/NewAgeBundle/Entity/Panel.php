@@ -83,20 +83,6 @@ class Panel
     protected $name;
 
     /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_lighting", type="boolean", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $lighting;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="neighborhoods", type="text", nullable=true)
@@ -125,10 +111,10 @@ class Panel
     protected $dimensions;
 
     /**
-     * @var User
+     * @var SupportType
      *
      * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\SupportType")
-     * @ORM\JoinColumn(name="suport_type_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="support_type_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -137,7 +123,22 @@ class Panel
      *      }
      * )
      */
-    protected $suportType;
+    protected $supportType;
+
+    /**
+     * @var LightingType
+     *
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\LightingType")
+     * @ORM\JoinColumn(name="lighting_type_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *      }
+     * )
+     */
+    protected $lightingType;
 
     /**
      * @var User
@@ -182,7 +183,6 @@ class Panel
 
     public function __construct()
     {
-        $this->lighting = false;
         $this->addresses = new ArrayCollection();
     }
 
@@ -219,25 +219,6 @@ class Panel
     }
 
     /**
-     * @param bool $lighting
-     * @return Panel
-     */
-    public function setLighting($lighting)
-    {
-        $this->lighting = (bool)$lighting;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLighting()
-    {
-        return (bool)$this->lighting;
-    }
-
-    /**
      * @return string
      */
     public function getDimensions()
@@ -270,13 +251,13 @@ class Panel
     }
 
     /**
-     * @param SupprtType $supportType
+     * @param SupportType $supportType
      *
      * @return Panel
      */
     public function setSupportType($supportType)
     {
-        $this->suportType = $supportType;
+        $this->supportType = $supportType;
 
         return $this;
     }
@@ -286,7 +267,27 @@ class Panel
      */
     public function getSupportType()
     {
-        return $this->suportType;
+        return $this->supportType;
+    }
+
+    /**
+     * @param SupportType $lightingType
+     *
+     * @return Panel
+     */
+    public function setLightingType($lightingType)
+    {
+        $this->lightingType = $lightingType;
+
+        return $this;
+    }
+
+    /**
+     * @return LightingType
+     */
+    public function getLightingType()
+    {
+        return $this->lightingType;
     }
 
     /**

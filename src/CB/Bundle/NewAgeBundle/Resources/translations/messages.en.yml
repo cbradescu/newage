@@ -82,6 +82,22 @@ cb:
             entity_plural_label:           Support Types
             block.general:                 Support Type
 
+      # LightingType entity
+      lightingtype:
+            entity_label:                  Lighting Type
+            entity_plural_label:           Lighting Types
+            block.general:                 Lighting Type
+            id.label:                      Id
+            name.label:                    Name
+            message:
+                saved:                     Lighting Type saved
+            form:
+                choose_lighting_type:       Choose Lighting Type
+      lighting_type:
+            entity_label:                  Lighting Type
+            entity_plural_label:           Lighting Types
+            block.general:                 Lighting Type
+
       available:
           monthly:                         Monthly Available
 

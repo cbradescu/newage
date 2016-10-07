@@ -8,19 +8,29 @@ datagrid:
                 select:
                     - panel.id
                     - panel.name
-                    - panel.lighting as isLighting
+                    - stype.name as support
+                    - ltype.name as lighting
                     - panel.dimensions
 #                    - panel.gps
                 from:
                     - { table: %cb_newage_panel.entity.class%, alias: panel }
+                join:
+                    left:
+                        -
+                            join: panel.supportType
+                            alias: stype
+                        -
+                            join: panel.lightingType
+                            alias: ltype
         columns:
             id:
                 label:        cb.newage.panel.id.label
             name:
                 label:        cb.newage.panel.name.label
-            isLighting:
-                label:        cb.newage.panel.lighting.label
-                frontend_type: boolean
+            support:
+                label:        cb.newage.supporttype.entity_label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
             dimensions:
                 label:        cb.newage.panel.dimensions.label
 #            gps:
@@ -641,3 +651,72 @@ datagrid:
                 link:         delete_link
     support_type-grid:
         extends: base-support_type-grid
+
+    base-lighting_type-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_lighting_type_view
+            query:
+                select:
+                    - lightingType.id
+                    - lightingType.name
+                from:
+                    - { table: %cb_newage_lighting_type.entity.class%, alias: lightingType }
+        columns:
+            id:
+                label:        cb.newage.lightingtype.id.label
+            name:
+                label:        cb.newage.lightingtype.name.label
+
+        sorters:
+            columns:
+                id:
+                    data_name: lightingType.id
+                name:
+                    data_name: lightingType.name
+            default:
+                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: lightingType.name
+                    enabled: true
+
+        properties:
+            id: ~
+            view_link:
+                type:         url
+                route:        cb_newage_lighting_type_view
+                params:       [ id ]
+            update_link:
+                type:         url
+                route:        cb_newage_lighting_type_update
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_newage_lighting_type_api_delete_lighting_type
+                params:       [ id ]
+        actions:
+            view:
+                type:         navigate
+                acl_resource: cb_newage_lighting_type_view
+                label:        oro.grid.action.view
+                icon:         eye-open
+                link:         view_link
+                rowAction:    true
+            update:
+                type:         navigate
+                acl_resource: cb_newage_lighting_type_update
+                label:        oro.grid.action.update
+                icon:         edit
+                link:         update_link
+            delete:
+                type:         delete
+                acl_resource: cb_newage_lighting_type_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+    lighting_type-grid:
+        extends: base-lighting_type-grid
