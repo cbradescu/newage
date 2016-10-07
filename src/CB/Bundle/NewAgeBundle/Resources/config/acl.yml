@@ -109,3 +109,31 @@ cb_newage_panel_address_delete:
     permission: DELETE
     group_name: ""
     bindings: ~
+
+cb_newage_support_type_create:
+    type: entity
+    class: CBNewAgeBundle:SupportType
+    permission: CREATE
+    group_name: ""
+    bindings: ~
+
+cb_newage_support_type_view:
+    type: entity
+    class: CBNewAgeBundle:SupportType
+    permission: VIEW
+    group_name: ""
+    bindings: ~
+
+cb_newage_support_type_update:
+    type: entity
+    class: CBNewAgeBundle:SupportType
+    permission: EDIT
+    group_name: ""
+    bindings: ~
+
+cb_newage_support_type_delete:
+    type: entity
+    class: CBNewAgeBundle:SupportType
+    permission: DELETE
+    group_name: ""
+    bindings: ~

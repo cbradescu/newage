@@ -127,6 +127,21 @@ class Panel
     /**
      * @var User
      *
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\SupportType")
+     * @ORM\JoinColumn(name="suport_type_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *      }
+     * )
+     */
+    protected $suportType;
+
+    /**
+     * @var User
+     *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
@@ -252,6 +267,26 @@ class Panel
     public function setNeighborhoods($neighborhoods)
     {
         $this->neighborhoods = $neighborhoods;
+    }
+
+    /**
+     * @param SupprtType $supportType
+     *
+     * @return Panel
+     */
+    public function setSupportType($supportType)
+    {
+        $this->suportType = $supportType;
+
+        return $this;
+    }
+
+    /**
+     * @return SupportType
+     */
+    public function getSupportType()
+    {
+        return $this->suportType;
     }
 
     /**

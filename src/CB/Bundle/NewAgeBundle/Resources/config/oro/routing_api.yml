@@ -5,10 +5,12 @@ cb_newage_panel_address_api:
     resource:     "@CBNewAgeBundle/Controller/Api/Rest/PanelAddressController.php"
     type:         rest
     parent:       cb_newage_panel_api
-
 cb_newage_panel_view_api:
     resource:     "@CBNewAgeBundle/Controller/Api/Rest/PanelViewController.php"
     type:         rest
 cb_newage_campaign_api:
     resource:     "@CBNewAgeBundle/Controller/Api/Rest/CampaignController.php"
+    type:         rest
+cb_newage_support_type_api:
+    resource:     "@CBNewAgeBundle/Controller/Api/Rest/SupportTypeController.php"
     type:         rest

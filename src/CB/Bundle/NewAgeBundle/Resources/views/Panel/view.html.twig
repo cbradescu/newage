@@ -65,10 +65,19 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {%- set supportTypeInformation -%}
+        {%- if entity.supportType -%}
+            <a href="{{ path('cb_newage_support_type_view', {'id': entity.supportType.id}) }}">
+                {{ entity.supportType }}
+            </a>
+        {%- endif -%}
+    {%- endset -%}
+
     {%- set panelInformation -%}
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('cb.newage.panel.code.label'|trans, entity.name) }}
+            {{ UI.renderHtmlProperty('cb.newage.supporttype.entity_label'|trans, supportTypeInformation) }}
             {{ UI.renderProperty('cb.newage.panel.lighting.label'|trans, entity.isLighting ? 'Yes'|trans : 'No'|trans) }}
             {{ UI.renderProperty('cb.newage.panel.dimensions.label'|trans, entity.dimensions) }}
             {{ UI.renderHtmlProperty('cb.newage.panel.neighborhoods.label'|trans, entity.neighborhoods|escape|nl2br) }}

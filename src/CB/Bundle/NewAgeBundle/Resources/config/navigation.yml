@@ -21,7 +21,10 @@ oro_menu_config:
             extras:
                 position: 4
 
-        newage_tab_panel_link:
+        panel_tab_support_type_index_link:
+            label: 'cb.newage.support_type.entity_plural_label'
+            route: cb_newage_support_type_index
+        panel_tab_index_link:
             label: 'cb.newage.panel.entity_plural_label'
             route: cb_newage_panel_index
         newage_tab_panel_view_link:
@@ -36,8 +39,9 @@ oro_menu_config:
             children:
                 campaign_tab: ~
                 panel_view_tab: ~
-                panel_tab: ~
-
+                panel_tab:
+                    children:
+                        panel_tab_support_type_index_link: ~
 oro_titles:
     cb_newage_panel_index: ~
     cb_newage_panel_view: '%%entity.name%%'
@@ -53,3 +57,8 @@ oro_titles:
     cb_newage_campaign_view: '%%entity.name%%'
     cb_newage_campaign_create: 'oro.ui.create_entity'
     cb_newage_campaign_update: '%%entity.name%% - oro.ui.edit'
+
+    cb_newage_support_type_index: ~
+    cb_newage_support_type_view: '%%entity.name%%'
+    cb_newage_support_type_create: 'oro.ui.create_entity'
+    cb_newage_support_type_update: '%%entity.name%% - oro.ui.edit'

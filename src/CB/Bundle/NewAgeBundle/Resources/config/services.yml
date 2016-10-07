@@ -20,6 +20,10 @@ parameters:
 
     cb_newage.form.type.panel_address.class:            CB\Bundle\NewAgeBundle\Form\Type\PanelAddressType
 
+    cb_newage_support_type.entity.class:               CB\Bundle\NewAgeBundle\Entity\SupportType
+    cb_newage_support_type.manager.class:              CB\Bundle\NewAgeBundle\Model\SupportTypeManager
+    cb_newage_support_type.manager.api.class:          CB\Bundle\NewAgeBundle\Model\SupportTypeApiManager
+
 services:
     cb_newage_panel.manager:
         class: %cb_newage_panel.manager.class%
@@ -106,3 +110,17 @@ services:
             - "@cb_newage.panel_address.form"
             - "@request"
             - "@doctrine.orm.entity_manager"
+
+    cb_newage_support_type.manager:
+        class: %cb_newage_support_type.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.acl_helper
+
+    cb_newage_support_type.manager.api:
+        class: %cb_newage_support_type.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %cb_newage_support_type.entity.class%
+            - @doctrine.orm.entity_manager
+            - @cb_newage_support_type.manager

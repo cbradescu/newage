@@ -12,6 +12,10 @@ parameters:
     cb_newage_campaign.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\CampaignApiType
     cb_newage_campaign.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\CampaignHandler
 
+    cb_newage_support_type.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\SupportTypeType
+    cb_newage_support_type.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\SupportTypeApiType
+    cb_newage_support_type.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\SupportTypeHandler
+
 services:
     cb_newage_panel.form.type.entity:
         class: %cb_newage_panel.form.type.entity.class%
@@ -153,3 +157,50 @@ services:
         arguments:
             - 'campaign'
             - 'cb_newage_campaign_api'
+
+    cb_newage_support_type.form.type.entity:
+        class: %cb_newage_support_type.form.type.entity.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        tags:
+            - { name: form.type, alias: cb_newage_support_type }
+
+    cb_newage_support_type.form.handler.entity:
+        class: %cb_newage_support_type.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_support_type.form.entity
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_support_type.form.entity:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'cb_newage_support_type_form'
+            - 'cb_newage_support_type'
+
+    cb_newage_support_type.form.type.entity.api:
+        class: %cb_newage_support_type.form.type.entity.api.class%
+        tags:
+            - { name: form.type, alias: cb_newage_support_type_api }
+
+    cb_newage_support_type.form.handler.entity.api:
+        class: %cb_newage_support_type.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_support_type.form.entity.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_support_type.form.entity.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'support_type'
+            - 'cb_newage_support_type_api'

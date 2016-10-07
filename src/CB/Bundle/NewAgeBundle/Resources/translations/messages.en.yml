@@ -66,6 +66,22 @@ cb:
             datagrid:
                 has_panel_view.label:      Has Panel View
 
+      # SupportType entity
+      supporttype:
+            entity_label:                  Support Type
+            entity_plural_label:           Support Types
+            block.general:                 Support Type
+            id.label:                      Id
+            name.label:                    Name
+            message:
+                saved:                     Support Type saved
+            form:
+                choose_support_type:       Choose Support Type
+      support_type:
+            entity_label:                  Support Type
+            entity_plural_label:           Support Types
+            block.general:                 Support Type
+
       available:
           monthly:                         Monthly Available
 
