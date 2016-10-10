@@ -1,0 +1,16 @@
+CB\Bundle\NewAgeBundle\Entity\Panel:
+    properties:
+        name:
+            - Length:
+                min:        3
+                max:        255
+        supportType:
+            - NotBlank: ~
+        lightingType:
+            - NotBlank: ~
+CB\Bundle\NewAgeBundle\Entity\PanelAddress:
+    properties:
+        latitude:
+            - NotBlank: ~
+        longitude:
+            - NotBlank: ~
