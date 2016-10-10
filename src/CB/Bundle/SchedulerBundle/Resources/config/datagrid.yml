@@ -12,7 +12,6 @@ datagrid:
                     - pv.name as panelView
                     - c.title as campaign
                     - p.name as panel
-                    - p.lighting
                 from:
                     - { table: %cb_scheduler.scheduler_event.entity.class%, alias: se }
                 join:
@@ -43,9 +42,6 @@ datagrid:
                 label:  cb.newage.panelview.entity_label
             campaign:
                 label:  cb.newage.campaign.entity_label
-            lighting:
-                label:  cb.newage.panel.lighting.label
-                renderable: false
 
         sorters:
             columns:
@@ -75,6 +71,3 @@ datagrid:
                     options:
                         field_options:
                             class: CBNewAgeBundle:Campaign
-                lighting:
-                    type: boolean
-                    data_name: p.lighting
