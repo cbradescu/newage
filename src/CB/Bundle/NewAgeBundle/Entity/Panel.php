@@ -17,6 +17,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -180,6 +181,24 @@ class Panel
      * )
      */
     protected $addresses;
+
+    /**
+     * @var File
+     *
+     * @ConfigField(
+     *      defaultValues={
+     *          "attachment"={
+     *              "maxsize"=20,
+     *              "width"=480,
+     *              "height"=480
+     *          }
+     *      }
+     * )
+     * @Assert\Valid()
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AttachmentBundle\Entity\File", cascade={"persist"})
+     * @ORM\JoinColumn(name="photo_file_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $photo;
 
     public function __construct()
     {
@@ -380,5 +399,21 @@ class Panel
         }
 
         return $this;
+    }
+
+    /**
+     * @return File
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param File $photo
+     */
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
     }
 }

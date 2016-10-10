@@ -18,6 +18,7 @@ cb:
                 longitude.label:                 Longitude
             dimensions.label:              Dimensions
             neighborhoods.label:           Neighborhoods
+            photo.label:                   Photo
             owner.label:                   Owner
             organization.label:            Organization
 

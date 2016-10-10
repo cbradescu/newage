@@ -75,6 +75,16 @@ class PanelType extends AbstractType
                 ]
             )
             ->add(
+                'photo',
+                'oro_image',
+                [
+                    'label' => 'cb.newage.panel.photo.label',
+                    'required' => false,
+                    'checkEmptyFile' => $options['checkEmptyFile'],
+                    'allowDelete' => isset($options['allowDelete']) ? $options['allowDelete'] : false
+                ]
+            )
+            ->add(
                 'addresses',
                 'oro_address_collection',
                 array(
