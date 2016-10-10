@@ -29,7 +29,7 @@ class CBNewAgeBundle implements Migration
         $table->addColumn('id', 'smallint', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['name'], 'UNIQ_FEF9EDB75E237F04');
+//        $table->addUniqueIndex(['name'], 'UNIQ_FEF9EDB75E237F04');
         /** End of generate table oro_access_group **/
     }
 
@@ -45,7 +45,7 @@ class CBNewAgeBundle implements Migration
         $table->addColumn('id', 'smallint', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['name'], 'UNIQ_FEF9EDB75E237F03');
+//        $table->addUniqueIndex(['name'], 'UNIQ_FEF9EDB75E237F03');
         /** End of generate table oro_access_group **/
     }
 }
