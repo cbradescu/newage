@@ -25,7 +25,7 @@ class CBNewAgeBundle implements Migration
     public static function cbLightingTypeTable(Schema $schema)
     {
         /** Generate table oro_access_group **/
-        $table = $schema->createTable('cb_lighting_type');
+        $table = $schema->createTable('cb_newage_lighting_type');
         $table->addColumn('id', 'smallint', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
@@ -41,7 +41,7 @@ class CBNewAgeBundle implements Migration
     public static function cbSupportTypeTable(Schema $schema)
     {
         /** Generate table oro_access_group **/
-        $table = $schema->createTable('cb_support_type');
+        $table = $schema->createTable('cb_newage_support_type');
         $table->addColumn('id', 'smallint', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
