@@ -3,7 +3,7 @@
 {% set pageTitle = 'cb.newage.lightingtype.entity_plural_label'|trans %}
 {% set gridName = 'lighting_type-grid' %}
 {% block navButtons %}
-    {% if true or resource_granted('cb_newage_lighting_type_create') %}
+    {% if resource_granted('cb_newage_lighting_type_create') %}
         {{ UI.addButton({
             'path' : path('cb_newage_lighting_type_create'),
             'label': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.lightingtype.entity_label'|trans}),

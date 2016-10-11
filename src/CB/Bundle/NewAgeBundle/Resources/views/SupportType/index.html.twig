@@ -3,7 +3,7 @@
 {% set pageTitle = 'cb.newage.support_type.entity_plural_label'|trans %}
 {% set gridName = 'support_type-grid' %}
 {% block navButtons %}
-    {% if true or resource_granted('cb_newage_support_type_create') %}
+    {% if resource_granted('cb_newage_support_type_create') %}
         {{ UI.addButton({
             'path' : path('cb_newage_support_type_create'),
             'label': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.support_type.entity_label'|trans}),

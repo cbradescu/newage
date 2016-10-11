@@ -3,7 +3,7 @@
 {% set pageTitle = 'cb.newage.panel_view.entity_plural_label'|trans %}
 {% set gridName = 'panel_view-grid' %}
 {% block navButtons %}
-    {% if true or resource_granted('cb_newage_panel_view_create') %}
+    {% if resource_granted('cb_newage_panel_view_create') %}
         {{ UI.addButton({
             'path' : path('cb_newage_panel_view_create'),
             'label': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.panelview.entity_label'|trans}),
