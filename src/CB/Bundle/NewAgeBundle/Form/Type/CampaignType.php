@@ -79,15 +79,6 @@ class CampaignType extends AbstractType
                     'attr'     => ['class' => 'end'],
                 ]
             )
-            ->add(
-                'confirmed',
-                'checkbox',
-                array(
-                    'label' => 'cb.newage.campaign.confirmed.label',
-                    'disabled'  => !$this->securityFacade->isGranted('ROLE_AVAILABLE'),
-                    'required' => false
-                )
-            )
         ;
     }
 
