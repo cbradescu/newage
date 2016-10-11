@@ -180,7 +180,6 @@ datagrid:
                     - campaign.title
                     - campaign.start
                     - campaign.end
-                    - campaign.confirmed
                 from:
                     - { table: %cb_newage_campaign.entity.class%, alias: campaign }
         columns:
@@ -194,9 +193,6 @@ datagrid:
             end:
                 label: cb.newage.campaign.end.label
                 frontend_type: date
-            confirmed:
-                label: cb.newage.campaign.confirmed.label
-                frontend_type: boolean
 
         filters:
             columns:
@@ -209,9 +205,6 @@ datagrid:
                 end:
                     type:      date
                     data_name: campaign.end
-                confirmed:
-                    type: boolean
-                    data_name: campaign.confirmed
 
         properties:
             id: ~
@@ -305,70 +298,6 @@ datagrid:
             columns:
                 name:
                     data_name: panelView.name
-
-    campaign-to-panel-view-update-grid:
-        extends: base-campaign-to-panel-view-update-grid
-        source:
-            query:
-                select:
-                    - >
-                        (CASE WHEN (:campaign IS NOT NULL) THEN
-                            CASE WHEN (panelView.id IN (:panel_views_ids) OR panelView.id IN (:data_in)) AND panelView.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                          ELSE
-                            CASE WHEN panelView.id IN (:data_in) AND panelView.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                          END) as hasPanelView
-            bind_parameters:
-                - campaign
-                - panel_views_ids
-        columns:
-            hasPanelView:
-                label:   cb.newage.campaign.datagrid.has_panel_view.label
-                editable: true
-                frontend_type: boolean
-            name:
-                label: cb.newage.panelview.name.label
-                data_name: name
-            panelName:
-                label: cb.newage.panel.entity_label
-            panelDimensions:
-                label: cb.newage.panel.dimensions.label
-        properties:
-            id: ~
-        sorters:
-            columns:
-                hasPanelView: { data_name: hasPanelView }
-            default:
-                hasPanelView: DESC
-        filters:
-            columns:
-                hasPanelView:
-                    data_name: hasPanelView
-                    type:      boolean
-                panelName:
-                    type: entity
-                    data_name: panelView.panel
-                    options:
-                        field_options:
-                            class: CBNewAgeBundle:Panel
-                panelDimensions:
-                    type: string
-                    data_name: panel.dimensions
-        action_configuration:
-            delete: false
-        options:
-            routerEnabled: false
-            rowSelection:
-                dataField: id
-                columnName: hasPanelView
-                selectors:
-                    included: '#appendPanelViews'
-                    excluded: '#removePanelViews'
-            mass_actions:
-                delete:
-                    enabled: false
-
 
     available-grid:
         source:

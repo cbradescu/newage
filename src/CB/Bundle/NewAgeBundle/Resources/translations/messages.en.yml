@@ -58,14 +58,11 @@ cb:
             description.label:             Description
             start.label:                   Start
             end.label:                     End
-            confirmed.label:                     Confirmed
             owner.label:                   Owner
             organization.label:            Organization
             add.label:                     Add Campaign
             form:
                 choose_campaign:          Choose Campaign
-            datagrid:
-                has_panel_view.label:      Has Panel View
 
       # SupportType entity
       supporttype:

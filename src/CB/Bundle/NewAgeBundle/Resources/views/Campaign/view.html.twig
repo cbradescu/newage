@@ -37,17 +37,6 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
-{% block breadcrumbs %}
-    {{ parent() }}
-    <div class="pull-left">
-        {% if entity.confirmed %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'Confirmed'|trans }}</div>
-        {% else %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'Unconfirmed'|trans }}</div>
-        {% endif %}
-    </div>
-{% endblock breadcrumbs %}
-
 {% block content_data %}
     {%- set campaignInformation -%}
     <div class="row-fluid form-horizontal">
@@ -63,31 +52,12 @@
     </div>
     {%- endset -%}
 
-
-    {%- set panelViews -%}
-    {% for panelView in entity.panelViews %}
-        {% if resource_granted('cb_newage_panel_view_view') %}
-            <a href="{{ path('cb_newage_panel_view_view', {'id': panelView.id}) }}">
-                {{ panelView|escape }}{{ loop.last ? '' : ',' }}
-            </a>
-        {% else %}
-            {{ panelView|escape }}{{ loop.last ? '' : ',' }}
-        {% endif %}
-    {% endfor %}
-    {%- endset -%}
-
     {% set dataBlocks = [
         {
             'title': 'cb.newage.campaign.block.general'|trans,
             'class': 'active',
             'subblocks': [
                 {'data' : [campaignInformation]}
-            ]
-        },
-        {
-            'title': 'cb.newage.campaign.block.panel_views'|trans,
-            'subblocks': [
-                {'data' : [panelViews]}
             ]
         }
     ] %}

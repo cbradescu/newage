@@ -88,41 +88,6 @@ class CampaignType extends AbstractType
                     'required' => false
                 )
             )
-            ->add(
-                'panelViews',
-                'oro_multiple_entity',
-                [
-                    'required' => false,
-                    'block' => 'PanelView',
-                    'block_config' => array(
-
-                        'PanelView' => array(
-                            'title' => '',
-                            'subblocks' => array(
-                                array(
-                                    'useSpan' => ''
-                                )
-                            )
-                        )
-                    ),
-                    'label' => 'cb.newage.panel_view.entity_plural_label',
-                    'class' => 'CB\Bundle\NewAgeBundle\Entity\PanelView',
-                    'grid_url' => $this->router->generate(
-                        'oro_entity_relation',
-                        [
-                            'id' => 0,
-                            'entityName' => 'CB_Bundle_NewAgeBundle_Entity_PanelView',
-                            'fieldName' => 'panelViews'
-                        ]
-                    ),
-                    'default_element' => 'cb_newage_form_panelViews',
-                    'selector_window_title' => 'Select Panel Views',
-                    'initial_elements' => null,
-                    //'extend' => true,
-                ]
-
-            )
-
         ;
     }
 
@@ -149,43 +114,5 @@ class CampaignType extends AbstractType
     public function getName()
     {
         return 'cb_newage_campaign';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        /** @var Campaign $campaign */
-        $campaign = $form->getData();
-        $view->children['panelViews']->vars['grid_url']
-            = $this->router->generate('cb_newage_campaign_widget_panel_views_info', array('id' => $campaign->getId()));
-        $view->children['panelViews']->vars['initial_elements']
-            = $this->getInitialPanelViews($campaign->getPanelViews());
-    }
-
-    /**
-     * @param Collection $panelViews
-     * @return array
-     */
-    protected function getInitialPanelViews(Collection $panelViews)
-    {
-        $result = array();
-
-        /** @var PanelView $panelView */
-        foreach ($panelViews as $panelView) {
-            $result[] = array(
-                'id' => $panelView->getId(),
-                'label' => $panelView->getName(),
-                'link' => $this->router->generate('cb_newage_panel_view_info', array('id' => $panelView->getId())),
-                'extraData' => array(
-                    array('label' => 'Panel', 'value' => $panelView->getPanel()->getName() ?: 'N/A'),
-                    array('label' => 'Dimensions', 'value' => $panelView->getPanel()->getDimensions() ?: 'N/A'),
-                ),
-                'isDefault' => false
-            );
-        }
-
-        return $result;
     }
 }

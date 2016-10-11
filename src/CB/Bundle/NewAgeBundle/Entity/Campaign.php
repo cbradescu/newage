@@ -51,15 +51,6 @@ use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 
 class Campaign
 {
-    const ACCEPTED             = 'accepted';
-    const DECLINED             = 'declined';
-    const WITHOUT_STATUS       = null;
-
-    protected $availableStatuses = [
-        Campaign::ACCEPTED,
-        Campaign::DECLINED
-    ];
-    
     /**
      * @var integer
      *
@@ -138,20 +129,6 @@ class Campaign
      * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="campaign", cascade={"persist"})
      */
     protected $events;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $confirmed = false;
 
     /**
      * @var User
@@ -247,9 +224,9 @@ class Campaign
     }
 
     /**
-     * Gets date/ a campaign begins.
+     * Gets date a campaign begins.
      *
-     * @return \Date
+     * @return \DateTime
      */
     public function getStart()
     {
@@ -259,7 +236,7 @@ class Campaign
     /**
      * Sets date a campaign begins.
      *
-     * @param \Date $start
+     * @param \DateTime $start
      *
      * @return self
      */
@@ -273,7 +250,7 @@ class Campaign
     /**
      * Gets date a campaign ends.
      *
-     * @return \Date
+     * @return \DateTime
      */
     public function getEnd()
     {
@@ -283,33 +260,13 @@ class Campaign
     /**
      * Sets date a campaign ends.
      *
-     * @param \Date $end
+     * @param \DateTime $end
      *
      * @return self
      */
     public function setEnd($end)
     {
         $this->end = $end;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isConfirmed()
-    {
-        return $this->confirmed;
-    }
-
-    /**
-     * @param  bool $confirmed
-     *
-     * @return Campaign
-     */
-    public function setConfirmed($confirmed)
-    {
-        $this->confirmed = (boolean)$confirmed;
 
         return $this;
     }
