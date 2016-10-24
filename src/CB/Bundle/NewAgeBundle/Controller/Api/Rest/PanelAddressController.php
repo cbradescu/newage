@@ -206,11 +206,13 @@ class PanelAddressController extends RestController implements ClassResourceInte
         // convert addresses to plain array
         $addressTypesData = array();
 
-        /** @var $entity PanelAddress */
-        foreach ($entity->getTypes() as $addressType) {
-            $addressTypesData[] = parent::getPreparedItem($addressType);
+        if ($entity->getTypes()) {
+            /** @var $entity PanelAddress */
+            foreach ($entity->getTypes() as $addressType) {
+                $addressTypesData[] = parent::getPreparedItem($addressType);
+            }
         }
-
+        
         $result                = parent::getPreparedItem($entity);
         $result['types']       = $addressTypesData;
         $result['countryIso2'] = $entity->getCountryIso2();

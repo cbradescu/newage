@@ -116,10 +116,23 @@ class SchedulerEventRepository extends EntityRepository
 //                . ' e.backgroundColor, e.createdAt, e.updatedAt'
 //            );
             ->select(
-                'e.id, c.id as campaignId, c.title as campaignName, pv.id as panelViewId, pv.name as panelViewName, e.start, e.end, e.status'
+                'e.id,
+                 c.id as campaignId,
+                 c.title as campaignName,
+                 pv.id as panelViewId,
+                 pv.name as panelViewName,
+                 p.id as panelId,
+                 st.id as supportTypeId,
+                 lt.id as lightingTypeId,
+                 e.start,
+                 e.end,
+                 e.status'
             )
             ->leftJoin('e.panelView', 'pv')
             ->leftJoin('e.campaign', 'c')
+            ->leftJoin('pv.panel', 'p')
+            ->leftJoin('p.supportType', 'st')
+            ->leftJoin('p.lightingType', 'lt')
         ;
 //        if ($extraFields) {
 //            foreach ($extraFields as $field) {

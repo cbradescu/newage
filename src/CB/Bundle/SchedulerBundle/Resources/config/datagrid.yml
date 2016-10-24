@@ -12,6 +12,9 @@ datagrid:
                     - pv.name as panelView
                     - c.title as campaign
                     - p.name as panel
+                    - st.name as supportType
+                    - lt.name as lightingType
+                    - addr.city as city
                 from:
                     - { table: %cb_scheduler.scheduler_event.entity.class%, alias: se }
                 join:
@@ -25,6 +28,15 @@ datagrid:
                         -
                             join: pv.panel
                             alias: p
+                        -
+                            join: p.supportType
+                            alias: st
+                        -
+                            join: p.lightingType
+                            alias: lt
+                        -
+                            join: p.addresses
+                            alias: addr
         columns:
             id:
                 label:  cb.scheduler.scheduler_event.id.label
@@ -42,6 +54,12 @@ datagrid:
                 label:  cb.newage.panelview.entity_label
             campaign:
                 label:  cb.newage.campaign.entity_label
+            supportType:
+                label:  cb.newage.supporttype.entity_label
+            lightingType:
+                label:  cb.newage.lightingtype.entity_label
+            city:
+                label:  oro.address.city.label
 
         sorters:
             columns:
@@ -71,3 +89,18 @@ datagrid:
                     options:
                         field_options:
                             class: CBNewAgeBundle:Campaign
+                supportType:
+                    type: entity
+                    data_name: st.name
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:SupportType
+                lightingType:
+                    type: entity
+                    data_name: lt.name
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:LightingType
+                city:
+                    type: string
+                    data_name: addr.city

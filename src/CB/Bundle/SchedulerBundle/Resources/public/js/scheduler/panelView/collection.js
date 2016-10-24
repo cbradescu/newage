@@ -19,6 +19,12 @@ define([
             this.url = routing.generate(
                 this.route
             );
+        },
+        setFilters: function(panel, panelView) {
+            this.url = routing.generate(
+                this.route,
+                {panel: panel, id: panelView}
+            );
         }
     });
 });

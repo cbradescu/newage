@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -40,6 +41,18 @@ class PanelViewController extends RestController implements ClassResourceInterfa
      *     nullable=true,
      *     description="Number of items per page. defaults to 10."
      * )
+     * @Rest\QueryParam(
+     *      name="panel",
+     *      requirements="\d+",
+     *      nullable=true,
+     *      description="Panel id."
+     * )
+     * @Rest\QueryParam(
+     *      name="id",
+     *      requirements="\d+",
+     *      nullable=true,
+     *      description="Id."
+     * )
      * @ApiDoc(
      *     description="Get all PanelView items",
      *     resource=true
@@ -52,7 +65,9 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         $page  = (int)$this->getRequest()->get('page', 1);
         $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
 
-        return $this->handleGetListRequest($page, $limit);
+        $criteria = $this->getFilterCriteria($this->getSupportedQueryParameters(__FUNCTION__));
+
+        return $this->handleGetListRequest($page, $limit, $criteria);
     }
 
     /**

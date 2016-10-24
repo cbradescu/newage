@@ -23,6 +23,7 @@ cb:
             organization.label:            Organization
 
       panel_view:
+            entity_label:                  Panel View
             entity_plural_label:           Panel Views
 
       panelview:

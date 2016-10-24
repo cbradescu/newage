@@ -98,10 +98,12 @@ define(function(require) {
          * this property is used to prevent loading of events from a server when the calendar object is created
          * @property {bool}
          */
-        enableEventLoading: false,
+        enableEventLoading: true,
         fullCalendar: null,
         eventView: null,
         loadingMask: null,
+        panel: null,
+        panelView: null,
 
         /**
          * This property can be used to prevent unnecessary reloading of calendar events.
@@ -151,11 +153,8 @@ define(function(require) {
             this.listenTo(this.collection, 'change', this.onEventChanged);
             this.listenTo(this.collection, 'destroy', this.onEventDeleted);
 
-            mediator.on('setSchedulerCollection', this.setSchedulerCollection, this);
             mediator.on('setSchedulerFilters', this.setSchedulerFilters, this);
-
-            // this.pluginManager = new PluginManager(this);
-            // this.pluginManager.enable(GuestsPlugin);
+            mediator.on('setSchedulerCollection', this.setSchedulerCollection, this);
         },
 
         setSchedulerCollection: function (response) {
@@ -204,7 +203,6 @@ define(function(require) {
                 // create a view for event details
                 this.eventView = new EventView(_.extend({}, options, {
                     model: eventModel,
-//                    calendar: this.options.calendar,
                     viewTemplateSelector: this.options.eventsOptions.itemViewTemplateSelector,
                     formTemplateSelector: this.options.eventsOptions.itemFormTemplateSelector,
                 }));
@@ -491,8 +489,35 @@ define(function(require) {
         },
 
         updateEventsWithoutReload: function() {
+            var oldPanel = this.panel;
+            var oldPanelView = this.panelView;
+
+            var panel = this.filters.filter( function (obj) {
+                return obj.name == 'panel';
+            });
+            var panelView = this.filters.filter( function (obj) {
+                return obj.name == 'panelView';
+            });
+
+            if (panel.length==1)
+                this.panel = panel[0].value;
+            else
+                this.panel = null;
+
+            if (panelView.length==1)
+                this.panelView = panelView[0].value;
+            else
+                this.panelView = null;
+
+            if (this.panel || this.panelView) {
+                this.getCalendarElement().fullCalendar('refetchResources');
+            } else if (oldPanel != this.panel || oldPanelView != this.panelView) {
+                this.getCalendarElement().fullCalendar('refetchResources');
+            }
+
             var oldEnableEventLoading = this.enableEventLoading;
-            this.enableEventLoading = false;
+            // this.enableEventLoading = false;
+            this.enableEventLoading = true;
             this.getCalendarElement().fullCalendar('refetchEvents');
             this.enableEventLoading = oldEnableEventLoading;
         },
@@ -548,12 +573,15 @@ define(function(require) {
                     return this.createResourceViewModel(resourceModel);
                 }, this);
 
-                // this._hideMask();
+                this._hideMask();
                 callback(fcResources);
             }, this);
 
             try {
-                this.resourceCollection.setUrl();
+                this.resourceCollection.setFilters(
+                    this.panel,
+                    this.panelView
+                );
 
                 // load events from a server
                 this.resourceCollection.fetch({
@@ -594,7 +622,7 @@ define(function(require) {
         createViewModel: function(eventModel) {
             var fcEvent = _.pick(
                 eventModel.attributes,
-                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'status', 'editable', 'removable']
+                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'panel', 'supportType', 'lightingType', 'status', 'editable', 'removable']
             );
 
             fcEvent.backgroundColor = this.getBackgroundColor(fcEvent.status);
@@ -777,19 +805,6 @@ define(function(require) {
                 var event = this.collection.get(fcEvent.id);
                 eventDecorator.decorate(event, $el);
             }, this);
-
-            // options.resourceAreaWidth = '15%';
-            // options.resourceColumns = [
-            //     {
-            //         labelText: 'Fata panou',
-            //         field: 'title'
-            //     }
-            // ];
-            //
-            // options.resources = [
-            //     { id: 'a', title: 'Fata A' },
-            //     { id: 'b', title: 'Fata B' }
-            // ];
 
             return options;
         },
