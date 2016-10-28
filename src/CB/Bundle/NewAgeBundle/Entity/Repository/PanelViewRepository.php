@@ -8,17 +8,17 @@ use Doctrine\ORM\QueryBuilder;
 class PanelViewRepository extends EntityRepository
 {
     /**
-     * Returns a query builder which can be used to get list of campaigns
-     *
-     * @param int $organizationId
+     * Returns a query builder which can be used to get list of panel views
      *
      * @return QueryBuilder
      */
-    public function getPanelViewsQueryBuilder($organizationId)
+    public function getPanelViewsQueryBuilder()
     {
         return $this->createQueryBuilder('c')
-            ->select('c')
-            ->where('c.organization = :organizationId')
-            ->setParameter('organizationId', $organizationId);
+            ->select(
+                'c.id',
+                'c.name'
+            )
+            ;
     }
 }

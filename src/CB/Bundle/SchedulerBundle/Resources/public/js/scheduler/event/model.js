@@ -61,7 +61,7 @@ define([
                 {},
                 _.omit(
                     this.toJSON(),
-                    ['id', 'title', 'resourceId', 'resourceName', 'editable', 'removable', 'allDay', 'backgroundColor']
+                    ['id', 'title', 'resourceId', 'resourceName', 'editable', 'removable', 'allDay', 'backgroundColor', 'lightingType', 'supportType', 'panel']
                 ),
                 attrs || {}
             );

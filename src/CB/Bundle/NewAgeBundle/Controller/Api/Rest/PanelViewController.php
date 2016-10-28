@@ -9,6 +9,7 @@
 namespace CB\Bundle\NewAgeBundle\Controller\Api\Rest;
 
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
+use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -63,11 +64,28 @@ class PanelViewController extends RestController implements ClassResourceInterfa
     public function cgetAction()
     {
         $page  = (int)$this->getRequest()->get('page', 1);
-        $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
+        $limit = (int)$this->getRequest()->get('limit', 1000);
 
         $criteria = $this->getFilterCriteria($this->getSupportedQueryParameters(__FUNCTION__));
 
         return $this->handleGetListRequest($page, $limit, $criteria);
+
+//        /** @var PanelViewRepository $repo */
+//        $repo  = $this->getManager()->getRepository();
+//        $qb = $repo->getPanelViewsQueryBuilder();
+//        $qb->setMaxResults(1000);
+//
+//        $result = $qb->getQuery()->getResult();
+//
+//        $panelViews = [];
+//        foreach ($result as $row) {
+//            $item['id'] = $row['id'];
+//            $item['name'] = $row['name'];
+//
+//            $panelViews[] = $item;
+//        }
+//
+//        return $this->buildResponse($panelViews, self::ACTION_LIST, ['result' => $result, 'query' => $qb]);
     }
 
     /**

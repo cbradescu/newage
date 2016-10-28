@@ -732,9 +732,6 @@ define(function(require) {
                 resources: _.bind(this.loadResources, this),
                 select: _.bind(this.onFcSelect, this),
                 eventClick: _.bind(this.onFcEventClick, this),
-                // eventDragStart: _.bind(this.onFcEventDragStart, this),
-                // eventDrop: _.bind(this.onFcEventDrop, this),
-                // eventResize: _.bind(this.onFcEventResize, this),
                 loading: _.bind(function(show) {
                     if (show) {
                         this.showLoadingMask();
