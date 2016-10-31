@@ -93,7 +93,7 @@ class SchedulerEventType extends AbstractType
             $form->getConfig()->getFormFactory()->createNamed(
                 'panelView',
                 'cb_panel_view_choice',
-                $data ? $data->getCampaign() : null,
+                $data ? $data->getPanelView() : null,
                 [
                     'required'        => false,
                     'mapped'          => false,

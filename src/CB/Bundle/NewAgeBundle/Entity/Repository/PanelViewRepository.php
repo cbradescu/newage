@@ -10,20 +10,25 @@ class PanelViewRepository extends EntityRepository
     /**
      * Returns a query builder which can be used to get list of panel views
      *
+     * @param int $organizationId
+     *
      * @return QueryBuilder
      */
-    public function getPanelViewsQueryBuilder()
+    public function getPanelViewsQueryBuilder($organizationId)
     {
-        $qb = $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('pv')
             ->select(
-                'c.id',
-                'c.name',
+                'pv.id',
+                'pv.name',
+                'p.name as panelName',
                 'IDENTITY(p.supportType)',
                 'IDENTITY(p.lightingType)',
                 'a.city'
             )
-            ->leftJoin('c.panel', 'p')
+            ->leftJoin('pv.panel', 'p')
             ->leftJoin('p.addresses', 'a')
+            ->where('pv.organization = :organizationId')
+            ->setParameter('organizationId', $organizationId);
         ;
 
         return $qb;

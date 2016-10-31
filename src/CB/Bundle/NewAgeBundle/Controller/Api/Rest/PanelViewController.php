@@ -83,7 +83,7 @@ class PanelViewController extends RestController implements ClassResourceInterfa
     {
         /** @var PanelViewRepository $repo */
         $repo  = $this->getManager()->getRepository();
-        $qb = $repo->getPanelViewsQueryBuilder();
+        $qb = $repo->getPanelViewsQueryBuilder($this->get('oro_security.security_facade')->getOrganization()->getId());
         $qb->setMaxResults(1000);
 
         $panelId  = (int)$this->getRequest()->get('panel', 0);
@@ -113,7 +113,7 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         $panelViews = [];
         foreach ($result as $row) {
             $item['id'] = $row['id'];
-            $item['name'] = $row['name'];
+            $item['name'] = $row['city'] . ', ' . $row['panelName'] . '-' .$row['name'];
 
             $panelViews[] = $item;
         }
