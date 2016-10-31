@@ -54,6 +54,24 @@ class PanelViewController extends RestController implements ClassResourceInterfa
      *      nullable=true,
      *      description="Id."
      * )
+     * @QueryParam(
+     *      name="supportType",
+     *      requirements="\d+",
+     *      nullable=true,
+     *      description="Support type id."
+     * )
+     * @QueryParam(
+     *      name="lightingType",
+     *      requirements="\d+",
+     *      nullable=true,
+     *      description="Lighting type id."
+     * )
+     * @QueryParam(
+     *      name="city",
+     *      requirements="\.+",
+     *      nullable=true,
+     *      description="City."
+     * )
      * @ApiDoc(
      *     description="Get all PanelView items",
      *     resource=true
@@ -63,29 +81,44 @@ class PanelViewController extends RestController implements ClassResourceInterfa
      */
     public function cgetAction()
     {
-        $page  = (int)$this->getRequest()->get('page', 1);
-        $limit = (int)$this->getRequest()->get('limit', 1000);
+        /** @var PanelViewRepository $repo */
+        $repo  = $this->getManager()->getRepository();
+        $qb = $repo->getPanelViewsQueryBuilder();
+        $qb->setMaxResults(1000);
 
-        $criteria = $this->getFilterCriteria($this->getSupportedQueryParameters(__FUNCTION__));
+        $panelId  = (int)$this->getRequest()->get('panel', 0);
+        $panelViewId  = (int)$this->getRequest()->get('id', 0);
+        $supportTypeId  = (int)$this->getRequest()->get('supportType', 0);
+        $lightingTypeId  = (int)$this->getRequest()->get('lightingType', 0);
+        $city  = (string)$this->getRequest()->get('city', null);
 
-        return $this->handleGetListRequest($page, $limit, $criteria);
+        if ($panelId)
+            $qb->andWhere('p.id=:panelId')
+                ->setParameter('panelId', $panelId);
+        if ($panelViewId)
+            $qb->andWhere('c.id=:panelViewId')
+                ->setParameter('panelViewId', $panelViewId);
+        if ($supportTypeId)
+            $qb->andWhere('p.supportType=:supportTypeId')
+                ->setParameter('supportTypeId', $supportTypeId);
+        if ($lightingTypeId)
+            $qb->andWhere('p.lightingType=:lightingTypeId')
+                ->setParameter('lightingTypeId', $lightingTypeId);
+        if ($city)
+            $qb->andWhere('LOWER(a.city) LIKE :city')
+                ->setParameter('city', "%$city%");
 
-//        /** @var PanelViewRepository $repo */
-//        $repo  = $this->getManager()->getRepository();
-//        $qb = $repo->getPanelViewsQueryBuilder();
-//        $qb->setMaxResults(1000);
-//
-//        $result = $qb->getQuery()->getResult();
-//
-//        $panelViews = [];
-//        foreach ($result as $row) {
-//            $item['id'] = $row['id'];
-//            $item['name'] = $row['name'];
-//
-//            $panelViews[] = $item;
-//        }
-//
-//        return $this->buildResponse($panelViews, self::ACTION_LIST, ['result' => $result, 'query' => $qb]);
+        $result = $qb->getQuery()->getResult();
+
+        $panelViews = [];
+        foreach ($result as $row) {
+            $item['id'] = $row['id'];
+            $item['name'] = $row['name'];
+
+            $panelViews[] = $item;
+        }
+
+        return $this->buildResponse($panelViews, self::ACTION_LIST, ['result' => $result, 'query' => $qb]);
     }
 
     /**

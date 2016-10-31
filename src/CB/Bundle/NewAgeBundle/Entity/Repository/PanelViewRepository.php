@@ -14,11 +14,18 @@ class PanelViewRepository extends EntityRepository
      */
     public function getPanelViewsQueryBuilder()
     {
-        return $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('c')
             ->select(
                 'c.id',
-                'c.name'
+                'c.name',
+                'IDENTITY(p.supportType)',
+                'IDENTITY(p.lightingType)',
+                'a.city'
             )
-            ;
+            ->leftJoin('c.panel', 'p')
+            ->leftJoin('p.addresses', 'a')
+        ;
+
+        return $qb;
     }
 }

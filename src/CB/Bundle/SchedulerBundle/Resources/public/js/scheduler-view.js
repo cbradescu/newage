@@ -104,6 +104,9 @@ define(function(require) {
         loadingMask: null,
         panel: null,
         panelView: null,
+        supportType: null,
+        lightingType: null,
+        city: null,
 
         /**
          * This property can be used to prevent unnecessary reloading of calendar events.
@@ -491,12 +494,24 @@ define(function(require) {
         updateEventsWithoutReload: function() {
             var oldPanel = this.panel;
             var oldPanelView = this.panelView;
+            var oldSupportType = this.supportType;
+            var oldLightingType = this.lightingType;
+            var oldCity = this.city;
 
             var panel = this.filters.filter( function (obj) {
                 return obj.name == 'panel';
             });
             var panelView = this.filters.filter( function (obj) {
                 return obj.name == 'panelView';
+            });
+            var supportType = this.filters.filter( function (obj) {
+                return obj.name == 'supportType';
+            });
+            var lightingType = this.filters.filter( function (obj) {
+                return obj.name == 'lightingType';
+            });
+            var city = this.filters.filter( function (obj) {
+                return obj.name == 'city';
             });
 
             if (panel.length==1)
@@ -509,14 +524,29 @@ define(function(require) {
             else
                 this.panelView = null;
 
-            if (this.panel || this.panelView) {
+            if (supportType.length==1)
+                this.supportType = supportType[0].value;
+            else
+                this.supportType = null;
+
+            if (lightingType.length==1)
+                this.lightingType = lightingType[0].value;
+            else
+                this.lightingType = null;
+
+            if (city.length==1)
+                this.city = city[0].value;
+            else
+                this.city = null;
+
+            if (this.panel || this.panelView || this.supportType || this.lightingType || this.city) {
                 this.getCalendarElement().fullCalendar('refetchResources');
-            } else if (oldPanel != this.panel || oldPanelView != this.panelView) {
+            } else if (oldPanel != this.panel || oldPanelView != this.panelView || this.supportType != oldSupportType
+            || this.lightingType != oldLightingType || this.city != oldCity) {
                 this.getCalendarElement().fullCalendar('refetchResources');
             }
 
             var oldEnableEventLoading = this.enableEventLoading;
-            // this.enableEventLoading = false;
             this.enableEventLoading = true;
             this.getCalendarElement().fullCalendar('refetchEvents');
             this.enableEventLoading = oldEnableEventLoading;
@@ -580,7 +610,10 @@ define(function(require) {
             try {
                 this.resourceCollection.setFilters(
                     this.panel,
-                    this.panelView
+                    this.panelView,
+                    this.supportType,
+                    this.lightingType,
+                    this.city
                 );
 
                 // load events from a server
