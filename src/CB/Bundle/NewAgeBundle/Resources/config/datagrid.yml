@@ -1,4 +1,3 @@
-
 datagrid:
     base-panel-grid:
         source:
@@ -11,7 +10,7 @@ datagrid:
                     - stype.name as support
                     - ltype.name as lighting
                     - panel.dimensions
-#                    - panel.gps
+                    - addr.city
                 from:
                     - { table: %cb_newage_panel.entity.class%, alias: panel }
                 join:
@@ -22,6 +21,9 @@ datagrid:
                         -
                             join: panel.lightingType
                             alias: ltype
+                        -
+                            join: panel.addresses
+                            alias: addr
         columns:
             id:
                 label:        cb.newage.panel.id.label
@@ -33,8 +35,8 @@ datagrid:
                 label:        cb.newage.lightingtype.entity_label
             dimensions:
                 label:        cb.newage.panel.dimensions.label
-#            gps:
-#                label:        cb.newage.panel.gps.label
+            city:
+                label:        oro.address.city.label
         sorters:
             columns:
                 id:
@@ -49,6 +51,21 @@ datagrid:
                     type: string
                     data_name: panel.name
                     enabled: true
+                support:
+                    type: entity
+                    data_name: stype.name
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:SupportType
+                lighting:
+                    type: entity
+                    data_name: ltype.name
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:LightingType
+                city:
+                    type: string
+                    data_name: addr.city
         properties:
             id: ~
             view_link:
