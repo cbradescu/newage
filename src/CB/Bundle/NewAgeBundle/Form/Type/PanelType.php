@@ -80,7 +80,6 @@ class PanelType extends AbstractType
                 [
                     'label' => 'cb.newage.panel.photo.label',
                     'required' => false,
-                    'checkEmptyFile' => $options['checkEmptyFile'],
                     'allowDelete' => isset($options['allowDelete']) ? $options['allowDelete'] : false
                 ]
             )
