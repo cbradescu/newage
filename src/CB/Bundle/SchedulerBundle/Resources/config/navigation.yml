@@ -9,3 +9,6 @@ oro_menu_config:
         application_menu:
             children:
                 newage_tab_scheduler_link: ~
+
+oro_titles:
+    cb_scheduler_view: '%%entity.name%%'

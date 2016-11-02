@@ -1,24 +1,12 @@
-{#{% extends 'OroUIBundle:actions:view.html.twig' %}#}
 {% extends 'OroUIBundle:actions:index.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 {% import 'CBSchedulerBundle::templates.html.twig' as schedulerTemplates %}
 
-{#{% oro_title_set({params : {"%schedulername%": 'Scheduler'|trans }}) %}#}
+{% oro_title_set({params : {"%entity.name%": 'cb.scheduler.entity_label'|trans }}) %}
 {% set gridName = 'scheduler_event-grid' %}
 
 {% block navButtons %}{% endblock navButtons %}
-{#{% block breadcrumb %}{% endblock breadcrumb %}#}
 
-{#{% block pageHeader %}#}
-    {#{% if breadcrumbs is not defined %}#}
-        {#{% set breadcrumbs = {'entityTitle': 'cb.scheduler.entity_label'|trans } %}#}
-    {#{% endif %}#}
-    {#{{ parent() }}#}
-{#{% endblock pageHeader %}#}
-
-{#{% block stats %}{% endblock stats %}#}
-
-{#{% block content_data %}#}
 {% block content %}
     {% block content_datagrid %}
         {% if gridName is defined %}
@@ -32,13 +20,6 @@
             }
             |merge(renderParams|default({})) %}
             {{ dataGrid.renderGrid(gridName, params|default({}), renderParams) }}
-
-            {# Only grids on index pages will be tagged #}
-            {#<script type="text/javascript">#}
-                {#require(['oronavigation/js/content/grid-builder'], function (GridTagBuilder) {#}
-                    {#GridTagBuilder.allowTracking({{ gridName|json_encode|raw }});#}
-                {#});#}
-            {#</script>#}
         {% endif %}
     {% endblock content_datagrid %}
 
@@ -87,31 +68,5 @@
 
     {{ schedulerTemplates.scheduler_event_view_template('template-view-scheduler-event') }}
     {{ schedulerTemplates.scheduler_event_form_template('template-scheduler-event', event_form) }}
-
-    {#<script type="text/javascript">#}
-        {#require(['oroui/js/mediator', 'oroui/js/widget-manager', 'underscore'],#}
-                {#function(mediator, widgetManager, _) {#}
-                    {#mediator.bind('current_active_filters', function(filters) {#}
-                        {#var url = '{{ path('cb_api_get_schedulerevents', { scheduler: null, start: startDate|date('c'), end: endDate|date('c'), subordinate: true})|raw }}';#}
-
-                        {#_.each(filters, function(filter) {#}
-                            {#url = url + '&' + filter.name + '=' + filter.value;#}
-                        {#});#}
-
-                        {#$.ajax({#}
-                            {#url: url,#}
-                            {#type: 'GET',#}
-                            {#success: function(response) {#}
-                                {#mediator.trigger('setSchedulerCollection', response);#}
-                            {#},#}
-                            {#error: function(xhr) {#}
-                            {#}#}
-                        {#});#}
-                    {#});#}
-                {#});#}
-    {#</script>#}
 </div>
-{#{% endblock content_data %}#}
-
-
 {% endblock content %}
