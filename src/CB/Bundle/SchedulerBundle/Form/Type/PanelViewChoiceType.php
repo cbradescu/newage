@@ -52,6 +52,13 @@ class PanelViewChoiceType extends AbstractType
                 'translatable_options' => false
             )
         );
+        $resolver->setNormalizers(
+            array(
+                'empty_value' => function (Options $options) {
+                    return count($options['choices']) !== 1 ? 'cb.newage.panelview.form.choose_panel_view' : null;
+                },
+            )
+        );
     }
 
     /**
@@ -94,13 +101,13 @@ class PanelViewChoiceType extends AbstractType
         usort(
             $panelViews,
             function ($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
+                return strcasecmp($a['panelName'] . ' ' . $a['name'], $b['panelName'] . ' ' . $b['name']);
             }
         );
 
         $choices = [];
         foreach ($panelViews as $panelView) {
-            $choices[$panelView['id']] = $panelView['name'];
+            $choices[$panelView['id']] = $panelView['panelName'] . ' ' . $panelView['name'];
         }
 
         return $choices;

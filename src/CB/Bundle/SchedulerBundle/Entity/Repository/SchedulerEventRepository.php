@@ -122,6 +122,7 @@ class SchedulerEventRepository extends EntityRepository
                  pv.id as panelViewId,
                  pv.name as panelViewName,
                  p.id as panelId,
+                 p.name as panelName,
                  st.id as supportTypeId,
                  lt.id as lightingTypeId,
                  e.start,

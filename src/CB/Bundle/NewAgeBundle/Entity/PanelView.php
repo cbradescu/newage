@@ -139,7 +139,7 @@ class PanelView
      */
     public function __toString()
     {
-        return (string)$this->name;
+        return (string)$this->getPanel()->getName(). ' ' . $this->name;
     }
 
     /**

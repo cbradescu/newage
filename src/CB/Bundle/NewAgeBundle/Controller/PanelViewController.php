@@ -89,7 +89,7 @@ class PanelViewController extends Controller
         if ($this->get('cb_newage_panel_view.form.handler.entity')->process($panelView)) {
             $this->get('session')->getFlashBag()->add(
                 'success',
-                $this->get('translator')->trans('cb.newage.panel_view.message.saved')
+                $this->get('translator')->trans('cb.newage.panelview.message.saved')
             );
 
             return $this->get('oro_ui.router')->redirectAfterSave(

@@ -54,7 +54,7 @@ class CampaignChoiceType extends AbstractType
         );
         $resolver->setNormalizers(
             array(
-                'empty_value' => function (Options $options, $emptyValue) {
+                'empty_value' => function (Options $options) {
                     return count($options['choices']) !== 1 ? 'cb.newage.campaign.form.choose_campaign' : null;
                 },
             )

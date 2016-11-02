@@ -113,7 +113,7 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         $panelViews = [];
         foreach ($result as $row) {
             $item['id'] = $row['id'];
-            $item['name'] = $row['city'] . ', ' . $row['panelName'] . '-' .$row['name'];
+            $item['name'] = $row['panelName'] . ' ' .$row['name'];
 
             $panelViews[] = $item;
         }

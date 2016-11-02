@@ -162,7 +162,7 @@ class SchedulerEventController extends RestController implements ClassResourceIn
                 $item['start'] = $row['start']->format('c');
                 $item['end'] = $row['end']->format('c');
                 $item['resourceId'] = $row['panelViewId'];
-                $item['resourceName'] = $row['panelViewName'];
+                $item['resourceName'] = $row['panelName'] . ' ' . $row['panelViewName'];
                 $item['panelView'] = $row['panelViewId'];
                 $item['campaign'] = $row['campaignId'];
                 $item['panel'] = $row['panelId'];

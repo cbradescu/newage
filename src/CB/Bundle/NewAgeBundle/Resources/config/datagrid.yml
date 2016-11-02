@@ -43,7 +43,14 @@ datagrid:
                     data_name: panel.id
                 name:
                     data_name: panel.name
+                support:
+                    data_name: stype.name
+                lighting:
+                    data_name: ltype.name
+                city:
+                    data_name: addr.city
             default:
+                city:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:

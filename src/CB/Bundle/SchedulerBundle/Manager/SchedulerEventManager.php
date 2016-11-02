@@ -56,7 +56,7 @@ class SchedulerEventManager
         /** @var PanelViewRepository $repo */
         $repo      = $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:PanelView');
         $panelViews = $repo->getPanelViewsQueryBuilder($this->securityFacade->getOrganizationId())
-            ->select('pv.id, pv.name')
+            ->select('pv.id, pv.name, p.name as panelName')
             ->getQuery()
             ->getArrayResult();
 
