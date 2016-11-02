@@ -97,9 +97,6 @@ cb:
             entity_plural_label:           Lighting Types
             block.general:                 Lighting Type
 
-      available:
-          monthly:                         Monthly Available
-
-      menu:
-          available_tab.label:              Available
-          available_tab_monthly_link.label: Monthly
+      dashboard:
+          title.newage_launchpad: New Age Launchpad
+          newage_launchpad_widget_description: This widget gives you access to most commonly used actions and pages

@@ -1,0 +1,22 @@
+oro_dashboard_config:
+    widgets:
+        newage_launchpad:
+            label:      cb.newage.dashboard.title.newage_launchpad
+            route:      oro_dashboard_itemized_widget
+            route_parameters: { bundle: OroDashboardBundle, name: quickLaunchpad }
+            description: cb.newage.dashboard.newage_launchpad_widget_description
+            icon:       bundles/orodashboard/img/quick_launchpad.png
+
+            items:
+                panels:
+                    label:      cb.newage.panel.entity_plural_label
+                    icon:       desktop
+                    route:      cb_newage_panel_index
+                    acl:        cb_newage_panel_view
+                    position:   20
+                panel_views:
+                    label:      cb.newage.panelview.entity_plural_label
+                    icon:       film
+                    route:      cb_newage_panel_view_index
+                    acl:        cb_newage_panel_view_view
+                    position:   30

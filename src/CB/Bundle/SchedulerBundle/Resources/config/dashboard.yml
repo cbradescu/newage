@@ -1,0 +1,10 @@
+oro_dashboard_config:
+    widgets:
+        newage_launchpad:
+            items:
+                scheduler:
+                    label:      cb.scheduler.entity_label
+                    icon:       calendar
+                    route:      cb_scheduler_view
+                    acl:        cb_scheduler_event_view
+                    position:   10
