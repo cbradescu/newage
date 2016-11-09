@@ -199,15 +199,13 @@ define([
 
         reloadAddresses: function() {
             this.getCollection().fetch({reset: true});
-            this._activateFirstAddress();
         },
 
         activateAddress: function(address) {
             if (!address.get('primary')) {
                 this.activeAddress = address;
             }
-            // this.mapView.updateMap(address.getSearchableString(), address.get('label'));
-            this.mapView.updateMap(address.getSearchableString(), address.get('label'), address.get('latitude'), address.get('longitude'));
+            this.mapView.updateMap(address.getSearchableString(), null, address.get('latitude'), address.get('longitude'));
         }
     });
 });

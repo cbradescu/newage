@@ -1,0 +1,5 @@
+{% block cb_panel_address_collection_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-address-collection' }) %}
+    {{ block('oro_collection_widget') }}
+    {% set id = id ~ '_collection' %}
+{% endblock %}

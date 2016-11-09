@@ -15,8 +15,9 @@ parameters:
     cb_newage_available.datasource.available.class:     CB\Bundle\NewAgeBundle\Extension\AvailableDatasource
 
     cb_newage_panel_address.entity.class:               CB\Bundle\NewAgeBundle\Entity\PanelAddress
-    cb_newage_panel_address.manager.class:              CB\Bundle\NewAgeBundle\Model\PanelAddressManager
-    cb_newage_panel_address.manager.api.class:          CB\Bundle\NewAgeBundle\Model\PanelAddressApiManager
+#    cb_newage_panel_address.manager.class:              CB\Bundle\NewAgeBundle\Model\PanelAddressManager
+    cb_newage_panel_address.manager.api.class:          Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    cb_newage_panel_address.form.handler.class:         CB\Bundle\NewAgeBundle\Form\Handler\PanelAddressHandler
 
     cb_newage.form.type.panel_address.class:            CB\Bundle\NewAgeBundle\Form\Type\PanelAddressType
 
@@ -78,11 +79,11 @@ services:
         tags:
             - { name: oro_datagrid.datasource, type: available }
 
-    cb_newage_panel_address.manager:
-        class: %cb_newage_panel_address.manager.class%
-        arguments:
-            - @doctrine.orm.entity_manager
-            - @oro_security.acl_helper
+#    cb_newage_panel_address.manager:
+#        class: %cb_newage_panel_address.manager.class%
+#        arguments:
+#            - @doctrine.orm.entity_manager
+#            - @oro_security.acl_helper
 
     cb_newage_panel_address.manager.api:
         class: %cb_newage_panel_address.manager.api.class%
@@ -90,7 +91,6 @@ services:
         arguments:
             - %cb_newage_panel_address.entity.class%
             - @doctrine.orm.entity_manager
-            - @cb_newage_panel_address.manager
 
     cb_newage.form.type.panel_address:
         class: %cb_newage.form.type.panel_address.class%
@@ -108,7 +108,7 @@ services:
             - { data_class: %cb_newage_panel_address.entity.class% }
 
     cb_newage.form.handler.panel_address:
-        class: %oro_address.form.handler.address.class%
+        class: %cb_newage_panel_address.form.handler.class%
         scope: request
         arguments:
             - "@cb_newage.panel_address.form"

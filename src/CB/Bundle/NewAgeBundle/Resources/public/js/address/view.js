@@ -29,22 +29,9 @@ define([
 
         options: {
             map: {
-                'namePrefix': 'prefix',
-                'nameSuffix': 'suffix',
-                'firstName': 'first_name',
-                'middleNamem': 'iddle_name',
-                'lastName': 'last_name',
-                'organization': 'organization',
                 'street': 'street',
                 'street2': 'street2',
                 'city': 'city',
-                'country': 'country',
-                'countryIso2': 'country_iso2',
-                'countryIso3': 'country_iso3',
-                'postalCode': 'postal_code',
-                'region': 'region',
-                'regionText': 'region',
-                'regionCode': 'region_code',
                 'latittude': 'latitude',
                 'longitude': 'longitude'
             }

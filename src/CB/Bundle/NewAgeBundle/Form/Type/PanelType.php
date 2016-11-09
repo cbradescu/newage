@@ -85,7 +85,7 @@ class PanelType extends AbstractType
             )
             ->add(
                 'addresses',
-                'oro_address_collection',
+                'cb_panel_address_collection',
                 array(
                     'label'    => '',
                     'type'     => 'cb_panel_address',

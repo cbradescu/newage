@@ -75,8 +75,6 @@ class PanelAddressController extends Controller
         );
 
         if ($this->getRequest()->getMethod() == 'GET' && !$address->getId()) {
-//            $address->setFirstName($panel->getFirstName());
-//            $address->setLastName($panel->getLastName());
             if (!$panel->getAddresses()->count()) {
                 $address->setPrimary(true);
             }
@@ -88,9 +86,8 @@ class PanelAddressController extends Controller
             $panel->addAddress($address);
         }
 
-        // Update panel's modification date when an address is changed
-//        $panel->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
-
+        // Update contact's modification date when an address is changed
+        $panel->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
 
         if ($this->get('cb_newage.form.handler.panel_address')->process($address)) {
             $this->getDoctrine()->getManager()->flush();

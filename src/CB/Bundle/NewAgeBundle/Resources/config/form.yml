@@ -20,6 +20,8 @@ parameters:
     cb_newage_lighting_type.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\LightingTypeApiType
     cb_newage_lighting_type.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\LightingTypeHandler
 
+    cb_newage_panel_address_collection.form.type.entity.class:          CB\Bundle\NewAgeBundle\Form\Type\PanelAddressCollectionType
+
 services:
     cb_newage_panel.form.type.entity:
         class: %cb_newage_panel.form.type.entity.class%
@@ -255,3 +257,8 @@ services:
         arguments:
             - 'lighting_type'
             - 'cb_newage_lighting_type_api'
+
+    cb_newage_panel_address_collection.form.type.entity:
+        class: %cb_newage_panel_address_collection.form.type.entity.class%
+        tags:
+             - { name: form.type, alias: cb_panel_address_collection }

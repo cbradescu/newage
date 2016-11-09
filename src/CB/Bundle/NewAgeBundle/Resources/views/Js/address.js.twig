@@ -5,15 +5,12 @@
         <% if (!primary) { %><button class="btn item-remove-button" title="<%= _.__('Remove') %>"><i class="icon-trash hide-text"><%= _.__('Remove') %></i></button><% } %>
         {% endif %}
     </div>
-    <div class="title-item"><%= _.escape(label) %></div>
     <ul class="inline">
         <% if (primary) { %> <li><span class="label label-info"><%= _.__('Primary') %></span></li> <% } %>
-        <% _.each(types, function(type) { %>
-        <li><span class="label"><%= _.escape(type.label) %></span></li>
-        <% }) %>
     </ul>
     <address>
         <%= _.escape(formatted_address).replace(/\n/g, "<br/>") %>
     </address>
+
     <%= _.escape(latitude) %>,<%= _.escape(longitude) %>
 </script>

@@ -1,5 +1,7 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
+
+{% form_theme form with ['CBNewAgeBundle:Include:fields.html.twig'] %}
 {% oro_title_set({params : {"%entity.name%": entity.name, "%entityName%": 'cb.newage.panel.entity_label'|trans }}) %}
 
 {% set entityId = entity.id %}

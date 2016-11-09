@@ -21,9 +21,7 @@ datagrid:
                         -
                             join: panel.lightingType
                             alias: ltype
-                        -
-                            join: panel.addresses
-                            alias: addr
+                        - { join: panel.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
         columns:
             id:
                 label:        cb.newage.panel.id.label

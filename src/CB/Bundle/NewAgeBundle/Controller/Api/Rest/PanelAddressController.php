@@ -78,6 +78,7 @@ class PanelAddressController extends RestController implements ClassResourceInte
             }
         }
 
+
         return new JsonResponse(
             $result,
             empty($panel) ? Codes::HTTP_NOT_FOUND : Codes::HTTP_OK
@@ -101,72 +102,16 @@ class PanelAddressController extends RestController implements ClassResourceInte
     {
         /** @var PanelAddress $address */
         $address = $this->getManager()->find($addressId);
-
         /** @var Panel $panel */
         $panel = $this->getPanelManager()->find($panelId);
         if ($panel->getAddresses()->contains($address)) {
             $panel->removeAddress($address);
+            // Update contact's modification date when an address is removed
+            $panel->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
             return $this->handleDeleteRequest($addressId);
         } else {
             return $this->handleView($this->view(null, Codes::HTTP_NOT_FOUND));
         }
-    }
-
-    /**
-     * REST GET address by type
-     *
-     * @param string $panelId
-     * @param string $typeName
-     *
-     * @ApiDoc(
-     *      description="Get panel address by type",
-     *      resource=true
-     * )
-     * @AclAncestor("cb_newage_panel_address_view")
-     * @return Response
-     */
-    public function getByTypeAction($panelId, $typeName)
-    {
-        /** @var Panel $panel */
-        $panel = $this->getPanelManager()->find($panelId);
-
-        if ($panel) {
-            $address = $panel->getAddressByTypeName($typeName);
-        } else {
-            $address = null;
-        }
-
-        $responseData = $address ? json_encode($this->getPreparedItem($address)) : '';
-
-        return new Response($responseData, $address ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
-    }
-
-    /**
-     * REST GET primary address
-     *
-     * @param string $panelId
-     *
-     * @ApiDoc(
-     *      description="Get panel primary address",
-     *      resource=true
-     * )
-     * @AclAncestor("cb_newage_panel_address_view")
-     * @return Response
-     */
-    public function getPrimaryAction($panelId)
-    {
-        /** @var Panel $panel */
-        $panel = $this->getPanelManager()->find($panelId);
-
-        if ($panel) {
-            $address = $panel->getPrimaryAddress();
-        } else {
-            $address = null;
-        }
-
-        $responseData = $address ? json_encode($this->getPreparedItem($address)) : '';
-
-        return new Response($responseData, $address ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
     }
 
     protected function getPanelManager()
@@ -203,22 +148,7 @@ class PanelAddressController extends RestController implements ClassResourceInte
      */
     protected function getPreparedItem($entity, $resultFields = [])
     {
-        // convert addresses to plain array
-        $addressTypesData = array();
-
-        if ($entity->getTypes()) {
-            /** @var $entity PanelAddress */
-            foreach ($entity->getTypes() as $addressType) {
-                $addressTypesData[] = parent::getPreparedItem($addressType);
-            }
-        }
-        
         $result                = parent::getPreparedItem($entity);
-        $result['types']       = $addressTypesData;
-        $result['countryIso2'] = $entity->getCountryIso2();
-        $result['countryIso3'] = $entity->getCountryIso2();
-        $result['regionCode']  = $entity->getRegionCode();
-        $result['country']     = $entity->getCountryName();
         $result['latitude']    = $entity->getLatitude();
         $result['longitude']   = $entity->getLongitude();
 

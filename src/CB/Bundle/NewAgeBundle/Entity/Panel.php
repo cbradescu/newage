@@ -11,7 +11,7 @@ namespace CB\Bundle\NewAgeBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -142,6 +142,27 @@ class Panel
     protected $lightingType;
 
     /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelAddress",
+     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"primary" = "DESC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "full"=true,
+     *              "order"=250
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $addresses;
+
+    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -165,24 +186,6 @@ class Panel
     protected $organization;
 
     /**
-     * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelAddress",
-     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
-     * )
-     * @ORM\OrderBy({"primary" = "DESC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "full"=true,
-     *              "order"=250
-     *          }
-     *      }
-     * )
-     */
-    protected $addresses;
-
-    /**
      * @var File
      *
      * @ConfigField(
@@ -200,6 +203,38 @@ class Panel
      */
     protected $photo;
 
+    /**
+     * @var \DateTime $createdAt
+     *
+     * @ORM\Column(type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.created_at"
+     *          }
+     *      }
+     * )
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime $updatedAt
+     *
+     * @ORM\Column(type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedAt;
+
+
+    /**
+     * init addresses with empty collection
+     */
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -310,6 +345,117 @@ class Panel
     }
 
     /**
+     * Set addresses.
+     *
+     * This method could not be named setAddresses because of bug CRM-253.
+     *
+     * @param Collection|PanelAddress[] $addresses
+     * @return Panel
+     */
+    public function resetAddresses($addresses)
+    {
+        $this->addresses->clear();
+
+        foreach ($addresses as $address) {
+            $this->addAddress($address);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add address
+     *
+     * @param PanelAddress $address
+     * @return Panel
+     */
+    public function addAddress(PanelAddress $address)
+    {
+        /** @var PanelAddress $address */
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove address
+     *
+     * @param PanelAddress $address
+     * @return Panel
+     */
+    public function removeAddress(PanelAddress $address)
+    {
+        if ($this->addresses->contains($address)) {
+            $this->addresses->removeElement($address);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get addresses
+     *
+     * @return Collection|PanelAddress[]
+     */
+    public function getAddresses()
+    {
+        return $this->addresses;
+    }
+
+    /**
+     * @param PanelAddress $address
+     * @return bool
+     */
+    public function hasAddress(PanelAddress $address)
+    {
+        return $this->getAddresses()->contains($address);
+    }
+
+    /**
+     * Gets primary address if it's available.
+     *
+     * @return PanelAddress|null
+     */
+    public function getPrimaryAddress()
+    {
+        $result = null;
+
+        /** @var PanelAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->isPrimary()) {
+                $result = $address;
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param PanelAddress $address
+     *
+     * @return Panel
+     */
+    public function setPrimaryAddress(PanelAddress $address)
+    {
+        if ($this->hasAddress($address)) {
+            $address->setPrimary(true);
+            /** @var PanelAddress $otherAddress */
+            foreach ($this->getAddresses() as $otherAddress) {
+                if (!$address->isEqual($otherAddress)) {
+                    $otherAddress->setPrimary(false);
+                }
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
      * @param User $owningUser
      *
      * @return Panel
@@ -353,55 +499,6 @@ class Panel
     }
 
     /**
-     * @return Collection
-     */
-    public function getAddresses()
-    {
-        return $this->addresses;
-    }
-
-    /**
-     * @param Collection $addresses
-     */
-    public function setAddresses($addresses)
-    {
-        $this->addresses = $addresses;
-    }
-
-    /**
-     * Add address
-     *
-     * @param AbstractAddress $address
-     *
-     * @return Panel
-     */
-    public function addAddress(AbstractAddress $address)
-    {
-        /** @var PanelAddress $address */
-        if (!$this->addresses->contains($address)) {
-            $this->addresses->add($address);
-            $address->setOwner($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove address
-     *
-     * @param AbstractAddress $address
-     * @return Panel
-     */
-    public function removeAddress(AbstractAddress $address)
-    {
-        if ($this->addresses->contains($address)) {
-            $this->addresses->removeElement($address);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return File
      */
     public function getPhoto()
@@ -415,5 +512,27 @@ class Panel
     public function setPhoto($photo)
     {
         $this->photo = $photo;
+    }
+
+    /**
+     * Get contact last update date/time
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime updatedAt
+     *
+     * @return $this
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
     }
 }
