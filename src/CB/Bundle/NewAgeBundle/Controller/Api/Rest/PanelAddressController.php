@@ -33,7 +33,7 @@ class PanelAddressController extends RestController implements ClassResourceInte
      *      description="Get panel address",
      *      resource=true
      * )
-     * @AclAncestor("cb_newage_panel_address_view")
+     * @AclAncestor("cb_newage_panel_view")
      * @return Response
      */
     public function getAction($panelId, $addressId)
@@ -59,7 +59,7 @@ class PanelAddressController extends RestController implements ClassResourceInte
      *      description="Get all addresses items",
      *      resource=true
      * )
-     * @AclAncestor("cb_newage_panel_address_view")
+     * @AclAncestor("cb_newage_panel_view")
      * @param int $panelId
      *
      * @return JsonResponse
@@ -92,7 +92,7 @@ class PanelAddressController extends RestController implements ClassResourceInte
      *      description="Delete address items",
      *      resource=true
      * )
-     * @AclAncestor("cb_newage_panel_address_delete")
+     * @AclAncestor("cb_newage_panel_delete")
      * @param     $panelId
      * @param int $addressId
      *

@@ -27,7 +27,7 @@ class PanelAddressController extends Controller
     {
         return array(
             'entity' => $panel,
-            'address_edit_acl_resource' => 'cb_newage_panel_address_update'
+            'address_edit_acl_resource' => 'cb_newage_panel_update'
         );
     }
 

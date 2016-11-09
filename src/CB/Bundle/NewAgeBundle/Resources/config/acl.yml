@@ -82,34 +82,6 @@ cb_newage_campaign_delete:
     group_name: ""
     bindings: ~
 
-cb_newage_panel_address_view:
-    type: entity
-    class: CBNewAgeBundle:PanelAddress
-    permission: VIEW
-    group_name: ""
-    bindings: ~
-
-cb_newage_panel_address_create:
-    type: entity
-    class: CBNewAgeBundle:PanelAddress
-    permission: CREATE
-    group_name: ""
-    bindings: ~
-
-cb_newage_panel_address_update:
-    type: entity
-    class: CBNewAgeBundle:PanelAddress
-    permission: EDIT
-    group_name: ""
-    bindings: ~
-
-cb_newage_panel_address_delete:
-    type: entity
-    class: CBNewAgeBundle:PanelAddress
-    permission: DELETE
-    group_name: ""
-    bindings: ~
-
 cb_newage_support_type_create:
     type: entity
     class: CBNewAgeBundle:SupportType
