@@ -46,10 +46,28 @@
             {{ UI.renderProperty('cb.newage.campaign.start.label'|trans, entity.start|oro_format_date) }}
             {{ UI.renderProperty('cb.newage.campaign.end.label'|trans, entity.end|oro_format_date) }}
         </div>
+
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
         </div>
     </div>
+    {%- endset -%}
+
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {% set gridName = 'campaign-scheduler_event-grid' %}
+    {% set params = {campaign_id: entity.id} %}
+
+    {%- set gridSchedulerEvents -%}
+        {% if gridName is defined %}
+            {% if gridScope is defined %}
+                {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+            {% endif %}
+            {% if params is defined %}
+                {{ dataGrid.renderGrid(gridName, params) }}
+            {% else %}
+                {{ dataGrid.renderGrid(gridName) }}
+            {% endif %}
+        {% endif %}
     {%- endset -%}
 
     {% set dataBlocks = [
@@ -58,6 +76,13 @@
             'class': 'active',
             'subblocks': [
                 {'data' : [campaignInformation]}
+            ]
+        },
+        {
+            'title': 'cb.newage.panel.block.panel_views'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data': [gridSchedulerEvents]}
             ]
         }
     ] %}

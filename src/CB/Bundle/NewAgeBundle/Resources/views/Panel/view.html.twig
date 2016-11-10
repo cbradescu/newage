@@ -3,7 +3,8 @@
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 
 {% block stats %}
-{% endblock %}
+    {% include 'CBNewAgeBundle:Panel:headerStats.html.twig' with {'entity': entity} %}
+{% endblock stats %}
 
 {% oro_title_set({params : {"%entity.name%": entity.name|default('N/A') }}) %}
 
@@ -50,7 +51,6 @@
     })
     }}
     {% endif %}
-
 {% endblock navButtons %}
 
 {% block pageHeader %}

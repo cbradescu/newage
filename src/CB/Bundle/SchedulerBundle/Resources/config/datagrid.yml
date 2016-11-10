@@ -60,13 +60,13 @@ datagrid:
                 label:  cb.newage.lightingtype.entity_label
             city:
                 label:  oro.address.city.label
-
         sorters:
             columns:
         properties:
             id: ~
         action_configuration:
             delete: false
+
     scheduler_event-grid:
         extends: base-scheduler_event-grid
         filters:
@@ -104,3 +104,14 @@ datagrid:
                 city:
                     type: string
                     data_name: addr.city
+
+    # Campaing view
+    campaign-scheduler_event-grid:
+        extends: base-scheduler_event-grid
+        source:
+            query:
+                where:
+                    and:
+                        - ( se.campaign = :campaign_id)
+            bind_parameters:
+                - campaign_id
