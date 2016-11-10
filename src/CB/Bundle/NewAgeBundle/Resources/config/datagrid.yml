@@ -58,13 +58,13 @@ datagrid:
                     enabled: true
                 support:
                     type: entity
-                    data_name: stype.name
+                    data_name: panel.supportType
                     options:
                         field_options:
                             class: CBNewAgeBundle:SupportType
                 lighting:
                     type: entity
-                    data_name: ltype.name
+                    data_name: panel.lightingType
                     options:
                         field_options:
                             class: CBNewAgeBundle:LightingType
