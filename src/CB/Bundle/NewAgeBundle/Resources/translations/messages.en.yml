@@ -111,3 +111,5 @@ cb:
             name.label:                    Name
             owner.label:                   Owner
             organization.label:            Organization
+            form:
+                choose_city:               Choose City

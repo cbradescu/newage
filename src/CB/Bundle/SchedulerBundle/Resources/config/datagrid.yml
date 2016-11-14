@@ -14,7 +14,7 @@ datagrid:
                     - p.name as panel
                     - st.name as supportType
                     - lt.name as lightingType
-                    - addr.city as city
+                    - ct.name as city
                 from:
                     - { table: %cb_scheduler.scheduler_event.entity.class%, alias: se }
                 join:
@@ -34,9 +34,10 @@ datagrid:
                         -
                             join: p.lightingType
                             alias: lt
+                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
                         -
-                            join: p.addresses
-                            alias: addr
+                            join: addr.city
+                            alias: ct
         columns:
             id:
                 label:  cb.scheduler.scheduler_event.id.label
@@ -102,8 +103,12 @@ datagrid:
                         field_options:
                             class: CBNewAgeBundle:LightingType
                 city:
-                    type: string
+                    type: choice-tree
                     data_name: addr.city
+                    options:
+                        lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
+                        data: "@?cb_city.provider.filter.city_choice_tree->getList"
+                    enabled: true
 
     # Campaing view
     campaign-scheduler_event-grid:

@@ -23,10 +23,11 @@ class PanelViewRepository extends EntityRepository
                 'p.name as panelName',
                 'IDENTITY(p.supportType)',
                 'IDENTITY(p.lightingType)',
-                'a.city'
+                'c.name as city'
             )
             ->leftJoin('pv.panel', 'p')
             ->leftJoin('p.addresses', 'a')
+            ->leftJoin('a.city', 'c')
             ->where('pv.organization = :organizationId')
             ->setParameter('organizationId', $organizationId);
         ;

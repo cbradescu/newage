@@ -10,7 +10,7 @@ datagrid:
                     - stype.name as support
                     - ltype.name as lighting
                     - panel.dimensions
-                    - addr.city
+                    - c.name as city
                 from:
                     - { table: %cb_newage_panel.entity.class%, alias: panel }
                 join:
@@ -22,6 +22,9 @@ datagrid:
                             join: panel.lightingType
                             alias: ltype
                         - { join: panel.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
+                        -
+                            join: addr.city
+                            alias: c
         columns:
             id:
                 label:        cb.newage.panel.id.label
@@ -46,7 +49,7 @@ datagrid:
                 lighting:
                     data_name: ltype.name
                 city:
-                    data_name: addr.city
+                    data_name: c.name
             default:
                 city:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
@@ -69,8 +72,12 @@ datagrid:
                         field_options:
                             class: CBNewAgeBundle:LightingType
                 city:
-                    type: string
+                    type: choice-tree
                     data_name: addr.city
+                    options:
+                        lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
+                        data: "@?cb_city.provider.filter.city_choice_tree->getList"
+                    enabled: true
         properties:
             id: ~
             view_link:

@@ -31,7 +31,17 @@ class PanelAddressType extends AbstractType
             )
             ->add('street', 'text', array('required' => true, 'label' => 'oro.address.street.label'))
             ->add('street2', 'text', array('required' => false, 'label' => 'oro.address.street2.label'))
-            ->add('city', 'text', array('required' => true, 'label' => 'oro.address.city.label'))
+            ->add(
+                'city',
+                'entity',
+                [
+                    'label' => 'oro.address.city.label',
+                    'class'       => 'CBNewAgeBundle:City',
+                    'property'    => 'name',
+                    'empty_value' => 'cb.newage.city.form.choose_city',
+                    'required' => true
+                ]
+            )
             ->add(
                 'latitude',
                 'text',

@@ -33,6 +33,8 @@ parameters:
     cb_newage_city.manager.class:              CB\Bundle\NewAgeBundle\Model\CityManager
     cb_newage_city.manager.api.class:          CB\Bundle\NewAgeBundle\Model\CityApiManager
 
+    cb_city.provider.filter.city_choice_tree.class: CB\Bundle\NewAgeBundle\Provider\Filter\ChoiceTreeCityProvider
+
 services:
     cb_newage_panel.manager:
         class: %cb_newage_panel.manager.class%
@@ -160,3 +162,10 @@ services:
             - %cb_newage_city.entity.class%
             - @doctrine.orm.entity_manager
             - @cb_newage_city.manager
+
+    cb_city.provider.filter.city_choice_tree:
+        class: %cb_city.provider.filter.city_choice_tree.class%
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@oro_locale.dql.formatter.name'

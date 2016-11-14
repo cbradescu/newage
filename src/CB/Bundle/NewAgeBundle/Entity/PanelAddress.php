@@ -109,16 +109,15 @@ class PanelAddress implements PrimaryItem
     protected $street2;
 
     /**
-     * @var string
+     * @var City
      *
-     * @ORM\Column(name="city", type="string", length=255, nullable=true)
-     * @Soap\ComplexType("string", nillable=true)
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\City")
+     * @ORM\JoinColumn(name="city_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
-     *          "importexport"={
-     *              "order"=110,
-     *              "identity"=true
-     *          }
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *      }
      * )
      */
@@ -284,7 +283,7 @@ class PanelAddress implements PrimaryItem
     /**
      * Set city
      *
-     * @param string $city
+     * @param City $city
      * @return PanelAddress
      */
     public function setCity($city)
@@ -297,7 +296,7 @@ class PanelAddress implements PrimaryItem
     /**
      * Get city
      *
-     * @return string
+     * @return City
      */
     public function getCity()
     {

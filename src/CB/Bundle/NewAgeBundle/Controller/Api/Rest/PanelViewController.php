@@ -21,6 +21,8 @@ use FOS\RestBundle\Routing\ClassResourceInterface;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
+use Oro\Bundle\SoapBundle\Request\Parameters\Filter\StringToArrayParameterFilter;
+
 /**
  * @Rest\RouteResource("panel_view")
  * @Rest\NamePrefix("cb_newage_panel_view_api_")
@@ -68,9 +70,9 @@ class PanelViewController extends RestController implements ClassResourceInterfa
      * )
      * @QueryParam(
      *      name="city",
-     *      requirements="\.+",
+     *      requirements=".+",
      *      nullable=true,
-     *      description="City."
+     *      description="City id. One or several city ids separated by comma. Defaults to all cities"
      * )
      * @ApiDoc(
      *     description="Get all PanelView items",
@@ -90,7 +92,12 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         $panelViewId  = (int)$this->getRequest()->get('id', 0);
         $supportTypeId  = (int)$this->getRequest()->get('supportType', 0);
         $lightingTypeId  = (int)$this->getRequest()->get('lightingType', 0);
-        $city  = (string)$this->getRequest()->get('city', null);
+
+        $city = $this->getRequest()->get('city', null);
+        if ($city and $city!='All')
+            $cities = explode(',', $city);
+        else
+            $cities = [];
 
         if ($panelId)
             $qb->andWhere('p.id=:panelId')
@@ -104,9 +111,9 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         if ($lightingTypeId)
             $qb->andWhere('p.lightingType=:lightingTypeId')
                 ->setParameter('lightingTypeId', $lightingTypeId);
-        if ($city)
-            $qb->andWhere('LOWER(a.city) LIKE :city')
-                ->setParameter('city', "%$city%");
+        if (count($cities)!=0)
+            $qb->andWhere($qb->expr()->in('a.city', ':cities'))
+                ->setParameter('cities', $cities);
 
         $result = $qb->getQuery()->getResult();
 
