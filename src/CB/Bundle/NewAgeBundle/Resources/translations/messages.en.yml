@@ -100,3 +100,14 @@ cb:
       dashboard:
           title.newage_launchpad: New Age Launchpad
           newage_launchpad_widget_description: This widget gives you access to most commonly used actions and pages
+
+      city:
+            entity_label:                  City
+            entity_plural_label:           Cities
+            block.general:                 City
+            message:
+                saved:                     City saved
+            id.label:                      Id
+            name.label:                    Name
+            owner.label:                   Owner
+            organization.label:            Organization

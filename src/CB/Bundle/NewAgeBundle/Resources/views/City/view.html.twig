@@ -1,0 +1,74 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+{% block stats %}
+    <li>
+        {{ 'oro.ui.created_at'|trans }}:
+        {{ entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A'|trans }}
+    </li>
+    <li>
+        {{ 'oro.ui.updated_at'|trans }}:
+        {{ entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A'|trans }}
+    </li>
+{% endblock %}
+
+{% oro_title_set({params : {"%entity.name%": entity.name|default('N/A') }}) %}
+
+{% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+        'path' : path('cb_newage_city_update', { id: entity.id }),
+        'entity_label': 'cb.newage.city.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+        'dataUrl': path('cb_newage_city_api_delete_city', {'id': entity.id}),
+        'dataRedirect': path('cb_newage_city_index'),
+        'aCss': 'no-hash remove-button',
+        'id': 'btn-remove-user',
+        'dataId': entity.id,
+        'entity_label': 'cb.newage.city.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity': entity,
+    'indexPath': path('cb_newage_city_index'),
+    'indexLabel': 'cb.newage.city.entity_plural_label'|trans,
+    'entityTitle': entity.name
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {%- set cityInformation -%}
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('cb.newage.city.name.label'|trans, entity.name) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(entity) }}
+        </div>
+    </div>
+    {%- endset -%}
+    {% set dataBlocks = [
+    {
+    'title': 'cb.newage.city.block.general'|trans,
+    'class': 'active',
+    'subblocks': [
+    {'data' : [cityInformation]}
+    ]
+    }
+    ] %}
+
+
+    {% set id = 'cityView' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+
+    {{ parent() }}
+{% endblock content_data %}

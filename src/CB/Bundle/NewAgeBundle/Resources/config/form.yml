@@ -22,6 +22,10 @@ parameters:
 
     cb_newage_panel_address_collection.form.type.entity.class:          CB\Bundle\NewAgeBundle\Form\Type\PanelAddressCollectionType
 
+    cb_newage_city.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\CityType
+    cb_newage_city.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\CityApiType
+    cb_newage_city.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\CityHandler
+
 services:
     cb_newage_panel.form.type.entity:
         class: %cb_newage_panel.form.type.entity.class%
@@ -262,3 +266,50 @@ services:
         class: %cb_newage_panel_address_collection.form.type.entity.class%
         tags:
              - { name: form.type, alias: cb_panel_address_collection }
+
+    cb_newage_city.form.type.entity:
+        class: %cb_newage_city.form.type.entity.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        tags:
+            - { name: form.type, alias: cb_newage_city }
+
+    cb_newage_city.form.handler.entity:
+        class: %cb_newage_city.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_city.form.entity
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_city.form.entity:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'cb_newage_city_form'
+            - 'cb_newage_city'
+
+    cb_newage_city.form.type.entity.api:
+        class: %cb_newage_city.form.type.entity.api.class%
+        tags:
+            - { name: form.type, alias: cb_newage_city_api }
+
+    cb_newage_city.form.handler.entity.api:
+        class: %cb_newage_city.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_city.form.entity.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_city.form.entity.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'city'
+            - 'cb_newage_city_api'

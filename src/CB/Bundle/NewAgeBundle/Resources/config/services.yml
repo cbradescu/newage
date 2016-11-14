@@ -29,6 +29,10 @@ parameters:
     cb_newage_lighting_type.manager.class:              CB\Bundle\NewAgeBundle\Model\LightingTypeManager
     cb_newage_lighting_type.manager.api.class:          CB\Bundle\NewAgeBundle\Model\LightingTypeApiManager
 
+    cb_newage_city.entity.class:               CB\Bundle\NewAgeBundle\Entity\City
+    cb_newage_city.manager.class:              CB\Bundle\NewAgeBundle\Model\CityManager
+    cb_newage_city.manager.api.class:          CB\Bundle\NewAgeBundle\Model\CityApiManager
+
 services:
     cb_newage_panel.manager:
         class: %cb_newage_panel.manager.class%
@@ -142,3 +146,17 @@ services:
             - %cb_newage_lighting_type.entity.class%
             - @doctrine.orm.entity_manager
             - @cb_newage_lighting_type.manager
+
+    cb_newage_city.manager:
+        class: %cb_newage_city.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.acl_helper
+
+    cb_newage_city.manager.api:
+        class: %cb_newage_city.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %cb_newage_city.entity.class%
+            - @doctrine.orm.entity_manager
+            - @cb_newage_city.manager

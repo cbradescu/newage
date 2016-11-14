@@ -671,3 +671,67 @@ datagrid:
                 link:         delete_link
     lighting_type-grid:
         extends: base-lighting_type-grid
+
+    base-city-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_city_view
+            query:
+                select:
+                    - city.id
+                    - city.name
+                from:
+                    - { table: %cb_newage_city.entity.class%, alias: city }
+        columns:
+            name:
+                label:        cb.newage.city.name.label
+
+        sorters:
+            columns:
+                name:
+                    data_name: city.name
+
+            default:
+                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+
+        filters:
+            columns:
+
+        properties:
+            id: ~
+            view_link:
+                type:         url
+                route:        cb_newage_city_view
+                params:       [ id ]
+            update_link:
+                type:         url
+                route:        cb_newage_city_update
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_newage_city_api_delete_city
+                params:       [ id ]
+        actions:
+            view:
+                type:         navigate
+                acl_resource: cb_newage_city_view
+                label:        oro.grid.action.view
+                icon:         eye-open
+                link:         view_link
+                rowAction:    true
+            update:
+                type:         navigate
+                acl_resource: cb_newage_city_update
+                label:        oro.grid.action.update
+                icon:         edit
+                link:         update_link
+            delete:
+                type:         delete
+                acl_resource: cb_newage_city_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+    city-grid:
+        extends: base-city-grid
+        filters:
+            columns:

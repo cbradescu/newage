@@ -1,0 +1,13 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% set pageTitle = 'cb.newage.city.entity_plural_label'|trans %}
+{% set gridName = 'city-grid' %}
+{% block navButtons %}
+    {% if true or resource_granted('cb_newage_city_create') %}
+        {{ UI.addButton({
+            'path' : path('cb_newage_city_create'),
+            'label': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.city.entity_label'|trans}),
+            'title': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.city.entity_label'|trans})
+        }) }}
+    {% endif %}
+{% endblock %}

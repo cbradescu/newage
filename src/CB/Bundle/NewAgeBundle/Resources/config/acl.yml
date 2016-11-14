@@ -137,3 +137,30 @@ cb_newage_lighting_type_delete:
     permission: DELETE
     group_name: ""
     bindings: ~
+
+cb_newage_city_create:
+    type: entity
+    class: CBNewAgeBundle:City
+    permission: CREATE
+    group_name: ""
+    bindings: ~
+
+cb_newage_city_view:
+    type: entity
+    class: CBNewAgeBundle:City
+    permission: VIEW
+    group_name: ""
+    bindings: ~
+
+cb_newage_city_update:
+    type: entity
+    class: CBNewAgeBundle:City
+    permission: EDIT
+    group_name: ""
+    bindings: ~
+
+cb_newage_city_delete:
+    type: entity
+    class: CBNewAgeBundle:City
+    permission: DELETE
+    group_name: ""
