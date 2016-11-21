@@ -26,6 +26,12 @@ parameters:
     cb_newage_city.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\CityApiType
     cb_newage_city.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\CityHandler
 
+    cb_newage_offer.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\OfferType
+    cb_newage_offer.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\OfferApiType
+    cb_newage_offer.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\OfferHandler
+
+    cb_form.type.panel_view_multiple_entity.class: CB\Bundle\NewAgeBundle\Form\Type\PanelViewMultipleEntityType
+
 services:
     cb_newage_panel.form.type.entity:
         class: %cb_newage_panel.form.type.entity.class%
@@ -313,3 +319,59 @@ services:
         arguments:
             - 'city'
             - 'cb_newage_city_api'
+
+    cb_newage_offer.form.type.entity:
+        class: %cb_newage_offer.form.type.entity.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        tags:
+            - { name: form.type, alias: cb_newage_offer }
+
+    cb_newage_offer.form.handler.entity:
+        class: %cb_newage_offer.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_offer.form.entity
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_offer.form.entity:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'cb_newage_offer_form'
+            - 'cb_newage_offer'
+
+    cb_newage_offer.form.type.entity.api:
+        class: %cb_newage_offer.form.type.entity.api.class%
+        tags:
+            - { name: form.type, alias: cb_newage_offer_api }
+
+    cb_newage_offer.form.handler.entity.api:
+        class: %cb_newage_offer.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_offer.form.entity.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_offer.form.entity.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'offer'
+            - 'cb_newage_offer_api'
+
+    cb_form.type.panel_view_multiple_entity:
+        class: %cb_form.type.panel_view_multiple_entity.class%
+        arguments:
+            - '@router'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_security.security_facade'
+        tags:
+            - { name: form.type, alias: cb_panel_view_multiple_entity }

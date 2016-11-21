@@ -1,0 +1,91 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+{% block stats %}
+{% endblock %}
+
+{% oro_title_set({params : {"%entity.name%": entity.name|default('N/A') }}) %}
+
+{% block navButtons %}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity': entity,
+    'indexPath': path('cb_newage_offer_index'),
+    'indexLabel': 'cb.newage.offer.entity_plural_label'|trans,
+    'entityTitle': entity.name
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {%- set offerInformation -%}
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('cb.newage.offer.name.label'|trans, entity.name) }}
+            {{ UI.renderProperty('cb.newage.campaign.start.label'|trans, entity.start|oro_format_date) }}
+            {{ UI.renderProperty('cb.newage.campaign.end.label'|trans, entity.end|oro_format_date) }}
+
+            {%- set campaignData -%}
+                {%- if entity.campaign -%}
+                    <a href="{{ path('cb_newage_campaign_view', {'id': entity.campaign.id}) }}">
+                        {{ entity.campaign }}
+                    </a>
+                {%- endif -%}
+            {%- endset -%}
+
+            {{ UI.renderHtmlProperty('cb.newage.campaign.entity_label'|trans, campaignData) }}
+
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(entity) }}
+        </div>
+    </div>
+    {%- endset -%}
+
+    {% set dataBlocks = [
+    {
+        'title': 'cb.newage.offer.block.general'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [offerInformation]}
+        ]
+    }
+    ] %}
+
+    {% if entity.panelViews %}
+        {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+        {% set gridName = 'selected-panel_view-grid' %}
+        {% set params = {offer: entity.id} %}
+
+        {%- set gridSelectedPanelViews -%}
+            {% if gridName is defined %}
+                {% if gridScope is defined %}
+                    {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+                {% endif %}
+                {% if params is defined %}
+                    {{ dataGrid.renderGrid(gridName, params) }}
+                {% else %}
+                    {{ dataGrid.renderGrid(gridName) }}
+                {% endif %}
+            {% endif %}
+        {%- endset -%}
+
+        {% set dataBlocks = dataBlocks|merge([
+        {
+        'title': 'cb.newage.panelview.entity_plural_label'|trans,
+        'subblocks': [
+        {'data' : [gridSelectedPanelViews]}
+        ]
+        }
+        ]) %}
+    {% endif %}
+
+    {% set id = 'offerView' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+
+    {{ parent() }}
+{% endblock content_data %}

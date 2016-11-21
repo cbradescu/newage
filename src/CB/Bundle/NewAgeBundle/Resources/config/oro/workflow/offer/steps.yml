@@ -1,0 +1,21 @@
+workflows:
+    offer:
+        steps:
+            started:
+                label: 'Initiated'
+                order: 10
+                allowed_transitions:
+                    - create
+                    - filters
+
+            filtered:
+                label: 'Panel Views selected'
+                order: 20
+                allowed_transitions:
+                    - filters
+                    - close
+
+            closed:
+                label: 'Finished'
+                order: 30
+                allowed_transitions:

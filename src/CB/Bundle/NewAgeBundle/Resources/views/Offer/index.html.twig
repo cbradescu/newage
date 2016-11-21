@@ -1,0 +1,8 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% set pageTitle = 'cb.newage.offer.entity_plural_label'|trans %}
+{% set gridName = 'offer-grid' %}
+
+{% block navButtons %}
+    {% include 'OroWorkflowBundle:Widget:buttons.html.twig' %}
+{% endblock navButtons %}

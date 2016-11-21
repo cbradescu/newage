@@ -113,3 +113,20 @@ cb:
             organization.label:            Organization
             form:
                 choose_city:               Choose City
+
+      offer:
+            entity_label:                  Offer
+            entity_plural_label:           Offers
+            block.general:                 General
+            message:
+                saved:                     Offer saved
+            id.label:                      Id
+            name.label:                    Name
+            owner.label:                   Owner
+            organization.label:            Organization
+            start.label:                   Start
+            end.label:                     End
+            campaign.label:                Campaign
+            panel_views_no.label:          Panel Views No.
+            form:
+                select_panel_views:        Select Panel Views

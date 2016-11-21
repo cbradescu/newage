@@ -164,3 +164,31 @@ cb_newage_city_delete:
     class: CBNewAgeBundle:City
     permission: DELETE
     group_name: ""
+
+cb_newage_offer_create:
+    type: entity
+    class: CBNewAgeBundle:Offer
+    permission: CREATE
+    group_name: ""
+    bindings: ~
+
+cb_newage_offer_view:
+    type: entity
+    class: CBNewAgeBundle:Offer
+    permission: VIEW
+    group_name: ""
+    bindings: ~
+
+cb_newage_offer_update:
+    type: entity
+    class: CBNewAgeBundle:Offer
+    permission: EDIT
+    group_name: ""
+    bindings: ~
+
+cb_newage_offer_delete:
+    type: entity
+    class: CBNewAgeBundle:Offer
+    permission: DELETE
+    group_name: ""
+    bindings: ~

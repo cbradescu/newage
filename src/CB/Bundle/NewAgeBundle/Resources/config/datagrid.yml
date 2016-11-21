@@ -328,219 +328,6 @@ datagrid:
                 name:
                     data_name: panelView.name
 
-    available-grid:
-        source:
-            type: available
-        columns:
-            panelViewId:
-                label: Id
-                data_name: panelViewId
-            panelViewName:
-                label: Panel View
-                data_name: panelViewName
-            panelName:
-                label: Panel
-                data_name: panelName
-            d1:
-                label: 1
-                data_name: d1
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d2:
-                label: 2
-                data_name: d2
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d3:
-                label: 3
-                data_name: d3
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d4:
-                label: 4
-                data_name: d4
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d5:
-                label: 5
-                data_name: d5
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d6:
-                label: 6
-                data_name: d6
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d7:
-                label: 07
-                data_name: d7
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d8:
-                label: 8
-                data_name: d8
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d9:
-                label: 9
-                data_name: d9
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d10:
-                label: 10
-                data_name: d10
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d11:
-                label: 11
-                data_name: d11
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d12:
-                label: 12
-                data_name: d12
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d13:
-                label: 13
-                data_name: d13
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d14:
-                label: 14
-                data_name: d14
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d15:
-                label: 15
-                data_name: d15
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d16:
-                label: 16
-                data_name: d16
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d17:
-                label: 17
-                data_name: d17
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d18:
-                label: 18
-                data_name: d18
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d19:
-                label: 19
-                data_name: d19
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d20:
-                label: 20
-                data_name: d20
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d21:
-                label: 21
-                data_name: d21
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d22:
-                label: 22
-                data_name: d22
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d23:
-                label: 23
-                data_name: d23
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d24:
-                label: 24
-                data_name: d24
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d25:
-                label: 25
-                data_name: d25
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d26:
-                label: 26
-                data_name: d26
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d27:
-                label: 27
-                data_name: d27
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d28:
-                label: 28
-                data_name: d28
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d29:
-                label: 29
-                data_name: d29
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d30:
-                label: 30
-                data_name: d30
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-            d31:
-                label: 31
-                data_name: d31
-                frontend_type: html
-                type: twig
-                template: CBNewAgeBundle:Available:Datagrid/cell.html.twig
-        properties: ~
-        sorters: ~
-        filters:
-            name:
-                type: string
-                data_name: name
-                enabled: true
-        options:
-            toolbarOptions:
-                hide: true
-#                pagination:
-#                    hide: true
-#                    onePage: true
-
     base-support_type-grid:
         source:
             type: orm
@@ -742,3 +529,279 @@ datagrid:
         extends: base-city-grid
         filters:
             columns:
+
+    base-offer-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_offer_view
+            query:
+                select:
+                    - offer.id
+                    - offer.name
+                    - c.title as campaign
+                    - offer.start
+                    - offer.end
+                    - COUNT(pv.id) as panelViewsNo
+                from:
+                    - { table: %cb_newage_offer.entity.class%, alias: offer }
+                join:
+                    left:
+                        -
+                            join: offer.campaign
+                            alias: c
+                        -
+                            join: offer.panelViews
+                            alias: pv
+
+        columns:
+            id:
+                label:  cb.newage.offer.id.label
+            name:
+                label:  cb.newage.offer.name.label
+            campaign:
+                label:  cb.newage.campaign.entity_label
+            start:
+                label: cb.newage.offer.start.label
+                frontend_type: date
+            end:
+                label: cb.newage.offer.end.label
+                frontend_type: date
+            panelViewsNo:
+                label:  cb.newage.offer.panel_views_no.label
+        sorters:
+            columns:
+                id:
+                    data_name: offer.id
+                name:
+                    data_name: offer.name
+                campaign:
+                    data_name: c.title
+
+            default:
+                id:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: offer.name
+                campaign:
+                    type: entity
+                    data_name: offer.campaign
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:Campaign
+                start:
+                    type:      date
+                    data_name: offer.start
+                end:
+                    type:      date
+                    data_name: offer.end
+
+        properties:
+            id: ~
+            view_link:
+                type:         url
+                route:        cb_newage_offer_view
+                params:       [ id ]
+            update_link:
+                type:         url
+                route:        cb_newage_offer_update
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_newage_offer_api_delete_offer
+                params:       [ id ]
+        actions:
+            view:
+                type:         navigate
+                acl_resource: cb_newage_offer_view
+                label:        oro.grid.action.view
+                icon:         eye-open
+                link:         view_link
+                rowAction:    true
+            update:
+                type:         navigate
+                acl_resource: cb_newage_offer_update
+                label:        oro.grid.action.update
+                icon:         edit
+                link:         update_link
+            delete:
+                type:         delete
+                acl_resource: cb_newage_offer_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+    offer-grid:
+        extends: base-offer-grid
+
+    free-panel_view-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_panel_view_view
+            query:
+                select:
+                    - pv.id
+                    - pv.name
+                    - p.name as panel
+                    - st.name as support
+                    - lt.name as lighting
+                    - ct.name as city
+                    - >
+                        (CASE WHEN (:offer IS NOT NULL) THEN
+                            CASE WHEN (:offer MEMBER OF pv.offers OR pv.id IN (:data_in)) AND pv.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                          ELSE
+                            CASE WHEN pv.id IN (:data_in) AND pv.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                          END) as hasContact
+
+                from:
+                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
+                join:
+                    left:
+                        -
+                            join: pv.panel
+                            alias: p
+                        -
+                            join: p.supportType
+                            alias: st
+                        -
+                            join: p.lightingType
+                            alias: lt
+                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
+                        -
+                            join: addr.city
+                            alias: ct
+                        -
+                            join: pv.events
+                            alias: ev
+                            conditionType: WITH
+                            condition: '(ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)'
+                where:
+                    and:
+                        - ev.panelView IS NULL
+            bind_parameters:
+                - offer
+                - start
+                - end
+
+        columns:
+            hasContact:
+                label:   orocrm.account.assigned.label
+                editable: true
+                frontend_type: boolean
+            panel:
+                label:        cb.newage.panel.entity_label
+            name:
+                label:        cb.newage.panelview.name.label
+            support:
+                label:        cb.newage.supporttype.entity_label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
+            city:
+                label:        oro.address.city.label
+            eventId:
+                label:        cb.scheduler.scheduler_event.id.label
+        sorters:
+            columns:
+                panel:
+                    data_name: p.name
+                name:
+                    data_name: pv.name
+            default:
+                panel: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+
+        filters:
+            columns:
+                support:
+                    type: entity
+                    data_name: st.name
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:SupportType
+                lighting:
+                    type: entity
+                    data_name: lt.name
+                    options:
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:LightingType
+                            property: name
+                city:
+                    type: choice-tree
+                    data_name: addr.city
+                    options:
+                        lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
+                        data: "@?cb_city.provider.filter.city_choice_tree->getList"
+                    enabled: true
+        properties:
+            id: ~
+        action_configuration:
+            delete: false
+        options:
+            mass_actions:
+                delete:
+                    enabled: false
+            routerEnabled: false
+            rowSelection:
+                dataField: id
+                columnName: hasContact
+                selectors:
+                    included: '#appendPanelViews'
+                    excluded: '#removePanelViews'
+
+    selected-panel_view-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_panel_view_view
+            query:
+                select:
+                    - pv.id
+                    - pv.name
+                    - p.name as panel
+                    - st.name as support
+                    - lt.name as lighting
+                    - ct.name as city
+                from:
+                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
+                join:
+                    left:
+                        -
+                            join: pv.panel
+                            alias: p
+                        -
+                            join: p.supportType
+                            alias: st
+                        -
+                            join: p.lightingType
+                            alias: lt
+                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
+                        -
+                            join: addr.city
+                            alias: ct
+                where:
+                    and:
+                        - :offer MEMBER OF pv.offers
+            bind_parameters:
+                - offer
+
+        columns:
+            panel:
+                label:        cb.newage.panel.entity_label
+            name:
+                label:        cb.newage.panelview.name.label
+            support:
+                label:        cb.newage.supporttype.entity_label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
+            city:
+                label:        oro.address.city.label
+
+        action_configuration:
+            delete: false
+        options:
+            mass_actions:
+                delete:
+                    enabled: false

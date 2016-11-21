@@ -20,3 +20,6 @@ cb_newage_lighting_type_api:
 cb_newage_city_api:
     resource:     "@CBNewAgeBundle/Controller/Api/Rest/CityController.php"
     type:         rest
+cb_newage_offer_api:
+    resource:     "@CBNewAgeBundle/Controller/Api/Rest/OfferController.php"
+    type:         rest

@@ -106,6 +106,22 @@ class PanelView
     protected $events;
 
     /**
+     * @var Collection
+     *
+     * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\Offer", mappedBy="panelViews")
+     * @ORM\JoinTable(name="cb_newage_offer_to_panel_view")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=240,
+     *              "short"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $offers;
+
+    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -132,6 +148,7 @@ class PanelView
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->offers = new ArrayCollection();
     }
 
     /**
@@ -182,7 +199,60 @@ class PanelView
         $this->panel = $panel;
     }
 
-        /**
+    /**
+     * Get offers collection
+     *
+     * @return Collection|Offer[]
+     */
+    public function getOffers()
+    {
+        return $this->offers;
+    }
+
+    /**
+     * Add specified offer
+     *
+     * @param Offer $offer
+     *
+     * @return PanelView
+     */
+    public function addOffer(Offer $offer)
+    {
+        if (!$this->getOffers()->contains($offer)) {
+            $this->getOffers()->add($offer);
+            $offer->addPanelView($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove specified offer
+     *
+     * @param Offer $offer
+     *
+     * @return PanelView
+     */
+    public function removeOffer(Offer $offer)
+    {
+        if ($this->getOffers()->contains($offer)) {
+            $this->getOffers()->removeElement($offer);
+            $offer->removePanelView($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasOffers()
+    {
+        return count($this->offers) > 0;
+    }
+    
+
+    /**
      * @param User $owningUser
      *
      * @return PanelView
@@ -223,5 +293,20 @@ class PanelView
     public function getOrganization()
     {
         return $this->organization;
+    }
+
+    public function getCity()
+    {
+        return $this->panel->getAddresses()->first()->getCity()->getName();
+    }
+
+    public function getSupport()
+    {
+        return $this->panel->getSupportType()->getName();
+    }
+
+    public function getLighting()
+    {
+        return $this->panel->getLightingType()->getName();
     }
 }
