@@ -716,19 +716,19 @@ datagrid:
         filters:
             columns:
                 support:
-                    type: entity
+                    type: choice-tree
                     data_name: st.name
                     options:
-                        field_options:
-                            class: CBNewAgeBundle:SupportType
+                        lazy: "@cb_support.provider.filter.support_choice_tree->shouldBeLazy"
+                        data: "@?cb_support.provider.filter.support_choice_tree->getList"
+                    enabled: true
                 lighting:
-                    type: entity
+                    type: choice-tree
                     data_name: lt.name
                     options:
-                    options:
-                        field_options:
-                            class: CBNewAgeBundle:LightingType
-                            property: name
+                        lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
+                        data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
+                    enabled: true
                 city:
                     type: choice-tree
                     data_name: addr.city

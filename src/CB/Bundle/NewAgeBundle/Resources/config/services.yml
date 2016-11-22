@@ -34,6 +34,8 @@ parameters:
     cb_newage_city.manager.api.class:          CB\Bundle\NewAgeBundle\Model\CityApiManager
 
     cb_city.provider.filter.city_choice_tree.class: CB\Bundle\NewAgeBundle\Provider\Filter\ChoiceTreeCityProvider
+    cb_lighting.provider.filter.lighting_choice_tree.class: CB\Bundle\NewAgeBundle\Provider\Filter\ChoiceTreeLightingProvider
+    cb_support.provider.filter.support_choice_tree.class: CB\Bundle\NewAgeBundle\Provider\Filter\ChoiceTreeSupportProvider
 
     cb_newage_offer.entity.class:               CB\Bundle\NewAgeBundle\Entity\Offer
     cb_newage_offer.manager.class:              CB\Bundle\NewAgeBundle\Model\OfferManager
@@ -169,6 +171,20 @@ services:
 
     cb_city.provider.filter.city_choice_tree:
         class: %cb_city.provider.filter.city_choice_tree.class%
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@oro_locale.dql.formatter.name'
+
+    cb_lighting.provider.filter.lighting_choice_tree:
+        class: %cb_lighting.provider.filter.lighting_choice_tree.class%
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@oro_locale.dql.formatter.name'
+
+    cb_support.provider.filter.support_choice_tree:
+        class: %cb_support.provider.filter.support_choice_tree.class%
         arguments:
             - '@doctrine'
             - '@oro_security.acl_helper'
