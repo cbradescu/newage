@@ -49,7 +49,7 @@ class PanelViewMultipleEntityType extends AbstractType
                 'id' => $panelView->getId(),
                 'label' => $panelView->getPanel()->getName() . ' ' . $panelView->getName(),
                 'link' => $this->router->generate(
-                    'cb_offer_widget_panel_views_info',
+                    'cb_newage_panel_view_info',
                     array('id' => $panelView->getId())
                 ),
                 'extraData' => array(

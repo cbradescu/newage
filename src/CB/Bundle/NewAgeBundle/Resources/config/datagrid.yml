@@ -677,7 +677,7 @@ datagrid:
                             join: pv.events
                             alias: ev
                             conditionType: WITH
-                            condition: '(ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)'
+                            condition: (ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)
                 where:
                     and:
                         - ev.panelView IS NULL
@@ -701,8 +701,6 @@ datagrid:
                 label:        cb.newage.lightingtype.entity_label
             city:
                 label:        oro.address.city.label
-            eventId:
-                label:        cb.scheduler.scheduler_event.id.label
         sorters:
             columns:
                 panel:
@@ -736,11 +734,13 @@ datagrid:
                         lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
                         data: "@?cb_city.provider.filter.city_choice_tree->getList"
                     enabled: true
+
         properties:
             id: ~
         action_configuration:
             delete: false
         options:
+            entityHint: panelView
             mass_actions:
                 delete:
                     enabled: false
@@ -798,6 +798,15 @@ datagrid:
                 label:        cb.newage.lightingtype.entity_label
             city:
                 label:        oro.address.city.label
+
+        filters:
+            columns:
+                support:
+                    type: string
+                    data_name: st.name
+                lighting:
+                    type: string
+                    data_name: p.lightingType
 
         action_configuration:
             delete: false

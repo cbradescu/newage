@@ -4,14 +4,13 @@
 
     {% set params = {
     'offer': offer ? offer.id : null,
-    'start': offer ? offer.start : 'now'|date('Y-m-') ~ '01',
-    'end': offer ? offer.end : 'now'|date('Y-m-t'),
+    'start': offer ? offer.start|date('Y-m-d') : 'now'|date('Y-m-') ~ '01',
+    'end': offer ? offer.end|date('Y-m-d') : 'now'|date('Y-m-t'),
     '_parameters' : {
         'data_in':     app.request.get('added') ? app.request.get('added')|split(',') : [],
         'data_not_in': app.request.get('removed') ? app.request.get('removed')|split(','): []
     }
     } %}
-
 
     <style type="text/css">
         .grid-widget-content .grid,
