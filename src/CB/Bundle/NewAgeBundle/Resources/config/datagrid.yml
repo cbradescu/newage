@@ -713,16 +713,19 @@ datagrid:
 
         filters:
             columns:
+                hasContact:
+                    data_name: hasContact
+                    type:      boolean
                 support:
                     type: choice-tree
-                    data_name: st.name
+                    data_name: p.supportType
                     options:
                         lazy: "@cb_support.provider.filter.support_choice_tree->shouldBeLazy"
                         data: "@?cb_support.provider.filter.support_choice_tree->getList"
                     enabled: true
                 lighting:
                     type: choice-tree
-                    data_name: lt.name
+                    data_name: p.lightingType
                     options:
                         lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
                         data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
