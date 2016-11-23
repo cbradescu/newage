@@ -14,11 +14,14 @@ cb:
             code.label:                    Code
             lighting.label:                Lighting
             address:
+                label:                    Address
                 latitude.label:                  Latitude
                 longitude.label:                 Longitude
+                gps.label:                 GPS coords
             dimensions.label:              Dimensions
             neighborhoods.label:           Neighborhoods
             photo.label:                   Photo
+            url.label:                     Photo url
             owner.label:                   Owner
             organization.label:            Organization
 
@@ -40,6 +43,7 @@ cb:
             campaigns.label:               Campaigns
             events.label:                  Events
             panel.label:                   Panel
+            url.label:                     Photo url
             add:
                 label:                     Add Panel View
                 title:                     Add Panel View

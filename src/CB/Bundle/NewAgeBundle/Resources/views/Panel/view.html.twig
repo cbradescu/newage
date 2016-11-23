@@ -81,6 +81,14 @@
         {%- endif -%}
     {%- endset -%}
 
+    {%- set urlData -%}
+        {%- if entity.url -%}
+            <a href="{{ entity.url }}" target="_blank">
+                {{ entity.url }}
+            </a>
+        {%- endif -%}
+    {%- endset -%}
+
     {%- set photo -%}
         {%- if entity.photo -%}
             <img src="{{ oro_configured_image_url(entity, 'photo') }}"/>
@@ -95,6 +103,7 @@
             {{ UI.renderHtmlProperty('cb.newage.lightingtype.entity_label'|trans, lightingTypeInformation) }}
             {{ UI.renderProperty('cb.newage.panel.dimensions.label'|trans, entity.dimensions) }}
             {{ UI.renderHtmlProperty('cb.newage.panel.neighborhoods.label'|trans, entity.neighborhoods|escape|nl2br) }}
+            {{ UI.renderHtmlProperty('cb.newage.panel.url.label'|trans, urlData) }}
             {{ UI.renderHtmlProperty('cb.newage.panel.photo.label'|trans, photo) }}
         </div>
         <div class="responsive-block">

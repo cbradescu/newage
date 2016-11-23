@@ -59,7 +59,11 @@
     {% if entity.panelViews %}
         {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
         {% set gridName = 'selected-panel_view-grid' %}
-        {% set params = {offer: entity.id} %}
+        {%
+            set params = {
+                offer: entity.id
+            }
+        %}
 
         {%- set gridSelectedPanelViews -%}
             {% if gridName is defined %}

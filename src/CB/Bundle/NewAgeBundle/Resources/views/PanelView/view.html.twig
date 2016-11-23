@@ -43,17 +43,24 @@
         <div class="responsive-block">
 
             {%- set panelData -%}
-            {%- if entity.panel -%}
-                <a href="{{ path('cb_newage_panel_view', {'id': entity.panel.id}) }}">
-                    {{ entity.panel }}
-                </a>
-            {%- endif -%}
+                {%- if entity.panel -%}
+                    <a href="{{ path('cb_newage_panel_view', {'id': entity.panel.id}) }}">
+                        {{ entity.panel }}
+                    </a>
+                {%- endif -%}
             {%- endset -%}
-
             {{ UI.renderHtmlProperty('cb.newage.panel.entity_label'|trans, panelData) }}
 
-
             {{ UI.renderProperty('cb.newage.panelview.name.label'|trans, entity.name) }}
+
+            {%- set urlData -%}
+                {%- if entity.url -%}
+                    <a href="{{ entity.url }}" target="_blank">
+                        {{ entity.url }}
+                    </a>
+                {%- endif -%}
+            {%- endset -%}
+            {{ UI.renderhtmlProperty('cb.newage.panelview.url.label'|trans, urlData) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

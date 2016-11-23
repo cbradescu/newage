@@ -163,6 +163,20 @@ class Panel
     protected $addresses;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="url", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $url;
+
+    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -454,6 +468,21 @@ class Panel
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
 
     /**
      * @param User $owningUser

@@ -99,6 +99,20 @@ class PanelView
     protected $panel;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="url", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $url;
+
+    /**
      * @var ArrayCollection|SchedulerEvent[]
      *
      * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="panelView", cascade={"persist"})
@@ -250,7 +264,23 @@ class PanelView
     {
         return count($this->offers) > 0;
     }
-    
+
+
+    /**
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
 
     /**
      * @param User $owningUser

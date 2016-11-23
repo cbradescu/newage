@@ -763,10 +763,13 @@ datagrid:
                 select:
                     - pv.id
                     - pv.name
+                    - pv.url as panelViewUrl
                     - p.name as panel
+                    - p.dimensions
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
+                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
                 from:
                     - { table: %cb_newage_panel_view.entity.class%, alias: pv }
                 join:
@@ -791,29 +794,33 @@ datagrid:
                 - offer
 
         columns:
-            panel:
-                label:        cb.newage.panel.entity_label
-            name:
-                label:        cb.newage.panelview.name.label
-            support:
-                label:        cb.newage.supporttype.entity_label
-            lighting:
-                label:        cb.newage.lightingtype.entity_label
+            panelViewUrl:
+                label:        cb.newage.panelview.url.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
             city:
                 label:        oro.address.city.label
+            address:
+                label:        cb.newage.panel.address.label
+            panel:
+                label:        cb.newage.panel.entity_label
+            support:
+                label:        cb.newage.supporttype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
+            name:
+                label:        cb.newage.panelview.name.label
 
         filters:
             columns:
-                support:
-                    type: string
-                    data_name: st.name
-                lighting:
-                    type: string
-                    data_name: p.lightingType
 
         action_configuration:
             delete: false
         options:
+            export: true
             mass_actions:
                 delete:
                     enabled: false
