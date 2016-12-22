@@ -3,17 +3,16 @@
 namespace CB\Bundle\SchedulerBundle\Entity;
 
 use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\PanelView;
+use CB\Bundle\NewAgeBundle\Entity\Reservation;
+use CB\Bundle\SchedulerBundle\Model\ExtendSchedulerEvent;
+
 use Doctrine\ORM\Mapping as ORM;
 
-use CB\Bundle\SchedulerBundle\Model\ExtendSchedulerEvent;
-use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @ORM\Entity(repositoryClass="CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerEventRepository")
@@ -134,6 +133,22 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      * )
      */
     protected $status;
+
+    /**
+     * @var Reservation
+     *
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Reservation", inversedBy="events")
+     * @ORM\JoinColumn(name="reservation_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $reservation;
+
 
     public function __construct()
     {
@@ -298,6 +313,30 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
 //        } else {
 //            throw new \LogicException(sprintf('Status "%s" is not supported', $status));
 //        }
+    }
+
+    /**
+     * Gets reservation
+     *
+     * @return Reservation|null
+     */
+    public function getReservation()
+    {
+        return $this->reservation;
+    }
+
+    /**
+     * Sets reservation
+     *
+     * @param Reservation $reservation
+     *
+     * @return self
+     */
+    public function setReservation(Reservation $reservation)
+    {
+        $this->reservation = $reservation;
+
+        return $this;
     }
 
     /**

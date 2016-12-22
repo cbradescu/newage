@@ -1,0 +1,33 @@
+parameters:
+    cb_newage.mass_action.reserve.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\ReserveMassAction
+    cb_newage.mass_action.reserve_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\ReserveMassActionHandler
+#    cb_newage.mass_action.reserve_mass_action_listener.class: CB\Bundle\NewAgeBundle\EventListener\DataGrid\ReserveMassActionListener
+
+services:
+    cb_newage.mass_action.reserve:
+        class: %cb_newage.mass_action.reserve.class%
+        arguments:
+            - '@translator'
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: reserve }
+
+
+    cb_newage.mass_action.reserve_handler:
+        class: %cb_newage.mass_action.reserve_handler.class%
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@translator'
+            - '@security.context'
+            - '@oro_security.security_facade.link'
+            - '@oro_email.email.manager'
+
+#    @TODO: Not used anymore.
+#    cb_newage.mass_action.reserve_mass_action_listener:
+#        class: %cb_newage.mass_action.reserve_mass_action_listener.class%
+#        calls:
+#            - [setRequest , ["@service_container"]]
+#        arguments:
+#            - '@doctrine.orm.entity_manager'
+#        tags:
+#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }

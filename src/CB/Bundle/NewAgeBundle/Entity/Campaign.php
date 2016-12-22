@@ -96,6 +96,7 @@ class Campaign
     protected $description;
 
     /**
+     * @TODO remove start and end from campaing entity.
      * @var \DateTime
      *
      * @ORM\Column(name="start_at", type="date")

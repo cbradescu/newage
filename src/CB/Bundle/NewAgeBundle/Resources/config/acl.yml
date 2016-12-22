@@ -192,3 +192,31 @@ cb_newage_offer_delete:
     permission: DELETE
     group_name: ""
     bindings: ~
+
+cb_newage_reservation_create:
+    type: entity
+    class: CBNewAgeBundle:Reservation
+    permission: CREATE
+    group_name: ""
+    bindings: ~
+
+cb_newage_reservation_view:
+    type: entity
+    class: CBNewAgeBundle:Reservation
+    permission: VIEW
+    group_name: ""
+    bindings: ~
+
+cb_newage_reservation_update:
+    type: entity
+    class: CBNewAgeBundle:Reservation
+    permission: EDIT
+    group_name: ""
+    bindings: ~
+
+cb_newage_reservation_delete:
+    type: entity
+    class: CBNewAgeBundle:Reservation
+    permission: DELETE
+    group_name: ""
+    bindings: ~

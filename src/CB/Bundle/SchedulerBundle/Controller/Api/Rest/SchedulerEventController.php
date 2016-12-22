@@ -4,7 +4,6 @@ namespace CB\Bundle\SchedulerBundle\Controller\Api\Rest;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
@@ -19,20 +18,21 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+
+use CB\Bundle\NewAgeBundle\Entity\Reservation;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerEventRepository;
+
+use Doctrine\ORM\EntityNotFoundException;
+
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
-use CB\Bundle\SchedulerBundle\Handler\DeleteHandler;
-use Oro\Bundle\SoapBundle\Request\Parameters\Filter\HttpDateTimeParameterFilter;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use CB\Bundle\NewAgeBundle\Entity\Campaign;
-use CB\Bundle\NewAgeBundle\Entity\PanelView;
 /**
  * @RouteResource("schedulerevent")
  * @NamePrefix("cb_api_")
@@ -314,7 +314,33 @@ class SchedulerEventController extends RestController implements ClassResourceIn
      */
     public function deleteAction($id)
     {
-        return $this->handleDeleteRequest($id);
+        $isProcessed = false;
+
+        try {
+            /** @var SchedulerEvent|null $entity */
+            $schedulerEvent = $this->getManager()->find($id);
+
+            if (!$schedulerEvent) {
+                throw new EntityNotFoundException();
+            }
+
+            /** @var Reservation $reservation */
+            $reservation = $schedulerEvent->getReservation();
+            $reservation->removeReservedPanelView($schedulerEvent->getPanelView());
+
+            $em = $this->getManager()->getObjectManager();
+            $em->remove($schedulerEvent);
+            $em->flush();
+
+            $isProcessed = true;
+            $view        = $this->view(null, Codes::HTTP_NO_CONTENT);
+        } catch (EntityNotFoundException $notFoundEx) {
+            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+        } catch (ForbiddenException $forbiddenEx) {
+            $view = $this->view(['reason' => $forbiddenEx->getReason()], Codes::HTTP_FORBIDDEN);
+        }
+
+        return $this->buildResponse($view, self::ACTION_DELETE, ['id' => $id, 'success' => $isProcessed]);
     }
 
     /**

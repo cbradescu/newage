@@ -3,11 +3,21 @@
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 
 {% block stats %}
-{% endblock %}
+    {% include 'CBNewAgeBundle:Panel:headerStats.html.twig' with {'entity': entity} %}
+{% endblock stats %}
 
 {% oro_title_set({params : {"%entity.name%": entity.name|default('N/A') }}) %}
 
 {% block navButtons %}
+    {% if entity.reservation %}
+        {% if resource_granted('VIEW', entity.reservation) %}
+            {{ UI.addButton({
+                'path': path('cb_newage_reservation_view', { 'id': entity.reservation.id }),
+                'aCss': 'no-hash',
+                'label': 'cb.newage.offer.view_reservation.label'|trans
+            }) }}
+        {% endif %}
+    {% endif %}
 {% endblock navButtons %}
 
 {% block pageHeader %}
@@ -58,12 +68,15 @@
 
     {% if entity.panelViews %}
         {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
         {% set gridName = 'selected-panel_view-grid' %}
-        {%
-            set params = {
+        {% if entity.workflowStep.isFinal and not entity.reservation %}
+            {% set gridName = 'select-panel_view-grid' %}
+        {% endif %}
+
+        {% set params = {
                 offer: entity.id
-            }
-        %}
+        } %}
 
         {%- set gridSelectedPanelViews -%}
             {% if gridName is defined %}

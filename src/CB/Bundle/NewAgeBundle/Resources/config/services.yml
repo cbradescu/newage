@@ -1,4 +1,3 @@
-
 parameters:
     cb_newage_panel.entity.class:               CB\Bundle\NewAgeBundle\Entity\Panel
     cb_newage_panel.manager.class:              CB\Bundle\NewAgeBundle\Model\PanelManager
@@ -11,8 +10,6 @@ parameters:
     cb_newage_campaign.entity.class:               CB\Bundle\NewAgeBundle\Entity\Campaign
     cb_newage_campaign.manager.class:              CB\Bundle\NewAgeBundle\Model\CampaignManager
     cb_newage_campaign.manager.api.class:          CB\Bundle\NewAgeBundle\Model\CampaignApiManager
-
-    cb_newage_available.datasource.available.class:     CB\Bundle\NewAgeBundle\Extension\AvailableDatasource
 
     cb_newage_panel_address.entity.class:               CB\Bundle\NewAgeBundle\Entity\PanelAddress
 #    cb_newage_panel_address.manager.class:              CB\Bundle\NewAgeBundle\Model\PanelAddressManager
@@ -40,6 +37,10 @@ parameters:
     cb_newage_offer.entity.class:               CB\Bundle\NewAgeBundle\Entity\Offer
     cb_newage_offer.manager.class:              CB\Bundle\NewAgeBundle\Model\OfferManager
     cb_newage_offer.manager.api.class:          CB\Bundle\NewAgeBundle\Model\OfferApiManager
+
+    cb_newage_reservation.entity.class:               CB\Bundle\NewAgeBundle\Entity\Reservation
+    cb_newage_reservation.manager.class:              CB\Bundle\NewAgeBundle\Model\ReservationManager
+    cb_newage_reservation.manager.api.class:          CB\Bundle\NewAgeBundle\Model\ReservationApiManager
 
 services:
     cb_newage_panel.manager:
@@ -83,13 +84,6 @@ services:
             - %cb_newage_campaign.entity.class%
             - @doctrine.orm.entity_manager
             - @cb_newage_campaign.manager
-
-    cb_newage_available.datasource.available:
-        class: %cb_newage_available.datasource.available.class%
-        arguments:
-            - @doctrine.orm.entity_manager
-        tags:
-            - { name: oro_datagrid.datasource, type: available }
 
 #    cb_newage_panel_address.manager:
 #        class: %cb_newage_panel_address.manager.class%
@@ -203,3 +197,17 @@ services:
             - %cb_newage_offer.entity.class%
             - @doctrine.orm.entity_manager
             - @cb_newage_offer.manager
+
+    cb_newage_reservation.manager:
+        class: %cb_newage_reservation.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.acl_helper
+
+    cb_newage_reservation.manager.api:
+        class: %cb_newage_reservation.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %cb_newage_reservation.entity.class%
+            - @doctrine.orm.entity_manager
+            - @cb_newage_reservation.manager

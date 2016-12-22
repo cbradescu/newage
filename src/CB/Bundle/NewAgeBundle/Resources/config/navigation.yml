@@ -5,31 +5,36 @@ oro_menu_config:
         activities_tab: ~
         marketing_tab: ~
 
+        reservation_tab:
+            label: 'cb.newage.reservation.entity_plural_label'
+            route:   cb_newage_reservation_index
+            extras:
+                position: 2
         offer_tab:
             label: 'cb.newage.offer.entity_plural_label'
             route:   cb_newage_offer_index
             extras:
-                position: 2
+                position: 3
         campaign_tab:
             label: 'cb.newage.campaign.entity_plural_label'
             route:   cb_newage_campaign_index
             extras:
-                position: 3
+                position: 5
         panel_view_tab:
             label: 'cb.newage.panelview.entity_plural_label'
             route:   cb_newage_panel_view_index
             extras:
-                position: 4
+                position: 6
         panel_tab:
             label: 'cb.newage.panel.entity_plural_label'
             route:   cb_newage_panel_index
             extras:
-                position: 5
+                position: 7
         city_tab:
             label: 'cb.newage.city.entity_plural_label'
             route:   cb_newage_city_index
             extras:
-                position: 6
+                position: 8
 
         panel_tab_support_type_index_link:
             label: 'cb.newage.support_type.entity_plural_label'
@@ -50,6 +55,7 @@ oro_menu_config:
     tree:
         application_menu:
             children:
+                reservation_tab: ~
                 offer_tab: ~
                 campaign_tab: ~
                 panel_view_tab: ~

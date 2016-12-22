@@ -272,7 +272,6 @@ datagrid:
     campaign-grid:
         extends: base-campaign-grid
 
-
     campaign-from-day-grid:
         extends: base-campaign-grid
         source:
@@ -770,6 +769,12 @@ datagrid:
                     - lt.name as lighting
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                    - >
+                        MAX(CASE WHEN (ev.id IS NULL) THEN
+                            0
+                          ELSE
+                            ev.status
+                          END) as available
                 from:
                     - { table: %cb_newage_panel_view.entity.class%, alias: pv }
                 join:
@@ -787,6 +792,14 @@ datagrid:
                         -
                             join: addr.city
                             alias: ct
+                        -
+                            join: pv.offers
+                            alias: o
+                        -
+                            join: pv.events
+                            alias: ev
+                            conditionType: WITH
+                            condition: (ev.start >= o.start AND ev.start <= o.end) OR (ev.end >= o.start AND ev.end <= o.end) OR (ev.start >= o.start AND ev.end <= o.end) OR (ev.start <= o.start AND ev.end >= o.end)
                 where:
                     and:
                         - :offer MEMBER OF pv.offers
@@ -794,6 +807,11 @@ datagrid:
                 - offer
 
         columns:
+            available:
+                label:        cb.newage.reservation.datagrid.status.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/available.html.twig
             panelViewUrl:
                 label:        cb.newage.panelview.url.label
                 type: twig
@@ -814,11 +832,223 @@ datagrid:
             name:
                 label:        cb.newage.panelview.name.label
 
+        sorters:
+            columns:
+                panel:
+                    data_name: p.name
+                name:
+                    data_name: pv.name
+            default:
+                panel: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+
+        properties:
+            id: ~
+
         filters:
             columns:
 
         action_configuration:
             delete: false
+        options:
+            export: true
+            mass_actions:
+                delete:
+                    enabled: false
+
+    select-panel_view-grid:
+        extends: selected-panel_view-grid
+        mass_actions:
+            reserve:
+                type: reserve
+                entity_name: %cb_newage_panel_view.entity.class%
+                data_identifier: pv.id
+                label: cb.newage.reservation.datagrid.action.reserve
+                icon: random
+
+    base-reservation-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_reservation_view
+            query:
+                select:
+                    - reservation.id
+                    - o.name as name
+                from:
+                    - { table: %cb_newage_reservation.entity.class%, alias: reservation }
+                join:
+                    left:
+                        -
+                            join: reservation.offer
+                            alias: o
+        columns:
+            name:
+                label:        cb.newage.offer.name.label
+        sorters:
+            columns:
+
+            default:
+
+        filters:
+            columns:
+
+        properties:
+            id: ~
+            view_link:
+                type:         url
+                route:        cb_newage_reservation_view
+                params:       [ id ]
+            update_link:
+                type:         url
+                route:        cb_newage_reservation_update
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_newage_reservation_api_delete_reservation
+                params:       [ id ]
+        actions:
+            view:
+                type:         navigate
+                acl_resource: cb_newage_reservation_view
+                label:        oro.grid.action.view
+                icon:         eye-open
+                link:         view_link
+                rowAction:    true
+            update:
+                type:         navigate
+                acl_resource: cb_newage_reservation_update
+                label:        oro.grid.action.update
+                icon:         edit
+                link:         update_link
+            delete:
+                type:         delete
+                acl_resource: cb_newage_reservation_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+    reservation-grid:
+        extends: base-reservation-grid
+        filters:
+            columns:
+
+    reservation-panel_view-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_panel_view_view
+            query:
+                select:
+#                    - "'red-row' as row_class_name"
+                    - DISTINCT res.id
+#                    - o.id as oid
+                    - rpv.id as pvid
+                    - rpv.name
+                    - rpv.url as panelViewUrl
+                    - p.name as panel
+                    - p.dimensions
+                    - st.name as support
+                    - lt.name as lighting
+                    - ct.name as city
+                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                    - >
+                        MAX(CASE WHEN (ev.id IS NULL) THEN
+                            0
+                          ELSE
+                            ev.status
+                          END) as available
+                from:
+                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
+                join:
+                    left:
+                        -
+                            join: pv.reservations
+                            alias: res
+                        -
+                            join: res.offer
+                            alias: o
+                        -
+                            join: res.reservedPanelViews
+                            alias: rpv
+                        -
+                            join: rpv.panel
+                            alias: p
+                        -
+                            join: p.supportType
+                            alias: st
+                        -
+                            join: p.lightingType
+                            alias: lt
+                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
+                        -
+                            join: addr.city
+                            alias: ct
+                        -
+                            join: rpv.events
+                            alias: ev
+                            conditionType: WITH
+                            condition: (ev.start >= o.start AND ev.start <= o.end) OR (ev.end >= o.start AND ev.end <= o.end) OR (ev.start >= o.start AND ev.end <= o.end) OR (ev.start <= o.start AND ev.end >= o.end)
+                where:
+                    and:
+                        - res.id = :reservation
+            bind_parameters:
+                - reservation
+
+        columns:
+#            id:
+#                label:        id
+#            pvid:
+#                label:        pvid
+            available:
+                label:        cb.newage.reservation.datagrid.status.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/available.html.twig
+            panelViewUrl:
+                label:        cb.newage.panelview.url.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
+            city:
+                label:        oro.address.city.label
+            address:
+                label:        cb.newage.panel.address.label
+            panel:
+                label:        cb.newage.panel.entity_label
+            support:
+                label:        cb.newage.supporttype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
+            name:
+                label:        cb.newage.panelview.name.label
+
+        sorters:
+            columns:
+                panel:
+                    data_name: rpv.name
+                name:
+                    data_name: pv.name
+            default:
+                panel: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+        properties:
+#            row_class_name: ~
+            id: ~
+            pvid: ~
+            delete_link:
+                type:         url
+                route:        cb_newage_reservation_api_delete_reservation_pview
+                params:       [id, pvid]
+        actions:
+            delete:
+                type:         delete
+                acl_resource: cb_newage_reservation_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+        filters:
+            columns:
+
         options:
             export: true
             mass_actions:

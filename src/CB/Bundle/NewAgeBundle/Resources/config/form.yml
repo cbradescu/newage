@@ -1,4 +1,3 @@
-
 parameters:
     cb_newage_panel.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\PanelType
     cb_newage_panel.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\PanelApiType
@@ -31,6 +30,10 @@ parameters:
     cb_newage_offer.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\OfferHandler
 
     cb_form.type.panel_view_multiple_entity.class: CB\Bundle\NewAgeBundle\Form\Type\PanelViewMultipleEntityType
+
+    cb_newage_reservation.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\ReservationType
+    cb_newage_reservation.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\ReservationApiType
+    cb_newage_reservation.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\ReservationHandler
 
 services:
     cb_newage_panel.form.type.entity:
@@ -375,3 +378,50 @@ services:
             - '@oro_security.security_facade'
         tags:
             - { name: form.type, alias: cb_panel_view_multiple_entity }
+
+    cb_newage_reservation.form.type.entity:
+        class: %cb_newage_reservation.form.type.entity.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.security_facade
+        tags:
+            - { name: form.type, alias: cb_newage_reservation }
+
+    cb_newage_reservation.form.handler.entity:
+        class: %cb_newage_reservation.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_reservation.form.entity
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_reservation.form.entity:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'cb_newage_reservation_form'
+            - 'cb_newage_reservation'
+
+    cb_newage_reservation.form.type.entity.api:
+        class: %cb_newage_reservation.form.type.entity.api.class%
+        tags:
+            - { name: form.type, alias: cb_newage_reservation_api }
+
+    cb_newage_reservation.form.handler.entity.api:
+        class: %cb_newage_reservation.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_reservation.form.entity.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_reservation.form.entity.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'reservation'
+            - 'cb_newage_reservation_api'

@@ -97,10 +97,12 @@ class OfferController extends Controller
      * )
      * @AclAncestor("cb_newage_panel_view_view")
      * @Template()
+     *
+     * @param Offer $offer
+     * @return array
      */
     public function panelViewsInfoAction(Offer $offer = null)
     {
-
         return [
             'offer' => $offer
         ];

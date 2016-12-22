@@ -1,0 +1,134 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+{% block stats %}
+{% endblock %}
+
+{% oro_title_set({params : {"%entity.name%": entity.offer.name|default('N/A') }}) %}
+
+{% block navButtons %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+        'dataUrl': path('cb_newage_reservation_api_delete_reservation', {'id': entity.id}),
+        'dataRedirect': path('cb_newage_reservation_index'),
+        'aCss': 'no-hash remove-button',
+        'id': 'btn-remove-user',
+        'dataId': entity.id,
+        'entity_label': 'cb.newage.reservation.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity': entity,
+    'indexPath': path('cb_newage_reservation_index'),
+    'indexLabel': 'cb.newage.reservation.entity_plural_label'|trans,
+    'entityTitle': entity.offer.name
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {%- set offerInformation -%}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('cb.newage.offer.name.label'|trans, entity.offer.name) }}
+                {{ UI.renderProperty('cb.newage.campaign.start.label'|trans, entity.offer.start|oro_format_date) }}
+                {{ UI.renderProperty('cb.newage.campaign.end.label'|trans, entity.offer.end|oro_format_date) }}
+
+                {%- set campaignData -%}
+                    {%- if entity.offer.campaign -%}
+                        <a href="{{ path('cb_newage_campaign_view', {'id': entity.offer.campaign.id}) }}">
+                            {{ entity.offer.campaign }}
+                        </a>
+                    {%- endif -%}
+                {%- endset -%}
+
+                {{ UI.renderHtmlProperty('cb.newage.campaign.entity_label'|trans, campaignData) }}
+
+            </div>
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(entity) }}
+            </div>
+        </div>
+    {%- endset -%}
+
+    {% set dataBlocks = [
+    {
+    'title': 'cb.newage.offer.entity_label'|trans ~ ' #' ~ entity.offer.id,
+    'class': 'active',
+    'subblocks': [
+    {'data' : [offerInformation]}
+    ]
+    }
+    ] %}
+
+    {# Selected panel views from Reservation entity. #}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {% set gridName = 'reservation-panel_view-grid' %}
+    {%
+    set params = {
+    reservation: entity.id
+    }
+    %}
+
+    {%- set gridReservationPanelViews -%}
+        {% if gridName is defined %}
+            {% if gridScope is defined %}
+                {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+            {% endif %}
+            {% if params is defined %}
+                {{ dataGrid.renderGrid(gridName, params) }}
+            {% else %}
+                {{ dataGrid.renderGrid(gridName) }}
+            {% endif %}
+        {% endif %}
+    {%- endset -%}
+
+    {% set dataBlocks = dataBlocks|merge([
+    {
+    'title': 'cb.newage.reservation.block.reserved_panel_views'|trans,
+    'subblocks': [
+    {'data' : [gridReservationPanelViews]}
+    ]
+    }
+    ]) %}
+
+    {# Selected panel views from Offer entity. #}
+    {% set gridName = 'selected-panel_view-grid' %}
+    {%
+    set params = {
+        offer: entity.offer.id
+    }
+    %}
+
+    {%- set gridSelectedPanelViews -%}
+        {% if gridName is defined %}
+            {% if gridScope is defined %}
+                {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+            {% endif %}
+            {% if params is defined %}
+                {{ dataGrid.renderGrid(gridName, params) }}
+            {% else %}
+                {{ dataGrid.renderGrid(gridName) }}
+            {% endif %}
+        {% endif %}
+    {%- endset -%}
+
+    {% set dataBlocks = dataBlocks|merge([
+    {
+    'title': 'cb.newage.reservation.block.offered_panel_views'|trans,
+    'subblocks': [
+    {'data' : [gridSelectedPanelViews]}
+    ]
+    }
+    ]) %}
+
+    {% set id = 'reservationView' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+
+    {{ parent() }}
+{% endblock content_data %}

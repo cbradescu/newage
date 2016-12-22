@@ -2,15 +2,18 @@
 /**
  * Created by orm-generator.
  * User: catalin
- * Date: 14/Nov/16
- * Time: 14:51
+ * Date: 23/Nov/16
+ * Time: 12:43
  */
 
 namespace CB\Bundle\NewAgeBundle\Entity;
 
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -19,16 +22,17 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
+
 /**
  * @ORM\Entity
  * @ORM\Table(
- *      name="cb_newage_offer"
+ *      name="cb_newage_reservation"
  * )
  * @ORM\HasLifecycleCallbacks()
  * @Oro\Loggable
  * @Config(
- *      routeName="cb_newage_offer_index",
- *      routeView="cb_newage_offer_view",
+ *      routeName="cb_newage_reservation_index",
+ *      routeView="cb_newage_reservation_view",
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
@@ -50,7 +54,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
  * )
  */
 
-class Offer
+class Reservation
 {
     /**
      * @var integer
@@ -69,88 +73,27 @@ class Offer
     protected $id;
 
     /**
-     * @var string
+     * @var Offer
      *
-     * @ORM\Column(name="name", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\OneToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Offer", inversedBy="reservation", cascade={"persist"})
+     * @ORM\JoinColumn(name="offer_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $name;
+    protected $offer;
 
     /**
-     * @var \DateTime
+     * @var ArrayCollection $reservedPanelViews
      *
-     * @ORM\Column(name="start_at", type="date")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView", inversedBy="reservations")
+     * @ORM\JoinTable(name="cb_newage_reservation_to_panel_view")
      */
-    protected $start;
+    protected $reservedPanelViews;
 
     /**
-     * @var \DateTime
+     * @var ArrayCollection|SchedulerEvent[]
      *
-     * @ORM\Column(name="end_at", type="date")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="reservation", cascade={"persist"})
      */
-    protected $end;
-
-    /**
-     * @var Campaign
-     *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Campaign", inversedBy="events")
-     * @ORM\JoinColumn(name="campaign_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $campaign;
-
-    /**
-     *
-     * @var ArrayCollection $panelViews
-     *
-     * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView", inversedBy="offers")
-     * @ORM\JoinTable(name="cb_newage_offer_to_panel_view")
-     * @ConfigField(
-     *      defaultValues={
-     *          "merge"={
-     *              "display"=true
-     *          },
-     *          "importexport"={
-     *              "order"=50,
-     *              "short"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $panelViews;
-
-    /**
-     * @var Reservation
-     *
-     * @ORM\OneToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Reservation", mappedBy="offer")
-     */
-    protected $reservation;
+    protected $events;
 
     /**
      * @var User
@@ -204,33 +147,17 @@ class Offer
     protected $updatedAt;
 
     /**
-     * @var WorkflowItem
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\WorkflowBundle\Entity\WorkflowItem")
-     * @ORM\JoinColumn(name="workflow_item_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $workflowItem;
-
-    /**
-     * @var WorkflowStep
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WorkflowBundle\Entity\WorkflowStep")
-     * @ORM\JoinColumn(name="workflow_step_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $workflowStep;
-
-
-    public function __construct()
-    {
-        $this->panelViews = new ArrayCollection();
-    }
-
-    /**
      * @return string
      */
     public function __toString()
     {
-        return (string)$this->name;
+        return $this->offer->getName();
+    }
+
+    public function __construct()
+    {
+        $this->reservedPanelViews = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     /**
@@ -242,101 +169,34 @@ class Offer
     }
 
     /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Gets date an offer begins.
+     * @param Offer|null $offer
      *
-     * @return \DateTime
+     * @return Reservation
      */
-    public function getStart()
+    public function setOffer(Offer $offer)
     {
-        return $this->start;
-    }
-
-    /**
-     * Sets date an offer begins.
-     *
-     * @param \DateTime $start
-     *
-     * @return self
-     */
-    public function setStart($start)
-    {
-        $this->start = $start;
+        $offer->setReservation($this);
+        $this->offer = $offer;
 
         return $this;
     }
 
     /**
-     * Gets date an offer ends.
-     *
-     * @return \DateTime
-     */
-    public function getEnd()
-    {
-        return $this->end;
-    }
-
-    /**
-     * Sets date an offer ends.
-     *
-     * @param \DateTime $end
-     *
-     * @return self
-     */
-    public function setEnd($end)
-    {
-        $this->end = $end;
-
-        return $this;
-    }
-
-    /**
-     * Gets campaign
-     *
-     * @return Campaign|null
-     */
-    public function getCampaign()
-    {
-        return $this->campaign;
-    }
-
-    /**
-     * Sets campaign
-     *
-     * @param Campaign $campaign
-     *
      * @return Offer
      */
-    public function setCampaign(Campaign $campaign = null)
+    public function getOffer()
     {
-        $this->campaign = $campaign;
-
-        return $this;
+        return $this->offer;
     }
 
     /**
-     * Get panelViews collection
+     * Get reservedPanelViews collection
      *
      * @return Collection
      */
-    public function getPanelViews()
+    public function getReservedPanelViews()
     {
-        return $this->panelViews;
+        return $this->reservedPanelViews;
     }
 
     /**
@@ -344,27 +204,43 @@ class Offer
      *
      * @param PanelView $panelView
      *
-     * @return Offer
+     * @return Reservation
      */
-    public function addPanelView(PanelView $panelView)
+    public function addReservedPanelView(PanelView $panelView)
     {
-        if (!$this->getPanelViews()->contains($panelView)) {
-            $this->getPanelViews()->add($panelView);
+        if (!$this->getReservedPanelViews()->contains($panelView)) {
+            $this->getReservedPanelViews()->add($panelView);
         }
 
         return $this;
     }
 
     /**
-     * Set panelViews collection
+     * Set reservedPanelViews collection
      *
      * @param Collection $panelViews
      *
-     * @return Offer
+     * @return Reservation
      */
-    public function setPanelViews(Collection $panelViews)
+    public function setReservedPanelViews(Collection $panelViews)
     {
-        $this->panelViews = $panelViews;
+        $this->reservedPanelViews = $panelViews;
+
+        foreach ($panelViews as $panelView)
+        {
+            // If event does not exists with current Panel View attributes we add it.
+            if (!$this->findEventBy($this->getAttributes($panelView))) {
+                $event = new SchedulerEvent();
+                $event->setPanelView($panelView);
+                $event->setStart($this->getOffer()->getStart());
+                $event->setEnd($this->getOffer()->getEnd());
+                $event->setCampaign($this->getOffer()->getCampaign());
+                $event->setStatus(SchedulerEvent::RESERVED);
+                $event->setReservation($this);
+
+                $this->addEvent($event);
+            }
+        }
 
         return $this;
     }
@@ -374,33 +250,76 @@ class Offer
      *
      * @param PanelView $panelView
      *
-     * @return Offer
+     * @return Reservation
      */
-    public function removePanelView(PanelView $panelView)
+    public function removeReservedPanelView(PanelView $panelView)
     {
-        if ($this->getPanelViews()->contains($panelView)) {
-            $this->getPanelViews()->removeElement($panelView);
+        if ($this->getReservedPanelViews()->contains($panelView)) {
+            $this->getReservedPanelViews()->removeElement($panelView);
+
+            // After removing Panel View, we also remove the event.
+            $event = $this->findEventBy($this->getAttributes($panelView));
+            if ($event)
+                $this->removeEvent($event);
         }
 
         return $this;
     }
 
     /**
-     * @return Reservation
+     * Get events collection
+     *
+     * @return Collection
      */
-    public function getReservation()
+    public function getEvents()
     {
-        return $this->reservation;
+        return $this->events;
     }
 
     /**
-     * @param Reservation $reservation
+     * Add specified event
      *
-     * @return Offer
+     * @param SchedulerEvent $event
+     *
+     * @return Reservation
      */
-    public function setReservation($reservation)
+    public function addEvent(SchedulerEvent $event)
     {
-        $this->reservation = $reservation;
+        error_log("<br/>" . $event->getPanelView()->getName() . ' ' . $event->getCampaign()->getTitle() . "<br/>", 3, '/var/www/newage/crm-application/app/logs/catalin');
+
+        if (!$this->getEvents()->contains($event)) {
+            $this->getEvents()->add($event);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set events collection
+     *
+     * @param Collection $events
+     *
+     * @return Reservation
+     */
+    public function setEvents(Collection $events)
+    {
+        $this->events = $events;
+
+        return $this;
+    }
+
+    /**
+     * Remove specified event
+     *
+     * @param SchedulerEvent $event
+     *
+     * @return Reservation
+     */
+    public function removeEvent(SchedulerEvent $event)
+    {
+        if ($this->getEvents()->contains($event)) {
+            $this->getEvents()->removeElement($event);
+        }
 
         return $this;
     }
@@ -408,7 +327,7 @@ class Offer
     /**
      * @param User $owningUser
      *
-     * @return Offer
+     * @return Reservation
      */
     public function setOwner($owningUser)
     {
@@ -429,7 +348,7 @@ class Offer
      * Set organization
      *
      * @param Organization $organization
-     * @return Offer
+     * @return Reservation
      */
     public function setOrganization(Organization $organization = null)
     {
@@ -514,7 +433,7 @@ class Offer
 
     /**
      * @param  WorkflowItem $workflowItem
-     * @return Offer
+     * @return Reservation
      */
     public function setWorkflowItem($workflowItem)
     {
@@ -533,7 +452,7 @@ class Offer
 
     /**
      * @param  WorkflowItem $workflowStep
-     * @return Offer
+     * @return Reservation
      */
     public function setWorkflowStep($workflowStep)
     {
@@ -548,5 +467,43 @@ class Offer
     public function getWorkflowStep()
     {
         return $this->workflowStep;
+    }
+
+    /**
+     * @param array $attributes
+     * @return SchedulerEvent|mixed|null
+     */
+    public function findEventBy($attributes)
+    {
+        foreach ($this->events as $event)
+        {
+            $hasAttribute = true;
+            foreach ($attributes as $name => $value)
+            {
+                if (call_user_func( [$event, 'get' . ucfirst($name)]) != $value)
+                    $hasAttribute = false;
+            }
+
+            if ($hasAttribute)
+                return $event;
+        }
+
+        return null;
+    }
+
+    public function getAttributes(PanelView $panelView)
+    {
+        return [
+            'panelView' => $panelView,
+            'campaign' => $this->getOffer()->getCampaign(),
+            'start' => $this->getOffer()->getStart(),
+            'end' => $this->getOffer()->getEnd(),
+            'reservation' => $this
+        ];
+    }
+
+    public function hasReservedPanelView(PanelView $panelView)
+    {
+        return $this->getReservedPanelViews()->contains($panelView);
     }
 }
