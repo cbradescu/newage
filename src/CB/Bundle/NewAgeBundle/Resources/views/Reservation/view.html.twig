@@ -69,6 +69,10 @@
     {# Selected panel views from Reservation entity. #}
     {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
     {% set gridName = 'reservation-panel_view-grid' %}
+        {% if is_granted('ROLE_AVAILABLE') %}
+            {% set gridName = 'reservation-with-confirm-panel_view-grid' %}
+        {% endif %}
+
     {%
     set params = {
     reservation: entity.id

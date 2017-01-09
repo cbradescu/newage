@@ -152,4 +152,6 @@ cb:
             datagrid:
                 status.label:              Status
                 action.reserve:            Make Reservation
-                success_message: "{0} No reservation was made|{1} One entity was marked|]1,Inf[ %count% Panel Views were added."
+                action.confirm:            Confirm all
+                reserve.success_message: "{0} No reservation was made|{1} One Panel View was reserved|]1,Inf[ %count% Panel Views were added."
+                confirm.success_message: "{0} No confirmation was made|{1} One Panel View was confirmed|]1,Inf[ %count% Panel Views were confirmed."

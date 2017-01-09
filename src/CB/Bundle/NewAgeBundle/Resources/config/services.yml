@@ -42,6 +42,8 @@ parameters:
     cb_newage_reservation.manager.class:              CB\Bundle\NewAgeBundle\Model\ReservationManager
     cb_newage_reservation.manager.api.class:          CB\Bundle\NewAgeBundle\Model\ReservationApiManager
 
+    cb_newage.reservation.datagrid_helper.class:      CB\Bundle\NewAgeBundle\Datagrid\ReservationGridHelper
+
 services:
     cb_newage_panel.manager:
         class: %cb_newage_panel.manager.class%
@@ -211,3 +213,8 @@ services:
             - %cb_newage_reservation.entity.class%
             - @doctrine.orm.entity_manager
             - @cb_newage_reservation.manager
+
+    cb_newage.reservation.datagrid_helper:
+        class: %cb_newage.reservation.datagrid_helper.class%
+        arguments:
+            - '@security.authorization_checker'

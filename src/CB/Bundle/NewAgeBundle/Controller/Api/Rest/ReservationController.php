@@ -9,16 +9,18 @@
 namespace CB\Bundle\NewAgeBundle\Controller\Api\Rest;
 
 use CB\Bundle\NewAgeBundle\Entity\Reservation;
+use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use Symfony\Component\HttpFoundation\Response;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use FOS\RestBundle\Util\Codes;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-use FOS\RestBundle\Util\Codes;
+
 /**
  * @Rest\RouteResource("reservation")
  * @Rest\NamePrefix("cb_newage_reservation_api_")
@@ -123,8 +125,8 @@ class ReservationController extends RestController implements ClassResourceInter
     /**
      * REST DELETE
      *
+     * @param int $rid
      * @param int $id
-     * @param int $pvid
      *
      * @ApiDoc(
      *     description="Removes a Panel View from Reservation",
@@ -133,11 +135,13 @@ class ReservationController extends RestController implements ClassResourceInter
      * @AclAncestor("cb_newage_reservation_update")
      * @return Response
      */
-    public function deletePviewAction($id, $pvid)
+    public function deletePviewAction($rid, $id)
     {
         /** @var Reservation $reservation */
-        $reservation = $this->getManager()->find($id);
-        $panelView = $this->get('cb_newage_panel_view.manager.api')->find($pvid);
+        $reservation = $this->getManager()->find($rid);
+
+        /** @var PanelView $panelView */
+        $panelView = $this->get('cb_newage_panel_view.manager.api')->find($id);
 
         // Remove coresponding event
         $em = $this->getManager()->getObjectManager();

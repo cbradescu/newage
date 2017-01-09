@@ -84,7 +84,7 @@ class ReservationController extends Controller
         if ($this->get('cb_newage_reservation.form.handler.entity')->process($reservation)) {
             $this->get('session')->getFlashBag()->add(
                 'success',
-                $this->get('translator')->trans('cb_newage.reservation.message.saved')
+                $this->get('translator')->trans('cb.newage.reservation.message.saved')
             );
 
             return $this->get('oro_ui.router')->redirectAfterSave(
@@ -101,7 +101,7 @@ class ReservationController extends Controller
     }
 
     /**
-     * @Route("/{gridName}/massAction/{actionName}", name="cb_reserve_massaction")
+     * @Route("/{gridName}/reserveMassAction/{actionName}", name="cb_reserve_massaction")
      * @AclAncestor("cb_newage_reservation_create")
      * @Template("CBNewAgeBundle:Reservation:update.html.twig")
      *
@@ -118,7 +118,6 @@ class ReservationController extends Controller
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
 
         $offer = $response->getOption('offer');
-        error_log("\nOffer id: " . $offer . "\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
         $panelViews = $response->getOption('panelViews');
 
         /** @var Reservation $reservation */
@@ -127,5 +126,29 @@ class ReservationController extends Controller
         $reservation->setReservedPanelViews($panelViews);
 
         return $this->update($reservation);
+    }
+
+
+    /**
+     * @Route("/{gridName}/confirmMassAction/{actionName}", name="cb_confirm_massaction")
+     *
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return JsonResponse
+     */
+    public function confirmMassActionAction($gridName, $actionName)
+    {
+        /** @var MassActionDispatcher $massActionDispatcher */
+        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+
+        $data = [
+            'successful' => $response->isSuccessful(),
+            'message' => $response->getMessage()
+        ];
+
+        return new JsonResponse(array_merge($data, $response->getOptions()));
     }
 }

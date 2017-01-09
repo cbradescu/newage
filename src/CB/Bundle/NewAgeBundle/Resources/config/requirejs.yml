@@ -1,3 +1,4 @@
 config:
     paths:
         'oro/datagrid/action/reserve-mass-action': 'bundles/cbnewage/js/datagrid/action/reserve-mass-action.js'
+        'oro/datagrid/action/confirm-mass-action': 'bundles/cbnewage/js/datagrid/action/confirm-mass-action.js'
