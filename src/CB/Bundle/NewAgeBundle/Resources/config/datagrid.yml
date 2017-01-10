@@ -641,6 +641,7 @@ datagrid:
             query:
                 select:
                     - pv.id
+                    - pv.url
                     - pv.name
                     - p.name as panel
                     - st.name as support
@@ -690,6 +691,11 @@ datagrid:
                 label:   orocrm.account.assigned.label
                 editable: true
                 frontend_type: boolean
+            url:
+                label:        cb.newage.panelview.url.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
             panel:
                 label:        cb.newage.panel.entity_label
             name:
