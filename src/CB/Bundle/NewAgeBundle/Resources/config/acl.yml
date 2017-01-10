@@ -165,6 +165,12 @@ cb_newage_city_delete:
     permission: DELETE
     group_name: ""
 
+cb_newage_city_menu:
+    label: Cities menu tab
+    type: action
+    group_name: ""
+    category: "application"
+
 cb_newage_offer_create:
     type: entity
     class: CBNewAgeBundle:Offer

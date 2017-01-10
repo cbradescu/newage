@@ -31,6 +31,7 @@ oro_menu_config:
             extras:
                 position: 7
         city_tab:
+            aclResourceId: cb_newage_city_menu
             label: 'cb.newage.city.entity_plural_label'
             route:   cb_newage_city_index
             extras:
