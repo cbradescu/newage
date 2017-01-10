@@ -4,46 +4,70 @@ oro_menu_config:
         sales_tab: ~
         activities_tab: ~
         marketing_tab: ~
+        reports_tab: ~
 
+        offer_tab:
+            label: 'cb.newage.offer.entity_plural_label'
+            route:   cb_newage_offer_index
+            extras:
+                position: 1
         reservation_tab:
             label: 'cb.newage.reservation.entity_plural_label'
             route:   cb_newage_reservation_index
             extras:
                 position: 2
-        offer_tab:
-            label: 'cb.newage.offer.entity_plural_label'
-            route:   cb_newage_offer_index
+        admin_tab:
+            aclResourceId: cb_newage_admin_menu
+            label: 'cb.newage.menu.admin_tab_label'
+            uri: '#'
             extras:
-                position: 3
+                position: 5
+
         campaign_tab:
-            aclResourceId: cb_newage_campaign_menu
+            aclResourceId: cb_newage_admin_menu
             label: 'cb.newage.campaign.entity_plural_label'
             route:   cb_newage_campaign_index
             extras:
-                position: 5
-        panel_view_tab:
-            aclResourceId: cb_newage_panel_view_menu
-            label: 'cb.newage.panelview.entity_plural_label'
-            route:   cb_newage_panel_view_index
+                position: 10
+        panel_divider:
+            aclResourceId: cb_newage_admin_menu
+            label: ''
             extras:
-                position: 6
+                position: 20
+            attributes:
+                class: 'divider'
         panel_tab:
-            aclResourceId: cb_newage_panel_menu
+            aclResourceId: cb_newage_admin_menu
             label: 'cb.newage.panel.entity_plural_label'
             route:   cb_newage_panel_index
             extras:
-                position: 7
+                position: 30
+        panel_view_tab:
+            aclResourceId: cb_newage_admin_menu
+            label: 'cb.newage.panelview.entity_plural_label'
+            route:   cb_newage_panel_view_index
+            extras:
+                position: 40
+        city_divider:
+            aclResourceId: cb_newage_admin_menu
+            label: ''
+            extras:
+                position: 50
+            attributes:
+                class: 'divider'
         city_tab:
-            aclResourceId: cb_newage_city_menu
+            aclResourceId: cb_newage_admin_menu
             label: 'cb.newage.city.entity_plural_label'
             route:   cb_newage_city_index
             extras:
-                position: 8
+                position: 60
 
         panel_tab_support_type_index_link:
+            aclResourceId: cb_newage_admin_menu
             label: 'cb.newage.support_type.entity_plural_label'
             route: cb_newage_support_type_index
         panel_tab_lighting_type_index_link:
+            aclResourceId: cb_newage_admin_menu
             label: 'cb.newage.lighting_type.entity_plural_label'
             route: cb_newage_lighting_type_index
         panel_tab_index_link:
@@ -61,13 +85,17 @@ oro_menu_config:
             children:
                 reservation_tab: ~
                 offer_tab: ~
-                campaign_tab: ~
-                panel_view_tab: ~
-                panel_tab:
+                admin_tab:
                     children:
-                        panel_tab_support_type_index_link: ~
-                        panel_tab_lighting_type_index_link: ~
-                city_tab: ~
+                        campaign_tab: ~
+                        panel_divider: ~
+                        panel_tab:
+                            children:
+                                panel_tab_support_type_index_link: ~
+                                panel_tab_lighting_type_index_link: ~
+                        panel_view_tab: ~
+                        city_divider: ~
+                        city_tab: ~
 oro_titles:
     cb_newage_panel_index: ~
     cb_newage_panel_view: '%%entity.name%%'

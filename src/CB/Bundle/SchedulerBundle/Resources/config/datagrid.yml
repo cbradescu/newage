@@ -15,6 +15,7 @@ datagrid:
                     - st.name as supportType
                     - lt.name as lightingType
                     - ct.name as city
+                    - o.name as offer
                 from:
                     - { table: %cb_scheduler.scheduler_event.entity.class%, alias: se }
                 join:
@@ -38,9 +39,15 @@ datagrid:
                         -
                             join: addr.city
                             alias: ct
+                        -
+                            join: pv.offers
+                            alias: o
+
         columns:
-            id:
-                label:  cb.scheduler.scheduler_event.id.label
+#            id:
+#                label:  cb.scheduler.scheduler_event.id.label
+            offer:
+                label:  cb.newage.offer.entity_label
             start:
                 label:  cb.scheduler.scheduler_event.start.label
                 frontend_type: date
@@ -49,6 +56,10 @@ datagrid:
                 frontend_type: date
             status:
                 label:  cb.scheduler.scheduler_event.status.label
+                type:          twig
+                frontend_type: html
+                template:      CBNewAgeBundle:Datagrid:Property/available.html.twig
+
             panel:
                 label:  cb.newage.panel.entity_label
             panelView:
@@ -63,6 +74,16 @@ datagrid:
                 label:  oro.address.city.label
         sorters:
             columns:
+                start:
+                    data_name: se.start
+                offer:
+                    data_name: o.name
+                campaign:
+                    data_name: c.title
+            default:
+                start:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+                offer:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+
         properties:
             id: ~
         action_configuration:
@@ -72,24 +93,53 @@ datagrid:
         extends: base-scheduler_event-grid
         filters:
             columns:
-                panel:
-                    type: entity
-                    data_name: pv.panel
+                status:
+                    type:        choice
+                    data_name:   se.status
                     options:
                         field_options:
-                            class: CBNewAgeBundle:Panel
-                panelView:
+                            choices:
+                                1: Reserved
+                                2: Confirmed
+                offer:
                     type: entity
-                    data_name: se.panelView
+                    data_name: o.id
                     options:
                         field_options:
-                            class: CBNewAgeBundle:PanelView
+                            class: CBNewAgeBundle:Offer
                 campaign:
                     type: entity
                     data_name: se.campaign
                     options:
                         field_options:
                             class: CBNewAgeBundle:Campaign
+                city:
+                    type: choice-tree
+                    data_name: addr.city
+                    options:
+                        lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
+                        data: "@?cb_city.provider.filter.city_choice_tree->getList"
+                    enabled: true
+                start:
+                    type:        datetime
+                    data_name:   se.start
+                end:
+                    type:        datetime
+                    data_name:   se.end
+                panel:
+                    type: entity
+                    data_name: pv.panel
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:Panel
+                    enabled: false
+                panelView:
+                    type: entity
+                    data_name: se.panelView
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:PanelView
+                    enabled: false
                 supportType:
                     type: choice-tree
                     data_name: st.name
@@ -104,13 +154,14 @@ datagrid:
                         lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
                         data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
                     enabled: true
-                city:
-                    type: choice-tree
-                    data_name: addr.city
-                    options:
-                        lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
-                        data: "@?cb_city.provider.filter.city_choice_tree->getList"
-                    enabled: true
+#            default:
+#                status:
+#                    value: 2
+        options:
+            mass_actions:
+                delete:
+                    enabled: false
+            routerEnabled: false
 
     # Campaing view
     campaign-scheduler_event-grid:

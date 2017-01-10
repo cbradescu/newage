@@ -20,9 +20,3 @@ oro_dashboard_config:
                     route:      cb_newage_reservation_index
                     acl:        cb_newage_reservation_view
                     position:   20
-#                reserved_panel_views:
-#                    label:      cb.newage.reservation.reserved_panel_views
-#                    icon:       bars
-#                    route:      cb_newage_reservation_reserved_panel_views
-#                    acl:        cb_newage_reservation_view
-#                    position:   30

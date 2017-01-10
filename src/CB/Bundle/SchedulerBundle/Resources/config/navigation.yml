@@ -4,11 +4,19 @@ oro_menu_config:
             label: 'cb.scheduler.menu.available_tab_scheduler_link.label'
             route: cb_scheduler_view
             extras:
-                position: 1
+                position: 4
+        newage_tab_scheduler_event_link:
+            label: 'cb.scheduler.scheduler_event.entity_plural_label'
+            route: cb_scheduler_scheduler_event_index
+            extras:
+                position: 3
+
     tree:
         application_menu:
             children:
                 newage_tab_scheduler_link: ~
+                newage_tab_scheduler_event_link: ~
 
 oro_titles:
     cb_scheduler_view: '%%entity.name%%'
+    cb_scheduler_scheduler_event_index: ~

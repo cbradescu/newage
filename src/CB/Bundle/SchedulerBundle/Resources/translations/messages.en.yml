@@ -7,8 +7,8 @@ cb:
           available_tab_scheduler_link.label: Scheduler
 
         scheduler_event:
-            entity_label:                  Scheduler Event
-            entity_plural_label:           Scheduler Events
+            entity_label:                  Event
+            entity_plural_label:           Events
             owner.label:  Owner
             id.label: Id
             title.label:  Title
@@ -18,7 +18,7 @@ cb:
             status.label: Status
 
         schedulerevent:
-            entity_label:                  Scheduler Event
+            entity_label:                  Event
 
 cb.scheduler.scheduler_event.status.offered.label:  Offered
 cb.scheduler.scheduler_event.status.reserved.label: Reserved

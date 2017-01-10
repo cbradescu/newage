@@ -26,12 +26,6 @@ cb_newage_panel_delete:
     group_name: ""
     bindings: ~
 
-cb_newage_panel_menu:
-    label: Panels menu tab
-    type: action
-    group_name: ""
-    category: "application"
-
 cb_newage_panel_view_create:
     type: entity
     class: CBNewAgeBundle:PanelView
@@ -60,12 +54,6 @@ cb_newage_panel_view_delete:
     group_name: ""
     bindings: ~
 
-cb_newage_panel_view_menu:
-    label: Panel Views menu tab
-    type: action
-    group_name: ""
-    category: "application"
-
 cb_newage_campaign_create:
     type: entity
     class: CBNewAgeBundle:Campaign
@@ -93,12 +81,6 @@ cb_newage_campaign_delete:
     permission: DELETE
     group_name: ""
     bindings: ~
-
-cb_newage_campaign_menu:
-    label: Campaigns menu tab
-    type: action
-    group_name: ""
-    category: "application"
 
 cb_newage_support_type_create:
     type: entity
@@ -183,12 +165,6 @@ cb_newage_city_delete:
     permission: DELETE
     group_name: ""
 
-cb_newage_city_menu:
-    label: Cities menu tab
-    type: action
-    group_name: ""
-    category: "application"
-
 cb_newage_offer_create:
     type: entity
     class: CBNewAgeBundle:Offer
@@ -244,3 +220,9 @@ cb_newage_reservation_delete:
     permission: DELETE
     group_name: ""
     bindings: ~
+
+cb_newage_admin_menu:
+    label: Access Administration menu tab
+    type: action
+    group_name: ""
+    category: "application"
