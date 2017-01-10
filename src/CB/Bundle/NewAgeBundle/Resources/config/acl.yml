@@ -26,6 +26,12 @@ cb_newage_panel_delete:
     group_name: ""
     bindings: ~
 
+cb_newage_panel_menu:
+    label: Panels menu tab
+    type: action
+    group_name: ""
+    category: "application"
+
 cb_newage_panel_view_create:
     type: entity
     class: CBNewAgeBundle:PanelView
@@ -54,6 +60,12 @@ cb_newage_panel_view_delete:
     group_name: ""
     bindings: ~
 
+cb_newage_panel_view_menu:
+    label: Panel Views menu tab
+    type: action
+    group_name: ""
+    category: "application"
+
 cb_newage_campaign_create:
     type: entity
     class: CBNewAgeBundle:Campaign
@@ -81,6 +93,12 @@ cb_newage_campaign_delete:
     permission: DELETE
     group_name: ""
     bindings: ~
+
+cb_newage_campaign_menu:
+    label: Campaigns menu tab
+    type: action
+    group_name: ""
+    category: "application"
 
 cb_newage_support_type_create:
     type: entity

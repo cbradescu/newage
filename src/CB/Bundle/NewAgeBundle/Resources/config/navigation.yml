@@ -16,16 +16,19 @@ oro_menu_config:
             extras:
                 position: 3
         campaign_tab:
+            aclResourceId: cb_newage_campaign_menu
             label: 'cb.newage.campaign.entity_plural_label'
             route:   cb_newage_campaign_index
             extras:
                 position: 5
         panel_view_tab:
+            aclResourceId: cb_newage_panel_view_menu
             label: 'cb.newage.panelview.entity_plural_label'
             route:   cb_newage_panel_view_index
             extras:
                 position: 6
         panel_tab:
+            aclResourceId: cb_newage_panel_menu
             label: 'cb.newage.panel.entity_plural_label'
             route:   cb_newage_panel_index
             extras:
