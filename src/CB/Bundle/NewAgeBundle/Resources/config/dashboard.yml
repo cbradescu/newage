@@ -8,15 +8,21 @@ oro_dashboard_config:
             icon:       bundles/orodashboard/img/quick_launchpad.png
 
             items:
-                panels:
-                    label:      cb.newage.panel.entity_plural_label
-                    icon:       desktop
-                    route:      cb_newage_panel_index
-                    acl:        cb_newage_panel_view
+                offers:
+                    label:      cb.newage.offer.entity_plural_label
+                    icon:       file-text-alt
+                    route:      cb_newage_offer_index
+                    acl:        cb_newage_offer_view
+                    position:   10
+                reservations:
+                    label:      cb.newage.reservation.entity_plural_label
+                    icon:       file-text
+                    route:      cb_newage_reservation_index
+                    acl:        cb_newage_reservation_view
                     position:   20
-                panel_views:
-                    label:      cb.newage.panelview.entity_plural_label
-                    icon:       film
-                    route:      cb_newage_panel_view_index
-                    acl:        cb_newage_panel_view_view
-                    position:   30
+#                reserved_panel_views:
+#                    label:      cb.newage.reservation.reserved_panel_views
+#                    icon:       bars
+#                    route:      cb_newage_reservation_reserved_panel_views
+#                    acl:        cb_newage_reservation_view
+#                    position:   30

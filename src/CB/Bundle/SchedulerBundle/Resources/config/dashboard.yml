@@ -7,4 +7,4 @@ oro_dashboard_config:
                     icon:       calendar
                     route:      cb_scheduler_view
                     acl:        cb_scheduler_event_view
-                    position:   10
+                    position:   40
