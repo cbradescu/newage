@@ -29,8 +29,10 @@ class PanelViewRepository extends EntityRepository
             ->leftJoin('p.addresses', 'a')
             ->leftJoin('a.city', 'c')
             ->where('pv.organization = :organizationId')
-            ->setParameter('organizationId', $organizationId);
-        ;
+            ->setParameter('organizationId', $organizationId)
+            ->addOrderBy('p.name', 'ASC')
+            ->addOrderBy('pv.name', 'ASC')
+    ;
 
         return $qb;
     }
