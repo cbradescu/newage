@@ -595,7 +595,7 @@ datagrid:
             acl_resource: cb_newage_panel_view_view
             query:
                 select:
-                    - pv.id
+                    - DISTINCT pv.id
                     - pv.url
                     - pv.name
                     - p.name as panel
