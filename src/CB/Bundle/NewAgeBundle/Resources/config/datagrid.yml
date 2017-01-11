@@ -636,6 +636,8 @@ datagrid:
                 where:
                     and:
                         - ev.panelView IS NULL
+                    or:
+                        - ev.status <> 2
             bind_parameters:
                 - offer
                 - start
