@@ -96,35 +96,6 @@ class Campaign
     protected $description;
 
     /**
-     * @TODO remove start and end from campaing entity.
-     * @var \DateTime
-     *
-     * @ORM\Column(name="start_at", type="date")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $start;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="end_at", type="date")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $end;
-
-    /**
      * @var ArrayCollection|SchedulerEvent[]
      *
      * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="campaign", cascade={"persist"})
@@ -220,54 +191,6 @@ class Campaign
     public function setDescription($description)
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Gets date a campaign begins.
-     *
-     * @return \DateTime
-     */
-    public function getStart()
-    {
-        return $this->start;
-    }
-
-    /**
-     * Sets date a campaign begins.
-     *
-     * @param \DateTime $start
-     *
-     * @return self
-     */
-    public function setStart($start)
-    {
-        $this->start = $start;
-
-        return $this;
-    }
-
-    /**
-     * Gets date a campaign ends.
-     *
-     * @return \DateTime
-     */
-    public function getEnd()
-    {
-        return $this->end;
-    }
-
-    /**
-     * Sets date a campaign ends.
-     *
-     * @param \DateTime $end
-     *
-     * @return self
-     */
-    public function setEnd($end)
-    {
-        $this->end = $end;
 
         return $this;
     }

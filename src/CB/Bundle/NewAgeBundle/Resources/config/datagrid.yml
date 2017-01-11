@@ -207,8 +207,6 @@ datagrid:
                 select:
                     - campaign.id
                     - campaign.title
-                    - campaign.start
-                    - campaign.end
                 from:
                     - { table: %cb_newage_campaign.entity.class%, alias: campaign }
         columns:
@@ -216,24 +214,12 @@ datagrid:
                 label: cb.newage.campaign.id.label
             title:
                 label: cb.newage.campaign.title.label
-            start:
-                label: cb.newage.campaign.start.label
-                frontend_type: date
-            end:
-                label: cb.newage.campaign.end.label
-                frontend_type: date
 
         filters:
             columns:
                 title:
                     type: string
                     data_name: campaign.title
-                start:
-                    type:      date
-                    data_name: campaign.start
-                end:
-                    type:      date
-                    data_name: campaign.end
 
         properties:
             id: ~
@@ -271,37 +257,6 @@ datagrid:
                 link:         delete_link
     campaign-grid:
         extends: base-campaign-grid
-
-    campaign-from-day-grid:
-        extends: base-campaign-grid
-        source:
-            query:
-                join:
-                    left:
-                        - { join: campaign.panelViews, alias: panelView }
-
-                where:
-                    and:
-                        - panelView.id = :panel_view_id
-                        - campaign.start <= :current_day
-                        - campaign.end >= :current_day
-            bind_parameters:
-                - panel_view_id
-                - current_day
-
-        filters:
-
-        actions:
-
-        action_configuration:
-            delete: false
-
-        options:
-            toolbarOptions:
-                hide: true
-            mass_actions:
-                delete:
-                    enabled: false
 
     base-campaign-to-panel-view-update-grid:
         source:

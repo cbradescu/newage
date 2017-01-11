@@ -61,24 +61,6 @@ class CampaignType extends AbstractType
                     'label'    => 'cb.newage.campaign.description.label'
                 ]
             )
-            ->add(
-                'start',
-                'oro_date',
-                [
-                    'required' => true,
-                    'label'    => 'cb.newage.campaign.start.label',
-                    'attr'     => ['class' => 'start'],
-                ]
-            )
-            ->add(
-                'end',
-                'oro_date',
-                [
-                    'required' => true,
-                    'label'    => 'cb.newage.campaign.end.label',
-                    'attr'     => ['class' => 'end'],
-                ]
-            )
         ;
     }
 
