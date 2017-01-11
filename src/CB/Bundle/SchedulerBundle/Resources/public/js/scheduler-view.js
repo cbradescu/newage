@@ -102,6 +102,7 @@ define(function(require) {
         fullCalendar: null,
         eventView: null,
         loadingMask: null,
+        offer: null,
         panel: null,
         panelView: null,
         supportType: null,
@@ -157,17 +158,29 @@ define(function(require) {
             this.listenTo(this.collection, 'destroy', this.onEventDeleted);
 
             mediator.on('setSchedulerFilters', this.setSchedulerFilters, this);
-            mediator.on('setSchedulerCollection', this.setSchedulerCollection, this);
+            // mediator.on('setSchedulerCollection', this.setSchedulerCollection, this);
         },
 
-        setSchedulerCollection: function (response) {
-            this.collection.reset(response);
-
-            this.updateEventsLoadedCache();
-            this.updateEventsWithoutReload();
-        },
+        // setSchedulerCollection: function (response) {
+        //     this.collection.reset(response);
+        //
+        //     this.updateEventsLoadedCache();
+        //     this.updateEventsWithoutReload();
+        // },
 
         setSchedulerFilters: function (activeFilters) {
+            activeFilters = _.filter(activeFilters, function(filter) {
+                switch (filter.name) {
+                    case 'city':
+                    case 'supportType':
+                    case 'lightingType':
+                        return filter.value != 'All';
+                        break;
+                    default:
+                        return true;
+                }
+            });
+
             this.filters = activeFilters;
 
             this.updateEventsLoadedCache();
@@ -492,12 +505,16 @@ define(function(require) {
         },
 
         updateEventsWithoutReload: function() {
+            var oldOffer = this.offer;
             var oldPanel = this.panel;
             var oldPanelView = this.panelView;
             var oldSupportType = this.supportType;
             var oldLightingType = this.lightingType;
             var oldCity = this.city;
 
+            var offer = this.filters.filter( function (obj) {
+                return obj.name == 'offer';
+            });
             var panel = this.filters.filter( function (obj) {
                 return obj.name == 'panel';
             });
@@ -513,6 +530,11 @@ define(function(require) {
             var city = this.filters.filter( function (obj) {
                 return obj.name == 'city';
             });
+
+            if (offer.length==1)
+                this.offer = offer[0].value;
+            else
+                this.offer = null;
 
             if (panel.length==1)
                 this.panel = panel[0].value;
@@ -539,9 +561,9 @@ define(function(require) {
             else
                 this.city = null;
 
-            if (this.panel || this.panelView || this.supportType || this.lightingType || this.city) {
+            if (this.offer || this.panel || this.panelView || this.supportType || this.lightingType || this.city) {
                 this.getCalendarElement().fullCalendar('refetchResources');
-            } else if (oldPanel != this.panel || oldPanelView != this.panelView || this.supportType != oldSupportType
+            } else if (oldOffer != this.offer || oldPanel != this.panel || oldPanelView != this.panelView || this.supportType != oldSupportType
             || this.lightingType != oldLightingType || this.city != oldCity) {
                 this.getCalendarElement().fullCalendar('refetchResources');
             }
@@ -609,6 +631,7 @@ define(function(require) {
 
             try {
                 this.resourceCollection.setFilters(
+                    this.offer,
                     this.panel,
                     this.panelView,
                     this.supportType,
@@ -655,7 +678,7 @@ define(function(require) {
         createViewModel: function(eventModel) {
             var fcEvent = _.pick(
                 eventModel.attributes,
-                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'panel', 'supportType', 'lightingType', 'status', 'editable', 'removable']
+                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'offer','panel', 'supportType', 'lightingType', 'status', 'editable', 'removable']
             );
 
             fcEvent.backgroundColor = this.getBackgroundColor(fcEvent.status);

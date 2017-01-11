@@ -111,10 +111,6 @@ class SchedulerEventRepository extends EntityRepository
     public function getEventListQueryBuilder($extraFields = [])
     {
         $qb = $this->createQueryBuilder('e')
-//            ->select(
-//                'e.id, e.title, e.description, e.start, e.end, e.allDay,'
-//                . ' e.backgroundColor, e.createdAt, e.updatedAt'
-//            );
             ->select(
                 'e.id,
                  c.id as campaignId,
@@ -122,6 +118,7 @@ class SchedulerEventRepository extends EntityRepository
                  pv.id as panelViewId,
                  pv.name as panelViewName,
                  p.id as panelId,
+                 o.id as offerId,
                  p.name as panelName,
                  st.id as supportTypeId,
                  lt.id as lightingTypeId,
@@ -134,6 +131,8 @@ class SchedulerEventRepository extends EntityRepository
             ->leftJoin('pv.panel', 'p')
             ->leftJoin('p.supportType', 'st')
             ->leftJoin('p.lightingType', 'lt')
+            ->leftJoin('e.reservation', 'r')
+            ->leftJoin('r.offer', 'o')
         ;
 //        if ($extraFields) {
 //            foreach ($extraFields as $field) {

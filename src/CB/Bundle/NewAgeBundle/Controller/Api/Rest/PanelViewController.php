@@ -45,16 +45,22 @@ class PanelViewController extends RestController implements ClassResourceInterfa
      *     description="Number of items per page. defaults to 10."
      * )
      * @Rest\QueryParam(
-     *      name="panel",
-     *      requirements="\d+",
-     *      nullable=true,
-     *      description="Panel id."
-     * )
-     * @Rest\QueryParam(
      *      name="id",
      *      requirements="\d+",
      *      nullable=true,
      *      description="Id."
+     * )
+     * @Rest\QueryParam(
+     *      name="offer",
+     *      requirements="\d+",
+     *      nullable=true,
+     *      description="Offer id."
+     * )
+     * @Rest\QueryParam(
+     *      name="panel",
+     *      requirements="\d+",
+     *      nullable=true,
+     *      description="Panel id."
      * )
      * @QueryParam(
      *      name="supportType",
@@ -88,8 +94,9 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         $qb = $repo->getPanelViewsQueryBuilder($this->get('oro_security.security_facade')->getOrganization()->getId());
         $qb->setMaxResults(1000);
 
-        $panelId  = (int)$this->getRequest()->get('panel', 0);
         $panelViewId  = (int)$this->getRequest()->get('id', 0);
+        $offerId  = (int)$this->getRequest()->get('offer', 0);
+        $panelId  = (int)$this->getRequest()->get('panel', 0);
         $supportTypeId  = (int)$this->getRequest()->get('supportType', 0);
         $lightingTypeId  = (int)$this->getRequest()->get('lightingType', 0);
 
@@ -99,12 +106,15 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         else
             $cities = [];
 
+        if ($panelViewId)
+            $qb->andWhere('pv.id=:panelViewId')
+                ->setParameter('panelViewId', $panelViewId);
+        if ($offerId)
+            $qb->andWhere(':offer MEMBER OF pv.offers')
+                ->setParameter('offer', $offerId);
         if ($panelId)
             $qb->andWhere('p.id=:panelId')
                 ->setParameter('panelId', $panelId);
-        if ($panelViewId)
-            $qb->andWhere('c.id=:panelViewId')
-                ->setParameter('panelViewId', $panelViewId);
         if ($supportTypeId)
             $qb->andWhere('p.supportType=:supportTypeId')
                 ->setParameter('supportTypeId', $supportTypeId);

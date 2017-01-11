@@ -20,10 +20,10 @@ define([
                 this.route
             );
         },
-        setFilters: function(panel, panelView, supportType, lightingType, city) {
+        setFilters: function(offer, panel, panelView, supportType, lightingType, city) {
             this.url = routing.generate(
                 this.route,
-                {panel: panel, id: panelView, supportType: supportType, lightingType: lightingType, city: city}
+                {offer: offer, panel: panel, id: panelView, supportType: supportType, lightingType: lightingType, city: city}
             );
         }
     });
