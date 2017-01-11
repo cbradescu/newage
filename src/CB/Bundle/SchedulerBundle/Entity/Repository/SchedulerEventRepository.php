@@ -136,6 +136,8 @@ class SchedulerEventRepository extends EntityRepository
             ->leftJoin('a.city', 'ct')
             ->leftJoin('e.reservation', 'r')
             ->leftJoin('r.offer', 'o')
+            ->addOrderBy('p.name', 'ASC')
+            ->addOrderBy('pv.name', 'ASC')
         ;
 //        if ($extraFields) {
 //            foreach ($extraFields as $field) {
