@@ -174,6 +174,7 @@ class SchedulerEventController extends RestController implements ClassResourceIn
                 $item['panel'] = $row['panelId'];
                 $item['supportType'] = $row['supportTypeId'];
                 $item['lightingType'] = $row['lightingTypeId'];
+                $item['city'] = $row['city'];
                 $item['status'] = $row['status'];
 
                 $item['editable'] = false;

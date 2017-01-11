@@ -678,7 +678,7 @@ define(function(require) {
         createViewModel: function(eventModel) {
             var fcEvent = _.pick(
                 eventModel.attributes,
-                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'offer','panel', 'supportType', 'lightingType', 'status', 'editable', 'removable']
+                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'offer','panel', 'supportType', 'lightingType', 'status', 'city','editable', 'removable']
             );
 
             fcEvent.backgroundColor = this.getBackgroundColor(fcEvent.status);
