@@ -592,52 +592,8 @@ datagrid:
     free-panel_view-grid:
         source:
             type: orm
-            acl_resource: cb_newage_panel_view_view
-            query:
-                select:
-                    - DISTINCT pv.id
-                    - pv.url
-                    - pv.name
-                    - p.name as panel
-                    - st.name as support
-                    - lt.name as lighting
-                    - ct.name as city
-                    - >
-                        (CASE WHEN (:offer IS NOT NULL) THEN
-                            CASE WHEN (:offer MEMBER OF pv.offers OR pv.id IN (:data_in)) AND pv.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                          ELSE
-                            CASE WHEN pv.id IN (:data_in) AND pv.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                          END) as hasContact
-
-                from:
-                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
-                join:
-                    left:
-                        -
-                            join: pv.panel
-                            alias: p
-                        -
-                            join: p.supportType
-                            alias: st
-                        -
-                            join: p.lightingType
-                            alias: lt
-                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
-                        -
-                            join: addr.city
-                            alias: ct
-                        -
-                            join: pv.events
-                            alias: ev
-                            conditionType: WITH
-                            condition: (ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)
-                where:
-                    and:
-                        - ev.panelView IS NULL
-                    or:
-                        - ev.status <> 2
+            entity: CBNewAgeBundle:PanelView # The name of your entity
+            repository_method: getFreePanelViewsQueryBuilder # The function name for query builder
             bind_parameters:
                 - offer
                 - start
