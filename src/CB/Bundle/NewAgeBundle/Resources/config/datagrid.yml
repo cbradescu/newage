@@ -650,7 +650,7 @@ datagrid:
                     enabled: true
                 city:
                     type: choice-tree
-                    data_name: addr.city
+                    data_name: a.city
                     options:
                         lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
                         data: "@?cb_city.provider.filter.city_choice_tree->getList"
