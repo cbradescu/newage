@@ -2,16 +2,18 @@
 
 namespace CB\Bundle\NewAgeBundle\Workflow\Action;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-
 use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Exception\NotManageableEntityException;
 use Oro\Component\Action\Model\ContextAccessor;
+
 /**
  * - @generate_offer_items:
  *     offer: $currentOffer
@@ -25,14 +27,25 @@ class GenerateOfferItemsAction extends AbstractAction
     protected $registry;
 
     /**
+     * @var SecurityFacade
+     */
+    protected $securityFacade;
+
+    /**
      * @param ContextAccessor $contextAccessor
      * @param ManagerRegistry $registry
+     * @param SecurityFacade $securityFacade
      */
-    public function __construct(ContextAccessor $contextAccessor, ManagerRegistry $registry)
+    public function __construct(
+        ContextAccessor $contextAccessor,
+        ManagerRegistry $registry,
+        SecurityFacade $securityFacade
+    )
     {
         parent::__construct($contextAccessor);
 
         $this->registry = $registry;
+        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -83,6 +96,8 @@ class GenerateOfferItemsAction extends AbstractAction
         $item->setOffer($offer);
         $item->setStart($offer->getStart());
         $item->setEnd($offer->getEnd());
+        $item->setOwner($this->securityFacade->getLoggedUser());
+        $item->setOrganization($this->securityFacade->getOrganization());
 
         $offer->addItem($item);
 

@@ -226,5 +226,6 @@ services:
         arguments:
             - '@oro_action.context_accessor'
             - '@doctrine'
+            - '@oro_security.security_facade'
         tags:
             - { name: oro_workflow.action, alias: generate_offer_items }
