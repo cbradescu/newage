@@ -44,6 +44,8 @@ parameters:
 
     cb_newage.reservation.datagrid_helper.class:      CB\Bundle\NewAgeBundle\Datagrid\ReservationGridHelper
 
+    cb_newage.workflow.action.generate_offer_items.class:  CB\Bundle\NewAgeBundle\Workflow\Action\GenerateOfferItemsAction
+
 services:
     cb_newage_panel.manager:
         class: %cb_newage_panel.manager.class%
@@ -218,3 +220,11 @@ services:
         class: %cb_newage.reservation.datagrid_helper.class%
         arguments:
             - '@security.authorization_checker'
+
+    cb_newage.workflow.action.generate_offer_items:
+        class: %cb_newage.workflow.action.generate_offer_items.class%
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@doctrine'
+        tags:
+            - { name: oro_workflow.action, alias: generate_offer_items }

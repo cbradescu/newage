@@ -9,6 +9,9 @@ workflows:
                 property_path: offer.end
             offer_campaign:
                 property_path: offer.campaign
+            items:
+                label: 'Items'
+                property_path: offer.items
             panelViews:
                 label: 'Panel Views'
                 property_path: offer.panelViews

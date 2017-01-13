@@ -47,6 +47,49 @@ workflows:
                             attribute: $offer_end
                 transition_definition: create_definition
 
+            generate:
+                label: 'Generate panel views'
+                step_to: generated
+                is_unavailable_hidden: false
+                acl_resource: cb_newage_offer_update
+                display_type: page
+#                display_type: dialog
+                frontend_options:
+                    icon: 'icon-edit'
+                    class: 'btn-success'
+                    page:
+                        parent_route: 'cb_newage_offer_index'
+                        parent_label: cb.newage.offer.entity_plural_label
+                form_options:
+                    attribute_fields:
+                        items:
+                            form_type: oro_multiple_entity
+                            options:
+                                required: true
+                                class: 'CBNewAgeBundle:OfferItem'
+                                add_acl_resource: 'cb_newage_panel_view_view'
+                                selector_window_title: 'cb.newage.offer.form.select_panel_views'
+                                selection_route: 'cb_offer_widget_panel_views_info'
+                                selection_route_parameters:
+                                    id: $offer.id
+                                constraints:
+                                    - NotBlank: ~
+                    init_actions:
+#                        - '@find_entity':
+#                            parameters:
+#                                class: CB\Bundle\NewAgeBundle\Entity\Offer
+#                                attribute: $.items
+#                                where:
+#                                    id: $.id
+                        - @generate_offer_items:
+#                            conditions:
+#                                @empty: [$offer.start]
+#                                @empty: [$offer.end]
+                            parameters:
+                                offer: $offer
+                                attribute: $offer.items
+                transition_definition: generate_definition
+
             filters:
                 label: 'Select panel views'
                 step_to: filtered

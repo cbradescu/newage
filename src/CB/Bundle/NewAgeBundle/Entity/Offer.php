@@ -153,6 +153,26 @@ class Offer
     protected $reservation;
 
     /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\OfferItem",
+     *    mappedBy="offer", cascade={"all"}, orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "full"=true,
+     *              "order"=250
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $items;
+
+    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -223,6 +243,7 @@ class Offer
     public function __construct()
     {
         $this->panelViews = new ArrayCollection();
+        $this->items = new ArrayCollection();
     }
 
     /**
@@ -325,6 +346,62 @@ class Offer
     public function setCampaign(Campaign $campaign = null)
     {
         $this->campaign = $campaign;
+
+        return $this;
+    }
+
+    /**
+     * Get items collection
+     *
+     * @return Collection
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Set items collection
+     *
+     * @param Collection $items
+     *
+     * @return Offer
+     */
+    public function setItems(Collection $items)
+    {
+        $this->items = $items;
+
+        return $this;
+    }
+
+    /**
+     * Add specified item
+     *
+     * @param OfferItem $item
+     *
+     * @return Offer
+     */
+    public function addItem(OfferItem $item)
+    {
+        if (!$this->getItems()->contains($item)) {
+            $this->getItems()->add($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove specified item
+     *
+     * @param OfferItem $item
+     *
+     * @return Offer
+     */
+    public function removeItem(OfferItem $item)
+    {
+        if ($this->getItems()->contains($item)) {
+            $this->getItems()->removeElement($item);
+        }
 
         return $this;
     }

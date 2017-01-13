@@ -398,4 +398,32 @@ class PanelView
     {
         return $this->panel->getLightingType()->getName();
     }
+
+    /**
+     * Find confirmed events in an interval for current panel view.
+     *
+     * @param $start
+     * @param $end
+     * @return array
+     */
+    protected function getConfirmedEvents($start, $end)
+    {
+        $confirmedEvents = [];
+        foreach ($this->events as $event)
+        {
+            if ($event->getStatus()==2 and
+                (
+                    ($event->getStart()>=$start and $event->getStart()<=$end) or
+                    ($event->getEnd()>=$start and $event->getEnd()<=$end) or
+                    ($event->getStart()>=$start and $event->getEnd()<=$end) or
+                    ($event->getStart()<=$start and $event->getEnd()>=$end)
+                )
+            )
+                $confirmedEvents[] = $event;
+        }
+
+        return $confirmedEvents;
+    }
+
+
 }

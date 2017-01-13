@@ -6,10 +6,17 @@ workflows:
                 order: 10
                 allowed_transitions:
                     - create
+                    - generate
+
+            generated:
+                label: 'Generated'
+                order: 20
+                allowed_transitions:
+                    - generate
                     - filters
 
             filtered:
-                label: 'Panel Views selected'
+                label: 'Filtered'
                 order: 20
                 allowed_transitions:
                     - filters
