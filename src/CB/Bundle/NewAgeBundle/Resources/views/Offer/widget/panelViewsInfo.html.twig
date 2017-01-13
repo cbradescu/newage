@@ -1,11 +1,19 @@
 <div class="widget-content grid-widget-content">
     {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
-    {% set gridName = 'free-panel_view-grid' %}
+    {#{% set gridName = 'free-panel_view-grid' %}#}
+    {% set gridName = 'offer-items-grid' %}
 
+    {#{% set params = {#}
+    {#'offer': offer ? offer.id : null,#}
+    {#'start': offer ? offer.start|date('Y-m-d') : 'now'|date('Y-m-') ~ '01',#}
+    {#'end': offer ? offer.end|date('Y-m-d') : 'now'|date('Y-m-t'),#}
+    {#'_parameters' : {#}
+        {#'data_in':     app.request.get('added') ? app.request.get('added')|split(',') : [],#}
+        {#'data_not_in': app.request.get('removed') ? app.request.get('removed')|split(','): []#}
+    {#}#}
+    {#} %}#}
     {% set params = {
     'offer': offer ? offer.id : null,
-    'start': offer ? offer.start|date('Y-m-d') : 'now'|date('Y-m-') ~ '01',
-    'end': offer ? offer.end|date('Y-m-d') : 'now'|date('Y-m-t'),
     '_parameters' : {
         'data_in':     app.request.get('added') ? app.request.get('added')|split(',') : [],
         'data_not_in': app.request.get('removed') ? app.request.get('removed')|split(','): []
@@ -66,7 +74,7 @@
                                     addedModels[id] = new MultipleEntityModel({
                                         'id': model.get('id'),
                                         'link': routing.generate('orocrm_contact_info', {id: model.get('id')}),
-                                        'label': model.get('panel') + ' ' + model.get('name'),
+                                        'label': model.get('panel') + ' ' + model.get('panelView'),
                                         'extraData': [
                                             {
                                                 'label': 'City',
@@ -79,6 +87,10 @@
                                             {
                                                 'label': 'Lighting type',
                                                 'value': model.get('lighting')
+                                            },
+                                            {
+                                                'label': 'Start',
+                                                'value': model.get('start').substring(0,10)
                                             }
                                         ]
                                     });

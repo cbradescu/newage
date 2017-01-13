@@ -74,20 +74,6 @@ workflows:
                                     id: $offer.id
                                 constraints:
                                     - NotBlank: ~
-                    init_actions:
-#                        - '@find_entity':
-#                            parameters:
-#                                class: CB\Bundle\NewAgeBundle\Entity\Offer
-#                                attribute: $.items
-#                                where:
-#                                    id: $.id
-                        - @generate_offer_items:
-#                            conditions:
-#                                @empty: [$offer.start]
-#                                @empty: [$offer.end]
-                            parameters:
-                                offer: $offer
-                                attribute: $offer.items
                 transition_definition: generate_definition
 
             filters:

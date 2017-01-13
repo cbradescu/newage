@@ -4,7 +4,9 @@ namespace CB\Bundle\NewAgeBundle\Workflow\Action;
 
 use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
+use CB\Bundle\NewAgeBundle\Entity\PanelView;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
@@ -53,8 +55,6 @@ class GenerateOfferItemsAction extends AbstractAction
      */
     public function initialize(array $options)
     {
-        error_log('initialize', 3, '/var/www/newage/crm-application/app/logs/catalin');
-
         if (empty($options['offer'])) {
             throw new InvalidParameterException('Offer parameter must be specified');
         }
@@ -83,27 +83,49 @@ class GenerateOfferItemsAction extends AbstractAction
         /** @var Offer $offer */
         $offer = $this->contextAccessor->getValue($context, $this->options['offer']);
 
+        // Remove currently generated items.
         $items = $offer->getItems();
         foreach ($items as $item)
         {
             $offer->removeItem($item);
         }
 
-        $entityManager->persist($offer);
-        $entityManager->flush();
-
-        $item = new OfferItem();
-        $item->setOffer($offer);
-        $item->setStart($offer->getStart());
-        $item->setEnd($offer->getEnd());
-        $item->setOwner($this->securityFacade->getLoggedUser());
-        $item->setOrganization($this->securityFacade->getOrganization());
-
-        $offer->addItem($item);
+        // Add newly generated items.
+        $offer->setItems($this->generateOfferItems($offer));
 
         $entityManager->persist($offer);
         $entityManager->flush();
 
 //        $this->contextAccessor->setValue($context, $this->options['attribute'], $items);
+    }
+
+    protected function generateOfferItems(Offer $offer)
+    {
+        $items = new ArrayCollection();
+
+        $panelViews = $this->registry->getRepository('CBNewAgeBundle:PanelView')->findAll();
+
+        /** @var PanelView $panelView */
+        foreach ($panelViews as $panelView)
+        {
+            $confirmedOnes = $panelView->getConfirmedEvents($offer->getStart(), $offer->getEnd());
+
+            if (count($confirmedOnes))
+            {
+
+            } else {
+                $item = new OfferItem();
+                $item->setOffer($offer);
+                $item->setPanelVIew($panelView);
+                $item->setStart($offer->getStart());
+                $item->setEnd($offer->getEnd());
+                $item->setOwner($this->securityFacade->getLoggedUser());
+                $item->setOrganization($this->securityFacade->getOrganization());
+
+                $items->add($item);
+            }
+        }
+
+        return $items;
     }
 }

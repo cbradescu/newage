@@ -406,7 +406,7 @@ class PanelView
      * @param $end
      * @return array
      */
-    protected function getConfirmedEvents($start, $end)
+    public function getConfirmedEvents($start, $end)
     {
         $confirmedEvents = [];
         foreach ($this->events as $event)
@@ -419,11 +419,64 @@ class PanelView
                     ($event->getStart()<=$start and $event->getEnd()>=$end)
                 )
             )
-                $confirmedEvents[] = $event;
+                $confirmedEvents[] = [
+                    'start' =>  $event->getStart(),
+                    'end'   =>  $event->getEnd()
+                ];
         }
 
         return $confirmedEvents;
     }
 
+    /**
+     * Return concatenated reserved intervals from a period.
+     *
+     * @param array $confirmed
+     * @param \DateTime $start
+     * @param \DateTime $end
+     *
+     * @return array
+     */
+    protected function getFreeIntervals(array $confirmed, \DateTime $start, \DateTime $end)
+    {
+        // sorting ascending by start date.
+        usort($confirmed, function($a, $b) {
+            return $a['start'] - $b['start'];
+        });
 
+
+        $results = [];
+
+        $first = array_shift($confirmed);
+
+        /** @var array $int - current interval [start,end] */
+        if ($first['start']>$start)
+            $results[] = [
+                'start' => $start,
+                'end'   => $first['start']->modify('-1 day')
+            ];
+
+        $int['start'] = $int['end'] = $first['start']->modify('+1 day');
+
+        foreach ($confirmed as $ev)
+        {
+            if ($ev['start']>$int['end'])
+                $results[] =[
+                    'start' => $int['start'],
+                    'end'   => $ev['start']->modify('-1 day')
+                ];
+
+            $int['start'] = $int['end'] = $first['start']->modify('+1 day');
+        }
+
+        if ($int['start']<$end)
+            $results[] = [
+                'start' => $int['start'],
+                'end'   => $end
+            ];
+
+        $results[] = $int;
+
+        return $results;
+    }
 }

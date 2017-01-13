@@ -44,6 +44,7 @@ parameters:
 
     cb_newage.reservation.datagrid_helper.class:      CB\Bundle\NewAgeBundle\Datagrid\ReservationGridHelper
 
+    cb_newage.offer_item.entity.class:               CB\Bundle\NewAgeBundle\Entity\OfferItem
     cb_newage.workflow.action.generate_offer_items.class:  CB\Bundle\NewAgeBundle\Workflow\Action\GenerateOfferItemsAction
 
 services:
