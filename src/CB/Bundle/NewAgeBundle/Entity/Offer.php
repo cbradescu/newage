@@ -626,4 +626,9 @@ class Offer
     {
         return $this->workflowStep;
     }
+
+    public function isGreaterThanStart($days)
+    {
+        return $this->end >= $this->start->modify('+' . $days. ' days');
+    }
 }
