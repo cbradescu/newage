@@ -10,7 +10,7 @@
 
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
-        {{ UI.cancelButton(path('cb_newage_offer_index')) }}
+        {{ UI.cancelButton(path('cb_newage_offer_view', { id: entity.id })) }}
     {% endif %}
 {% endblock navButtons %}
 

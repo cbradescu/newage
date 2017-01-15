@@ -142,7 +142,7 @@ class OfferController extends Controller
         $confirmedPanelViews = [];
         foreach ($results as $row)
         {
-            error_log($row['panelView']. "\t" . $row['start']->format('Y-m-d') . "\t" . $row['end']->format('Y-m-d') ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
+//            error_log($row['panelView']. "\t" . $row['start']->format('Y-m-d') . "\t" . $row['end']->format('Y-m-d') ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
 
             $confirmedPanelViews[$row['panelView']][] = [
                 'start' => $row['start'],
