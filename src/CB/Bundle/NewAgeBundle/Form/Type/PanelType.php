@@ -84,6 +84,14 @@ class PanelType extends AbstractType
                 ]
             )
             ->add(
+                'url',
+                'text',
+                [
+                    'label' => 'cb.newage.panel.url.label',
+                    'required' => false
+                ]
+            )
+            ->add(
                 'addresses',
                 'cb_panel_address_collection',
                 array(

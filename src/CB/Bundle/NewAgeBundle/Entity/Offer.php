@@ -242,6 +242,10 @@ class Offer
 
     public function __construct()
     {
+        $this->start = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->end = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->end->modify('+5 days');
+
         $this->panelViews = new ArrayCollection();
         $this->items = new ArrayCollection();
     }
@@ -629,6 +633,7 @@ class Offer
 
     public function isGreaterThanStart($days)
     {
-        return $this->end >= $this->start->modify('+' . $days. ' days');
+        $start = clone $this->start;
+        return $this->end >= $start->modify('+' . $days. ' days');
     }
 }

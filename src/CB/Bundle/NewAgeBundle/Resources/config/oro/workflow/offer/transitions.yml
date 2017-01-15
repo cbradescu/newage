@@ -74,6 +74,11 @@ workflows:
                                     id: $offer.id
                                 constraints:
                                     - NotBlank: ~
+                    init_actions:
+                        - @generate_offer_items:
+                            parameters:
+                                offer: $offer
+                                attribute: $offer.items
                 transition_definition: generate_definition
 
             filters:

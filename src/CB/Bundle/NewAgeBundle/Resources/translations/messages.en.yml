@@ -121,7 +121,7 @@ cb:
       offer:
             entity_label:                  Offer
             entity_plural_label:           Offers
-            block.general:                 General
+            block.general:                 General Information
             message:
                 saved:                     Offer saved
             id.label:                      Id
@@ -131,6 +131,8 @@ cb:
             start.label:                   Start
             end.label:                     End
             campaign.label:                Campaign
+            offered_panel_views.label:     Offered Panel Views
+            select_panel_views.label:      Select Panel Views
             panel_views_no.label:          Panel Views No.
             view_reservation.label:        View Reservation
             form:

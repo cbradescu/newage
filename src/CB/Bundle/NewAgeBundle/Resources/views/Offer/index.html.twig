@@ -4,5 +4,12 @@
 {% set gridName = 'offer-grid' %}
 
 {% block navButtons %}
+    {% if resource_granted('cb_newage_offer_create') %}
+        {{ UI.addButton({
+            'path' : path('cb_newage_offer_create'),
+            'label': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.offer.entity_label'|trans}),
+            'title': 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.offer.entity_label'|trans})
+        }) }}
+    {% endif %}
     {% include 'OroWorkflowBundle:Widget:buttons.html.twig' %}
 {% endblock navButtons %}

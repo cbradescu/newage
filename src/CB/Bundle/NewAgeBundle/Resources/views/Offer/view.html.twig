@@ -9,14 +9,17 @@
 {% oro_title_set({params : {"%entity.name%": entity.name|default('N/A') }}) %}
 
 {% block navButtons %}
-    {% if entity.reservation %}
-        {% if resource_granted('VIEW', entity.reservation) %}
-            {{ UI.addButton({
-                'path': path('cb_newage_reservation_view', { 'id': entity.reservation.id }),
-                'aCss': 'no-hash',
-                'label': 'cb.newage.offer.view_reservation.label'|trans
-            }) }}
-        {% endif %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('cb_newage_offer_update', { id: entity.id }),
+            'entity_label': 'cb.newage.offer.entity_label'|trans
+        }) }}
+        {{ UI.editButton({
+            'path': path('cb_newage_offer_update', { 'id': entity.id }),
+            'aCss': 'no-hash',
+            'iCss': 'icon-ellipsis-vertical',
+            'label': 'cb.newage.offer.select_panel_views.label'|trans
+        }) }}
     {% endif %}
 {% endblock navButtons %}
 
@@ -36,10 +39,10 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('cb.newage.offer.name.label'|trans, entity.name) }}
-            {{ UI.renderProperty('cb.newage.campaign.start.label'|trans, entity.start|oro_format_date) }}
-            {{ UI.renderProperty('cb.newage.campaign.end.label'|trans, entity.end|oro_format_date) }}
+            {{ UI.renderProperty('cb.newage.offer.start.label'|trans, entity.start|oro_format_date) }}
+            {{ UI.renderProperty('cb.newage.offer.end.label'|trans, entity.end|oro_format_date) }}
 
-            {%- set campaignData -%}
+            {%- set offerData -%}
                 {%- if entity.campaign -%}
                     <a href="{{ path('cb_newage_campaign_view', {'id': entity.campaign.id}) }}">
                         {{ entity.campaign }}
@@ -47,7 +50,7 @@
                 {%- endif -%}
             {%- endset -%}
 
-            {{ UI.renderHtmlProperty('cb.newage.campaign.entity_label'|trans, campaignData) }}
+            {{ UI.renderHtmlProperty('cb.newage.offer.entity_label'|trans, offerData) }}
 
         </div>
         <div class="responsive-block">
@@ -69,14 +72,14 @@
     {% if entity.panelViews %}
         {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-        {% set gridName = 'selected-panel_view-grid' %}
-        {% if entity.workflowStep.isFinal and not entity.reservation %}
-            {% set gridName = 'select-panel_view-grid' %}
-        {% endif %}
+        {#{% set gridName = 'selected-panel_view-grid' %}#}
+        {#{% if entity.workflowStep.isFinal and not entity.reservation %}#}
+            {#{% set gridName = 'select-panel_view-grid' %}#}
+        {#{% endif %}#}
 
-        {% set params = {
-                offer: entity.id
-        } %}
+        {#{% set params = {#}
+                {#offer: entity.id#}
+        {#} %}#}
 
         {%- set gridSelectedPanelViews -%}
             {% if gridName is defined %}
@@ -93,7 +96,7 @@
 
         {% set dataBlocks = dataBlocks|merge([
         {
-        'title': 'cb.newage.panelview.entity_plural_label'|trans,
+        'title': 'cb.newage.offer.offered_panel_views.label'|trans,
         'subblocks': [
         {'data' : [gridSelectedPanelViews]}
         ]

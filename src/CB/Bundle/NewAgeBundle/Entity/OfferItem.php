@@ -46,11 +46,10 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 class OfferItem
 {
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id", type="string", length=50)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -169,6 +168,11 @@ class OfferItem
     protected $updatedAt;
 
 
+    public function __construct(Offer $offer, PanelView $panelView, \DateTime $start, \DateTime $end)
+    {
+        $this->id = $offer->getId() . '[]' . $panelView->getId() . '[]' . $start->format('Y-m-d') . '[]' . $end->format('Y-m-d');
+    }
+
     /**
      * @return string
      */
@@ -178,7 +182,7 @@ class OfferItem
     }
 
     /**
-     * @return integer
+     * @return string
      */
     public function getId()
     {

@@ -85,10 +85,11 @@ class GenerateOfferItemsAction extends AbstractAction
 
         // Remove currently generated items.
         $items = $offer->getItems();
-        foreach ($items as $item)
-        {
-            $offer->removeItem($item);
-        }
+        if ($items)
+            foreach ($items as $item)
+            {
+                $offer->removeItem($item);
+            }
 
         // Add newly generated items.
         $offer->setItems($this->generateOfferItems($offer));
@@ -114,7 +115,7 @@ class GenerateOfferItemsAction extends AbstractAction
             {
 
             } else {
-                $item = new OfferItem();
+                $item = new OfferItem($offer, $panelView, $offer->getStart(), $offer->getEnd());
                 $item->setOffer($offer);
                 $item->setPanelVIew($panelView);
                 $item->setStart($offer->getStart());

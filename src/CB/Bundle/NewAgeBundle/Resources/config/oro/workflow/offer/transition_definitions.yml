@@ -7,10 +7,6 @@ workflows:
                         conditions:
                             @empty: [$offer.id]
                         parameters: ~
-                    - @generate_offer_items:
-                        parameters:
-                            offer: $offer
-                            attribute: $offer.items
                     - @redirect: # redirect to Offer view page
                         route: 'cb_newage_offer_view'
                         route_parameters:
