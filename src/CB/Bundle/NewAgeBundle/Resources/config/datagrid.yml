@@ -1066,3 +1066,114 @@ datagrid:
                 selectors:
                     included: '#appendPanelViews'
                     excluded: '#removePanelViews'
+
+    available-panel_view-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_panel_view_view
+            query:
+                select:
+                    - pv.id
+                    - pv.name
+                    - pv.url
+                    - p.name as panel
+                    - p.dimensions
+                    - st.name as support
+                    - lt.name as lighting
+                    - ct.name as city
+                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                from:
+                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
+                join:
+                    left:
+                        -
+                            join: pv.panel
+                            alias: p
+                        -
+                            join: p.supportType
+                            alias: st
+                        -
+                            join: p.lightingType
+                            alias: lt
+                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
+                        -
+                            join: addr.city
+                            alias: ct
+                where:
+                    and:
+                        - pv.id NOT IN (:forbidden)
+            bind_parameters:
+                - forbidden
+
+        columns:
+            url:
+                label:        cb.newage.panelview.url.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
+            city:
+                label:        oro.address.city.label
+            address:
+                label:        cb.newage.panel.address.label
+            panel:
+                label:        cb.newage.panel.entity_label
+            name:
+                label:        cb.newage.panelview.name.label
+            support:
+                label:        cb.newage.supporttype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
+
+        sorters:
+            columns:
+                panel:
+                    data_name: p.name
+                name:
+                    data_name: pv.name
+            default:
+                panel: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+
+        filters:
+            columns:
+                city:
+                    type: choice-tree
+                    data_name: addr.city
+                    options:
+                        lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
+                        data: "@?cb_city.provider.filter.city_choice_tree->getList"
+                    enabled: true
+                support:
+                    type: choice-tree
+                    data_name: p.supportType
+                    options:
+                        lazy: "@cb_support.provider.filter.support_choice_tree->shouldBeLazy"
+                        data: "@?cb_support.provider.filter.support_choice_tree->getList"
+                    enabled: true
+                lighting:
+                    type: choice-tree
+                    data_name: p.lightingType
+                    options:
+                        lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
+                        data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
+                    enabled: true
+
+        properties:
+            id: ~
+        action_configuration:
+            delete: false
+        options:
+            entityHint: panelView
+            mass_actions:
+                delete:
+                    enabled: false
+#            routerEnabled: false
+        mass_actions:
+            reserve:
+                type: reserve
+                entity_name: %cb_newage_panel_view.entity.class%
+                data_identifier: pv.id
+                label: cb.newage.reservation.datagrid.action.reserve
+                icon: random

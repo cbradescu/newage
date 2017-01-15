@@ -636,4 +636,6 @@ class Offer
         $start = clone $this->start;
         return $this->end >= $start->modify('+' . $days. ' days');
     }
+
+
 }

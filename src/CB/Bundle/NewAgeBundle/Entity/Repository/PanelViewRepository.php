@@ -128,4 +128,27 @@ class PanelViewRepository extends EntityRepository
         return $qb;
     }
 
+    /**
+     * Return confirmed Panel Views in an interval of time.
+     *
+     * @param \DateTime $start
+     * @param \DateTime $end
+     *
+     * @return QueryBuilder
+     */
+    public function getConfirmedPanelViews($start, $end)
+    {
+        $qb = $this->getEntityManager()->getRepository('CBSchedulerBundle:SchedulerEvent')->createQueryBuilder('ev')
+            ->select(
+                'IDENTITY(ev.panelView) as panelView',
+                'ev.start',
+                'ev.end'
+                )
+            ->where('(ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)')
+            ->andWhere('ev.status=2')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        return $qb;
+    }
 }

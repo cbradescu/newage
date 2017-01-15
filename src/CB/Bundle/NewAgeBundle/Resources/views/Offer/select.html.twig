@@ -10,16 +10,7 @@
 
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
-        {{ UI.editButton({
-            'path' : path('cb_newage_offer_update', { id: entity.id }),
-            'entity_label': 'cb.newage.offer.entity_label'|trans
-        }) }}
-        {{ UI.editButton({
-            'path': path('cb_newage_offer_select', { 'id': entity.id }),
-            'aCss': 'no-hash',
-            'iCss': 'icon-ellipsis-vertical',
-            'label': 'cb.newage.offer.select_panel_views.label'|trans
-        }) }}
+        {{ UI.cancelButton(path('cb_newage_offer_index')) }}
     {% endif %}
 {% endblock navButtons %}
 
@@ -69,19 +60,17 @@
     }
     ] %}
 
-    {% if entity.panelViews %}
+
+    {% if forbidden %}
         {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-        {#{% set gridName = 'selected-panel_view-grid' %}#}
-        {#{% if entity.workflowStep.isFinal and not entity.reservation %}#}
-        {#{% set gridName = 'select-panel_view-grid' %}#}
-        {#{% endif %}#}
+        {% set gridName = 'available-panel_view-grid' %}
 
-        {#{% set params = {#}
-        {#offer: entity.id#}
-        {#} %}#}
+        {% set params = {
+            forbidden: forbidden
+        } %}
 
-        {%- set gridSelectedPanelViews -%}
+        {%- set forbiddenInformation -%}
             {% if gridName is defined %}
                 {% if gridScope is defined %}
                     {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
@@ -96,9 +85,9 @@
 
         {% set dataBlocks = dataBlocks|merge([
         {
-        'title': 'cb.newage.offer.offered_panel_views.label'|trans,
+        'title': 'forbidden'|trans,
         'subblocks': [
-        {'data' : [gridSelectedPanelViews]}
+        {'data' : [forbiddenInformation]}
         ]
         }
         ]) %}
