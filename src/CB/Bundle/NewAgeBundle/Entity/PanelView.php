@@ -464,7 +464,7 @@ class PanelView
 
 
         foreach ($confirmed as $ev) {
-            error_log('Next Int: ' . $ev['start']->format('Y-m-d') . "\t" . $ev['end']->format('Y-m-d') . "\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
+//            error_log('Next Int: ' . $ev['start']->format('Y-m-d') . "\t" . $ev['end']->format('Y-m-d') . "\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
             if ($ev['start'] > $int['end']) {
                 if ($ev['start'] < $end) {
                     $cloneDate = clone $ev['start'];

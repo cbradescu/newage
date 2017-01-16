@@ -8,11 +8,16 @@
 namespace CB\Bundle\NewAgeBundle\Controller;
 
 use CB\Bundle\NewAgeBundle\Entity\Offer;
+use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 /**
@@ -89,7 +94,7 @@ class OfferController extends Controller
         if ($this->get('cb_newage_offer.form.handler.entity')->process($offer)) {
             $this->get('session')->getFlashBag()->add(
                 'success',
-                $this->get('translator')->trans('cb_newage.offer.message.saved')
+                $this->get('translator')->trans('cb.newage.offer.message.saved')
             );
 
             return $this->get('oro_ui.router')->redirectAfterSave(
@@ -123,6 +128,122 @@ class OfferController extends Controller
             'offer' => $offer
         ];
     }
+
+    /**
+     * @Route("/{gridName}/offerMassAction/{actionName}", name="cb_offer_massaction")
+     * @AclAncestor("cb_newage_offer_create")
+     * @Template("CBNewAgeBundle:Offer:view.html.twig")
+     *
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return RedirectResponse
+     */
+    public function offerMassActionAction($gridName, $actionName)
+    {
+        /** @var MassActionDispatcher $massActionDispatcher */
+        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+
+        $offer = $response->getOption('offer');
+        $isAllSelected = $response->getOption('isAllSelected');
+        $values = $response->getOption('values');
+
+        $queryBuilder = $this
+            ->getDoctrine()
+            ->getManager()
+            ->createQueryBuilder()
+            ->select('pv')
+            ->from('CBNewAgeBundle:PanelView', 'pv');
+
+        if ($isAllSelected) {
+            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
+            $queryBuilder->andWhere($queryBuilder->expr()->notIn('pv.id', $forbiddenPanelViewIds));
+        } else {
+            $queryBuilder->andWhere($queryBuilder->expr()->in('pv.id', $values));
+        }
+
+        $results = $queryBuilder->getQuery()->getResult();
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->beginTransaction();
+
+        try {
+            foreach ($offer->getItems() as $item)
+            {
+                $item->setOffer(null);
+                $em->remove($item);
+            }
+
+            $entitiesCount = 0;
+            /** @var PanelView $panelView */
+            foreach ($results as $panelView) {
+
+                $confirmedEvents = $panelView->getConfirmedEvents($offer->getStart(), $offer->getEnd());
+                if (count($confirmedEvents)<0) { // Daca are evenimente confirmate, cautam intervale libere
+                    $freeIntervals = $panelView->getFreeIntervals(
+                        $confirmedEvents,
+                        $offer->getStart(),
+                        $offer->getEnd()
+                    );
+
+                    foreach ($freeIntervals as $freeInterval) {
+                        $interval = $freeInterval['end']->diff($freeInterval['start']);
+                        if ($interval->format('%a') >= 5) {
+                            $item = new OfferItem();
+
+                            $item->setOffer($offer);
+                            $item->setPanelView($panelView);
+                            $item->setStart($freeInterval['start']);
+                            $item->setEnd($freeInterval['end']);
+                            $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+                            $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+
+                            $em->persist($item);
+                            $entitiesCount++;
+                        }
+                    }
+                } else { // In caz contrar fata este libere pentru toata perioada ofertei
+                    $item = new OfferItem();
+
+                    $item->setOffer($offer);
+                    $item->setPanelView($panelView);
+                    $item->setStart($offer->getStart());
+                    $item->setEnd($offer->getEnd());
+                    $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+                    $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+
+                    $em->persist($item);
+                    $entitiesCount++;
+                }
+            }
+
+            $em->flush();
+            $em->commit();
+
+            $this->get('session')->getFlashBag()->add(
+                'warning',
+                $this->get('translator')->trans(
+                    'Removed old panel views from current offer'
+                )
+            );
+
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                $this->get('translator')->transChoice(
+                    'cb.newage.offer.message.items.added',
+                    $entitiesCount,
+                    ['%count%' => $entitiesCount]
+                )
+            );
+        } catch (\Exception $e) {
+            $em->rollback();
+        }
+
+        return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
+    }
+
 
     /**
      * Return Panel View ids that are not allow to be offered.

@@ -121,9 +121,12 @@ cb:
       offer:
             entity_label:                  Offer
             entity_plural_label:           Offers
-            block.general:                 General Information
+            block:
+                general:                   General Information
+                available:                 Available Panel Views
             message:
                 saved:                     Offer saved
+                items.added:               %count% Panel views added
             id.label:                      Id
             name.label:                    Name
             owner.label:                   Owner
@@ -137,6 +140,8 @@ cb:
             view_reservation.label:        View Reservation
             form:
                 select_panel_views:        Select Panel Views
+            datagrid:
+                action.offer:              Add to offer
 
       reservation:
             entity_label:                  Reservation

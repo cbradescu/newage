@@ -1,4 +1,7 @@
 parameters:
+    cb_newage.mass_action.offer.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\OfferMassAction
+    cb_newage.mass_action.offer_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\OfferMassActionHandler
+
     cb_newage.mass_action.reserve.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\ReserveMassAction
     cb_newage.mass_action.reserve_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\ReserveMassActionHandler
 #    cb_newage.mass_action.reserve_mass_action_listener.class: CB\Bundle\NewAgeBundle\EventListener\DataGrid\ReserveMassActionListener
@@ -7,6 +10,20 @@ parameters:
     cb_newage.mass_action.confirm_mass_action_listener.class: CB\Bundle\NewAgeBundle\EventListener\DataGrid\ConfirmMassActionListener
 
 services:
+    cb_newage.mass_action.offer:
+        class: %cb_newage.mass_action.offer.class%
+        arguments:
+            - '@translator'
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: offer }
+
+
+    cb_newage.mass_action.offer_handler:
+        class: %cb_newage.mass_action.offer_handler.class%
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
     cb_newage.mass_action.reserve:
         class: %cb_newage.mass_action.reserve.class%
         arguments:

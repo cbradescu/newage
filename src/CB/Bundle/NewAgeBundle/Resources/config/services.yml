@@ -37,6 +37,7 @@ parameters:
     cb_newage_offer.entity.class:               CB\Bundle\NewAgeBundle\Entity\Offer
     cb_newage_offer.manager.class:              CB\Bundle\NewAgeBundle\Model\OfferManager
     cb_newage_offer.manager.api.class:          CB\Bundle\NewAgeBundle\Model\OfferApiManager
+    cb_newage.subscriber.offer_listener.class: CB\Bundle\NewAgeBundle\EventListener\OfferListener
 
     cb_newage_reservation.entity.class:               CB\Bundle\NewAgeBundle\Entity\Reservation
     cb_newage_reservation.manager.class:              CB\Bundle\NewAgeBundle\Model\ReservationManager
@@ -202,6 +203,14 @@ services:
             - %cb_newage_offer.entity.class%
             - @doctrine.orm.entity_manager
             - @cb_newage_offer.manager
+
+    cb_newage.subscriber.offer_listener:
+        class: %cb_newage.subscriber.offer_listener.class%
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
 
     cb_newage_reservation.manager:
         class: %cb_newage_reservation.manager.class%

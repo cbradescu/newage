@@ -26,72 +26,39 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
-    {%- set offerInformation -%}
-    <div class="row-fluid form-horizontal">
-        <div class="responsive-block">
-            {{ UI.renderProperty('cb.newage.offer.name.label'|trans, entity.name) }}
-            {{ UI.renderProperty('cb.newage.offer.start.label'|trans, entity.start|oro_format_date) }}
-            {{ UI.renderProperty('cb.newage.offer.end.label'|trans, entity.end|oro_format_date) }}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-            {%- set offerData -%}
-                {%- if entity.campaign -%}
-                    <a href="{{ path('cb_newage_campaign_view', {'id': entity.campaign.id}) }}">
-                        {{ entity.campaign }}
-                    </a>
-                {%- endif -%}
-            {%- endset -%}
+    {% set gridName = 'available-panel_view-grid' %}
 
-            {{ UI.renderHtmlProperty('cb.newage.offer.entity_label'|trans, offerData) }}
+    {% set params = {
+        forbidden: forbidden,
+        offer: entity.id
+    } %}
 
-        </div>
-        <div class="responsive-block">
-            {{ entityConfig.renderDynamicFields(entity) }}
-        </div>
-    </div>
+    {%- set forbiddenInformation -%}
+        {% if gridName is defined %}
+            {% if gridScope is defined %}
+                {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+            {% endif %}
+            {% if params is defined %}
+                {{ dataGrid.renderGrid(gridName, params) }}
+            {% else %}
+                {{ dataGrid.renderGrid(gridName) }}
+            {% endif %}
+        {% endif %}
     {%- endset -%}
 
     {% set dataBlocks = [
     {
-        'title': 'cb.newage.offer.block.general'|trans,
+        'title': 'cb.newage.offer.block.available'|trans,
         'class': 'active',
         'subblocks': [
-            {'data' : [offerInformation]}
+            {'data' : [forbiddenInformation]}
         ]
     }
     ] %}
 
 
-    {% if forbidden %}
-        {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
-
-        {% set gridName = 'available-panel_view-grid' %}
-
-        {% set params = {
-            forbidden: forbidden
-        } %}
-
-        {%- set forbiddenInformation -%}
-            {% if gridName is defined %}
-                {% if gridScope is defined %}
-                    {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
-                {% endif %}
-                {% if params is defined %}
-                    {{ dataGrid.renderGrid(gridName, params) }}
-                {% else %}
-                    {{ dataGrid.renderGrid(gridName) }}
-                {% endif %}
-            {% endif %}
-        {%- endset -%}
-
-        {% set dataBlocks = dataBlocks|merge([
-        {
-        'title': 'forbidden'|trans,
-        'subblocks': [
-        {'data' : [forbiddenInformation]}
-        ]
-        }
-        ]) %}
-    {% endif %}
 
     {% set id = 'offerView' %}
     {% set data = { 'dataBlocks': dataBlocks } %}

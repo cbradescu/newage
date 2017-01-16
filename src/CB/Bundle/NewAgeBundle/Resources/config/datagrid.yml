@@ -948,15 +948,6 @@ datagrid:
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
-                    - >
-                        (CASE WHEN (:offer IS NOT NULL) THEN
-                          CASE WHEN (:offer MEMBER OF pv.offers OR pv.id IN (:data_in)) AND pv.id NOT IN (:data_not_in)
-                          THEN true ELSE false END
-                        ELSE
-                          CASE WHEN pv.id IN (:data_in) AND pv.id NOT IN (:data_not_in)
-                          THEN true ELSE false END
-                        END) as hasContact
-
                 from:
                     - { table: %cb_newage.offer_item.entity.class%, alias: i }
                 join:
@@ -977,7 +968,6 @@ datagrid:
                         -
                             join: addr.city
                             alias: ct
-
                 where:
                     and:
                         - i.offer = :offer
@@ -985,10 +975,6 @@ datagrid:
                 - offer
 
         columns:
-            hasContact:
-                label:   orocrm.account.assigned.label
-                editable: true
-                frontend_type: boolean
             url:
                 label:        cb.newage.panelview.url.label
                 type: twig
@@ -1025,12 +1011,9 @@ datagrid:
 
         filters:
             columns:
-                hasContact:
-                    data_name: hasContact
-                    type:      boolean
                 city:
                     type: choice-tree
-                    data_name: a.city
+                    data_name: addr.city
                     options:
                         lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
                         data: "@?cb_city.provider.filter.city_choice_tree->getList"
@@ -1060,12 +1043,6 @@ datagrid:
                 delete:
                     enabled: false
             routerEnabled: false
-            rowSelection:
-                dataField: id
-                columnName: hasContact
-                selectors:
-                    included: '#appendPanelViews'
-                    excluded: '#removePanelViews'
 
     available-panel_view-grid:
         source:
@@ -1171,9 +1148,9 @@ datagrid:
                     enabled: false
 #            routerEnabled: false
         mass_actions:
-            reserve:
-                type: reserve
+            offer:
+                type: offer
                 entity_name: %cb_newage_panel_view.entity.class%
                 data_identifier: pv.id
-                label: cb.newage.reservation.datagrid.action.reserve
+                label: cb.newage.offer.datagrid.action.offer
                 icon: random

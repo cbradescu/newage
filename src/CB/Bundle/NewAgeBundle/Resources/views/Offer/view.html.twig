@@ -2,10 +2,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 
-{% block stats %}
-    {% include 'CBNewAgeBundle:Panel:headerStats.html.twig' with {'entity': entity} %}
-{% endblock stats %}
-
 {% oro_title_set({params : {"%entity.name%": entity.name|default('N/A') }}) %}
 
 {% block navButtons %}
@@ -33,6 +29,10 @@
 
     {{ parent() }}
 {% endblock pageHeader %}
+
+{% block stats %}
+    {% include 'CBNewAgeBundle:Offer:headerStats.html.twig' with {'entity': entity} %}
+{% endblock stats %}
 
 {% block content_data %}
     {%- set offerInformation -%}
@@ -69,19 +69,16 @@
     }
     ] %}
 
-    {% if entity.panelViews %}
+    {% if entity.items %}
         {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-        {#{% set gridName = 'selected-panel_view-grid' %}#}
-        {#{% if entity.workflowStep.isFinal and not entity.reservation %}#}
-        {#{% set gridName = 'select-panel_view-grid' %}#}
-        {#{% endif %}#}
+        {% set gridName = 'offer-items-grid' %}
 
-        {#{% set params = {#}
-        {#offer: entity.id#}
-        {#} %}#}
+        {% set params = {
+            offer: entity.id
+        } %}
 
-        {%- set gridSelectedPanelViews -%}
+        {%- set gridOfferItems -%}
             {% if gridName is defined %}
                 {% if gridScope is defined %}
                     {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
@@ -98,7 +95,7 @@
         {
         'title': 'cb.newage.offer.offered_panel_views.label'|trans,
         'subblocks': [
-        {'data' : [gridSelectedPanelViews]}
+        {'data' : [gridOfferItems]}
         ]
         }
         ]) %}
