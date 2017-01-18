@@ -20,7 +20,7 @@ class SchedulerEventType extends AbstractType
         $builder
             ->add(
                 'start',
-                'oro_datetime',
+                'oro_date',
                 [
                     'required' => true,
                     'label'    => 'cb.scheduler.scheduler_event.start.label',
@@ -29,15 +29,49 @@ class SchedulerEventType extends AbstractType
             )
             ->add(
                 'end',
-                'oro_datetime',
+                'oro_date',
                 [
                     'required' => true,
                     'label'    => 'cb.scheduler.scheduler_event.end.label',
                     'attr'     => ['class' => 'end'],
                 ]
-            );
+            )
+            ->add(
+                'panelView',
+                'entity',
+                array(
+                    'label'       => 'cb.newage.panelview.entity_label',
+                    'class'       => 'CBNewAgeBundle:PanelView',
+//                    'property'    => 'name',
+                    'empty_value' => 'cb.newage.panelview.form.choose_panel_view'
+                )
+            )
+            ->add(
+                'campaign',
+                'entity',
+                array(
+                    'label'       => 'cb.newage.campaign.entity_label',
+                    'class'       => 'CBNewAgeBundle:Campaign',
+                    'property'    => 'title',
+                    'empty_value' => 'cb.newage.campaign.form.choose_campaign'
+                )
+            )
+            ->add(
+                'status',
+                'choice',
+                array(
+                    'label'       => 'cb.scheduler.scheduler_event.status.label',
+                    'choices'     => [
+                        1 => 'Reserved',
+                        2 => 'Confirmed'
+                    ],
+                    'expanded' => false,
+                    'translatable_options' => false
+                )
+            )
+        ;
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+//        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**

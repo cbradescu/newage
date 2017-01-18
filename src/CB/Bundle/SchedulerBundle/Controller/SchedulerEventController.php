@@ -105,7 +105,7 @@ class SchedulerEventController extends Controller
 
         return array(
             'entity' => $schedulerEvent,
-            'form' => $this->get('cb_scheduler.scheduler_event.form.entity')->createView()
+            'form' => $this->get('cb_scheduler.scheduler_event.form')->createView()
         );
     }
 }

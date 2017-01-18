@@ -9,6 +9,8 @@ cb:
         scheduler_event:
             entity_label:                  Event
             entity_plural_label:           Events
+            block:
+                general:                   General Information
             owner.label:  Owner
             id.label: Id
             title.label:  Title
