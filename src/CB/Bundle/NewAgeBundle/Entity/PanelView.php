@@ -379,7 +379,6 @@ class PanelView
         $results = [];
 
         $first = array_shift($confirmed);
-//        error_log('First Int: ' . $first['start']->format('Y-m-d') . "\t" . $first['end']->format('Y-m-d') . "\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
 
         /** @var array $int - current interval [start,end] */
         if ($first['start'] > $start)
@@ -391,11 +390,7 @@ class PanelView
         $cloneDate = clone $first['end'];
         $int['start'] = $int['end'] = $cloneDate->modify('+1 day');
 
-//        error_log('Init start: ' . $int['start']->format('Y-m-d') . "\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
-
-
         foreach ($confirmed as $ev) {
-//            error_log('Next Int: ' . $ev['start']->format('Y-m-d') . "\t" . $ev['end']->format('Y-m-d') . "\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
             if ($ev['start'] > $int['end']) {
                 if ($ev['start'] < $end) {
                     $cloneDate = clone $ev['start'];
@@ -405,7 +400,6 @@ class PanelView
                 }
 
                 $results[] = $int;
-//                error_log('Results[]: ' . $int['start']->format('Y-m-d') . "\t" . $int['end']->format('Y-m-d') . "\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
             }
 
             if ($ev['end']<$end) {

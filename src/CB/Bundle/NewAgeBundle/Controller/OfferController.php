@@ -227,9 +227,6 @@ class OfferController extends Controller
         $stmt->execute();
         $results = $stmt->fetchAll();
 
-        error_log('query: ' . $query . "\n",3,'/var/www/newage/crm-application/app/logs/cata');
-        error_log('total: ' . count($results) . "\n",3,'/var/www/newage/crm-application/app/logs/cata');
-
         $em = $this->getDoctrine()->getEntityManager();
         $em->beginTransaction();
 
@@ -243,7 +240,6 @@ class OfferController extends Controller
             /** @var PanelView $panelView */
             foreach ($results as $row) {
                 $panelView = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView')->findOneBy(['id'=>$row['id']]);
-                error_log('pv: ' . $panelView->getId() . "\n",3,'/var/www/newage/crm-application/app/logs/cata');
 
                 $confirmedEvents = $panelView->getConfirmedEvents($offer->getStart(), $offer->getEnd());
                 if (count($confirmedEvents)>0) { // Daca are evenimente confirmate, cautam intervale libere
@@ -328,7 +324,6 @@ class OfferController extends Controller
         $confirmedPanelViews = [];
         foreach ($results as $row)
         {
-//            error_log($row['panelView']. "\t" . $row['start']->format('Y-m-d') . "\t" . $row['end']->format('Y-m-d') ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
 
             $confirmedPanelViews[$row['panelView']][] = [
                 'start' => $row['start'],
@@ -336,27 +331,17 @@ class OfferController extends Controller
             ];
         }
 
-//        ob_start();
-//        var_dump($confirmedPanelViews);
-//        $x = ob_get_clean();
-//        error_log('Dupa sortare: '. count($confirmedPanelViews) ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
-//        error_log('Dupa sortare: '. $x ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
-
-
         foreach ($confirmedPanelViews as $panelViewId => $intervals) {
             $panelView = $panelViewRepository->findOneBy(['id' => $panelViewId]);
-//            error_log('PanelView: '.$panelView->getId() . "\t" . count($intervals) ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
 
             /** @var PanelView $panelView */
             $freeIntervals = $panelView->getFreeIntervals($intervals, $offer->getStart(), $offer->getEnd());
 
             $forbidden = true;
-//            error_log('Free intervals: '. count($freeIntervals) ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
 
             if (count($freeIntervals)>0) {
                 foreach ($freeIntervals as $freeInterval)
                 {
-//                    error_log('Intervals: ' . $freeInterval['start']->format('Y-m-d') . "\t" . $freeInterval['end']->format('Y-m-d') ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
                     $interval = $freeInterval['end']->diff($freeInterval['start']);
                     if ($interval->format('%a')>=7)
                         $forbidden = false;

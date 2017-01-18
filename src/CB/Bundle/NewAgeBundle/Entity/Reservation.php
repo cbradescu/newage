@@ -285,8 +285,6 @@ class Reservation
      */
     public function addEvent(SchedulerEvent $event)
     {
-//        error_log("<br/>" . $event->getPanelView()->getName() . ' ' . $event->getCampaign()->getTitle() . "<br/>", 3, '/var/www/newage/crm-application/app/logs/catalin');
-
         if (!$this->getEvents()->contains($event)) {
             $this->getEvents()->add($event);
         }
