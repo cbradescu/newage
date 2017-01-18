@@ -126,26 +126,6 @@ class Offer
     protected $campaign;
 
     /**
-     *
-     * @var ArrayCollection $panelViews
-     *
-     * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView", inversedBy="offers")
-     * @ORM\JoinTable(name="cb_newage_offer_to_panel_view")
-     * @ConfigField(
-     *      defaultValues={
-     *          "merge"={
-     *              "display"=true
-     *          },
-     *          "importexport"={
-     *              "order"=50,
-     *              "short"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $panelViews;
-
-    /**
      * @var Reservation
      *
      * @ORM\OneToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Reservation", mappedBy="offer")
@@ -253,30 +233,13 @@ class Offer
      */
     protected $updatedAt;
 
-    /**
-     * @var WorkflowItem
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\WorkflowBundle\Entity\WorkflowItem")
-     * @ORM\JoinColumn(name="workflow_item_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $workflowItem;
-
-    /**
-     * @var WorkflowStep
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WorkflowBundle\Entity\WorkflowStep")
-     * @ORM\JoinColumn(name="workflow_step_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $workflowStep;
-
 
     public function __construct()
     {
         $this->start = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->end = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->end->modify('+5 days');
+        $this->end->modify('+7 days');
 
-        $this->panelViews = new ArrayCollection();
         $this->items = new ArrayCollection();
     }
 
@@ -441,62 +404,6 @@ class Offer
     }
 
     /**
-     * Get panelViews collection
-     *
-     * @return Collection
-     */
-    public function getPanelViews()
-    {
-        return $this->panelViews;
-    }
-
-    /**
-     * Add specified panelView
-     *
-     * @param PanelView $panelView
-     *
-     * @return Offer
-     */
-    public function addPanelView(PanelView $panelView)
-    {
-        if (!$this->getPanelViews()->contains($panelView)) {
-            $this->getPanelViews()->add($panelView);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Set panelViews collection
-     *
-     * @param Collection $panelViews
-     *
-     * @return Offer
-     */
-    public function setPanelViews(Collection $panelViews)
-    {
-        $this->panelViews = $panelViews;
-
-        return $this;
-    }
-
-    /**
-     * Remove specified panelView
-     *
-     * @param PanelView $panelView
-     *
-     * @return Offer
-     */
-    public function removePanelView(PanelView $panelView)
-    {
-        if ($this->getPanelViews()->contains($panelView)) {
-            $this->getPanelViews()->removeElement($panelView);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Reservation
      */
     public function getReservation()
@@ -641,44 +548,6 @@ class Offer
         $this->createdAt = $createdAt;
 
         return $this;
-    }
-
-    /**
-     * @param  WorkflowItem $workflowItem
-     * @return Offer
-     */
-    public function setWorkflowItem($workflowItem)
-    {
-        $this->workflowItem = $workflowItem;
-
-        return $this;
-    }
-
-    /**
-     * @return WorkflowItem
-     */
-    public function getWorkflowItem()
-    {
-        return $this->workflowItem;
-    }
-
-    /**
-     * @param  WorkflowItem $workflowStep
-     * @return Offer
-     */
-    public function setWorkflowStep($workflowStep)
-    {
-        $this->workflowStep = $workflowStep;
-
-        return $this;
-    }
-
-    /**
-     * @return WorkflowStep
-     */
-    public function getWorkflowStep()
-    {
-        return $this->workflowStep;
     }
 
     public function isGreaterThanStart($days)

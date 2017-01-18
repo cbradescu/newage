@@ -122,22 +122,6 @@ class PanelView
     /**
      * @var Collection
      *
-     * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\Offer", mappedBy="panelViews")
-     * @ORM\JoinTable(name="cb_newage_offer_to_panel_view")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=240,
-     *              "short"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $offers;
-
-    /**
-     * @var Collection
-     *
      * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\Reservation", mappedBy="reservedPanelViews")
      * @ORM\JoinTable(name="cb_newage_reservation_to_panel_view")
      */
@@ -170,7 +154,6 @@ class PanelView
     public function __construct()
     {
         $this->events = new ArrayCollection();
-        $this->offers = new ArrayCollection();
     }
 
     /**
@@ -219,58 +202,6 @@ class PanelView
     public function setPanel($panel)
     {
         $this->panel = $panel;
-    }
-
-    /**
-     * Get offers collection
-     *
-     * @return Collection|Offer[]
-     */
-    public function getOffers()
-    {
-        return $this->offers;
-    }
-
-    /**
-     * Add specified offer
-     *
-     * @param Offer $offer
-     *
-     * @return PanelView
-     */
-    public function addOffer(Offer $offer)
-    {
-        if (!$this->getOffers()->contains($offer)) {
-            $this->getOffers()->add($offer);
-            $offer->addPanelView($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove specified offer
-     *
-     * @param Offer $offer
-     *
-     * @return PanelView
-     */
-    public function removeOffer(Offer $offer)
-    {
-        if ($this->getOffers()->contains($offer)) {
-            $this->getOffers()->removeElement($offer);
-            $offer->removePanelView($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasOffers()
-    {
-        return count($this->offers) > 0;
     }
 
     /**

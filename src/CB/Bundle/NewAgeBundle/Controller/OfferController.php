@@ -12,6 +12,8 @@ use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
 
+use Doctrine\ORM\QueryBuilder;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -149,22 +151,84 @@ class OfferController extends Controller
         $offer = $response->getOption('offer');
         $isAllSelected = $response->getOption('isAllSelected');
         $values = $response->getOption('values');
+        $filters = $response->getOption('filters');
 
-        $queryBuilder = $this
-            ->getDoctrine()
-            ->getManager()
-            ->createQueryBuilder()
-            ->select('pv')
-            ->from('CBNewAgeBundle:PanelView', 'pv');
+        /** A trebuit sa folosesc native sql pentru ca $querybuilder intorcea doar o parte din inregistrari */
+        $conn = $this->getDoctrine()->getManager()->getConnection();
+        $query = '
+              SELECT 
+                  pv.id as id
+              FROM 
+                  cb_newage_panel_view pv 
+              LEFT JOIN 
+                  cb_newage_panel p ON p.id=pv.panel_id
+              LEFT JOIN 
+                  cb_newage_panel_address a ON a.owner_id = p.id AND (a.is_primary = 1)
+        ';
+
+        $hasWhere = false;
 
         if ($isAllSelected) {
             $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
-            $queryBuilder->andWhere($queryBuilder->expr()->notIn('pv.id', $forbiddenPanelViewIds));
-        } else {
-            $queryBuilder->andWhere($queryBuilder->expr()->in('pv.id', $values));
-        }
+            if (count($forbiddenPanelViewIds)>0) {
+                $query .= ' WHERE pv.id NOT IN (' . implode(",",$forbiddenPanelViewIds) .')';
+                $hasWhere = true;
+            }
 
-        $results = $queryBuilder->getQuery()->getResult();
+            if (isset($filters['city']['value'])) {
+                if ($hasWhere) {
+                    $query .= ' AND';
+                } else{
+                    $query .= ' WHERE';
+                    $hasWhere = true;
+                }
+                $query .= ' a.city_id IN (' . $filters['city']['value'] . ')';
+            }
+
+            if (isset($filters['support']['value'])) {
+                if ($hasWhere) {
+                    $query .= ' AND';
+                } else{
+                    $query .= ' WHERE';
+                    $hasWhere = true;
+                }
+                $query .= ' p.support_type_id IN (' . $filters['support']['value'] . ')';
+            }
+
+            if (isset($filters['lighting']['value'])) {
+                if ($hasWhere) {
+                    $query .= ' AND';
+                } else{
+                    $query .= ' WHERE';
+                    $hasWhere = true;
+                }
+                $query .= ' p.lighting_type_id IN (' . $filters['lighting']['value'] . ')';
+            }
+
+
+            if (isset($filters['dimensions']['value'])) {
+                if ($hasWhere) {
+                    $query .= ' AND';
+                } else{
+                    $query .= ' WHERE';
+                }
+                $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
+            }
+        } else {
+            if ($hasWhere) {
+                $query .= ' AND';
+            } else{
+                $query .= ' WHERE';
+            }
+
+            $query .= ' pv.id IN (' . $values .')';
+        }
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+
+        error_log('query: ' . $query . "\n",3,'/var/www/newage/crm-application/app/logs/cata');
+        error_log('total: ' . count($results) . "\n",3,'/var/www/newage/crm-application/app/logs/cata');
 
         $em = $this->getDoctrine()->getEntityManager();
         $em->beginTransaction();
@@ -172,16 +236,17 @@ class OfferController extends Controller
         try {
             foreach ($offer->getItems() as $item)
             {
-                $item->setOffer(null);
-                $em->remove($item);
+                $offer->removeItem($item);
             }
 
             $entitiesCount = 0;
             /** @var PanelView $panelView */
-            foreach ($results as $panelView) {
+            foreach ($results as $row) {
+                $panelView = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView')->findOneBy(['id'=>$row['id']]);
+                error_log('pv: ' . $panelView->getId() . "\n",3,'/var/www/newage/crm-application/app/logs/cata');
 
                 $confirmedEvents = $panelView->getConfirmedEvents($offer->getStart(), $offer->getEnd());
-                if (count($confirmedEvents)<0) { // Daca are evenimente confirmate, cautam intervale libere
+                if (count($confirmedEvents)>0) { // Daca are evenimente confirmate, cautam intervale libere
                     $freeIntervals = $panelView->getFreeIntervals(
                         $confirmedEvents,
                         $offer->getStart(),
@@ -190,7 +255,7 @@ class OfferController extends Controller
 
                     foreach ($freeIntervals as $freeInterval) {
                         $interval = $freeInterval['end']->diff($freeInterval['start']);
-                        if ($interval->format('%a') >= 5) {
+                        if ($interval->format('%a') >= 7) {
                             $item = new OfferItem();
 
                             $item->setOffer($offer);
@@ -204,7 +269,7 @@ class OfferController extends Controller
                             $entitiesCount++;
                         }
                     }
-                } else { // In caz contrar fata este libere pentru toata perioada ofertei
+                } else { // In caz contrar fata este libera pentru toata perioada ofertei
                     $item = new OfferItem();
 
                     $item->setOffer($offer);
@@ -293,7 +358,7 @@ class OfferController extends Controller
                 {
 //                    error_log('Intervals: ' . $freeInterval['start']->format('Y-m-d') . "\t" . $freeInterval['end']->format('Y-m-d') ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
                     $interval = $freeInterval['end']->diff($freeInterval['start']);
-                    if ($interval->format('%a')>=5)
+                    if ($interval->format('%a')>=7)
                         $forbidden = false;
                 }
             }

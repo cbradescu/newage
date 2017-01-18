@@ -62,12 +62,12 @@ class OfferMassActionHandler implements MassActionHandlerInterface
             array(
                 'offer' => $offer,
                 'values' => $data['values'],
-                'isAllselected' => $isAllSelected,
+                'isAllSelected' => $isAllSelected,
+                'filters' => $data['filters'],
                 'options' => $options
             )
         );
     }
-
 
     /**
      * @param array $data

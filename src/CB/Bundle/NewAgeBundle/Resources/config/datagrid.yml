@@ -495,7 +495,6 @@ datagrid:
                     - c.title as campaign
                     - offer.start
                     - offer.end
-                    - COUNT(pv.id) as panelViewsNo
                 from:
                     - { table: %cb_newage_offer.entity.class%, alias: offer }
                 join:
@@ -503,9 +502,6 @@ datagrid:
                         -
                             join: offer.campaign
                             alias: c
-                        -
-                            join: offer.panelViews
-                            alias: pv
 
         columns:
             id:
@@ -520,8 +516,6 @@ datagrid:
             end:
                 label: cb.newage.offer.end.label
                 frontend_type: date
-            panelViewsNo:
-                label:  cb.newage.offer.panel_views_no.label
         sorters:
             columns:
                 id:
@@ -1136,7 +1130,9 @@ datagrid:
                         lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
                         data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
                     enabled: true
-
+                dimensions:
+                    type: string
+                    data_name: p.dimensions
         properties:
             id: ~
         action_configuration:
