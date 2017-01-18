@@ -1,6 +1,7 @@
 <?php
 namespace CB\Bundle\NewAgeBundle\Entity;
 
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -84,6 +85,13 @@ class ReservationItem
      * )
      */
     protected $panelView;
+
+    /**
+     * @var SchedulerEvent
+     *
+     * @ORM\OneToOne(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="reservationItem", cascade={"persist"})
+     */
+    protected $event;
 
     /**
      * @var \DateTime
@@ -178,6 +186,27 @@ class ReservationItem
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param SchedulerEvent|null $event
+     *
+     * @return ReservationItem
+     */
+    public function setEvent(SchedulerEvent $event)
+    {
+        $event->setReservationItem($this);
+        $this->event = $event;
+
+        return $this;
+    }
+
+    /**
+     * @return SchedulerEvent
+     */
+    public function getEvent()
+    {
+        return $this->event;
     }
 
     /**
@@ -367,6 +396,18 @@ class ReservationItem
         $this->createdAt = $this->createdAt ? $this->createdAt : new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = clone $this->createdAt;
 
+        if ($this->event == null) {
+            $event = new SchedulerEvent();
+
+            $event->setCampaign($this->getOffer()->getCampaign());
+            $event->setPanelView($this->getPanelVIew());
+            $event->setStatus(SchedulerEvent::RESERVED);
+            $event->setReservationItem($this);
+            $event->setStart($this->getStart());
+            $event->setEnd($this->getEnd());
+
+            $this->event = $event;
+        }
     }
 
     /**

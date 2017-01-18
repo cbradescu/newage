@@ -86,8 +86,40 @@ datagrid:
 
         properties:
             id: ~
+            view_link:
+                type:         url
+                route:        cb_scheduler_scheduler_event_view
+                params:       [ id ]
+            update_link:
+                type:         url
+                route:        cb_scheduler_scheduler_event_update
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_api_delete_schedulerevent
+                params:       [ id ]
+        actions:
+            view:
+                type:         navigate
+                acl_resource: cb_newage_panel_view
+                label:        oro.grid.action.view
+                icon:         eye-open
+                link:         view_link
+                rowAction:    true
+            update:
+                type:         navigate
+                acl_resource: cb_newage_panel_update
+                label:        oro.grid.action.update
+                icon:         edit
+                link:         update_link
+            delete:
+                type:         delete
+                acl_resource: cb_newage_panel_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
         action_configuration:
-            delete: false
+#            delete: false
 
     scheduler_event-grid:
         extends: base-scheduler_event-grid

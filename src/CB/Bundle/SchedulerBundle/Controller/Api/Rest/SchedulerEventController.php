@@ -331,9 +331,9 @@ class SchedulerEventController extends RestController implements ClassResourceIn
                 throw new EntityNotFoundException();
             }
 
-            /** @var Reservation $reservation */
-            $reservation = $schedulerEvent->getReservation();
-            $reservation->removeReservedPanelView($schedulerEvent->getPanelView());
+//            /** @var Reservation $reservation */
+//            $reservation = $schedulerEvent->getReservation();
+//            $reservation->removeReservedPanelView($schedulerEvent->getPanelView());
 
             $em = $this->getManager()->getObjectManager();
             $em->remove($schedulerEvent);

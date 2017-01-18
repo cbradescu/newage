@@ -62,4 +62,50 @@ class SchedulerEventController extends Controller
     {
         return array();
     }
+
+    /**
+     * @Route("/view/{id}", name="cb_scheduler_scheduler_event_view", requirements={"id"="\d+"})
+     * @Template
+     * @AclAncestor("cb_newage_scheduler_event_view")
+     */
+    public function viewAction(SchedulerEvent $schedulerEvent)
+    {
+        return [
+            'entity' => $schedulerEvent
+        ];
+    }
+
+    /**
+     * @Route("/update/{id}", name="cb_scheduler_scheduler_event_update", requirements={"id"="\d+"})
+     * @Template
+     * @AclAncestor("cb_scheduler_scheduler_event_update")
+     */
+    public function updateAction(SchedulerEvent $schedulerEvent)
+    {
+        return $this->update($schedulerEvent);
+    }
+
+    /**
+     * @param SchedulerEvent $schedulerEvent
+     * @return array
+     */
+    protected function update(SchedulerEvent $schedulerEvent)
+    {
+        if ($this->get('cb_scheduler.scheduler_event.form.handler')->process($schedulerEvent)) {
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                $this->get('translator')->trans('cb.scheduler.scheduler_event.message.saved')
+            );
+
+            return $this->get('oro_ui.router')->redirectAfterSave(
+                ['route' => 'cb_scheduler_scheduler_event_update', 'parameters' => ['id' => $schedulerEvent->getId()]],
+                ['route' => 'cb_scheduler_scheduler_event_view', 'parameters' => ['id' => $schedulerEvent->getId()]]
+            );
+        }
+
+        return array(
+            'entity' => $schedulerEvent,
+            'form' => $this->get('cb_scheduler.scheduler_event.form.entity')->createView()
+        );
+    }
 }

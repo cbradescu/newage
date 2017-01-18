@@ -5,6 +5,7 @@ namespace CB\Bundle\SchedulerBundle\Entity;
 use CB\Bundle\NewAgeBundle\Entity\Campaign;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\Reservation;
+use CB\Bundle\NewAgeBundle\Entity\ReservationItem;
 use CB\Bundle\SchedulerBundle\Model\ExtendSchedulerEvent;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -133,6 +134,14 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      * )
      */
     protected $status;
+
+    /**
+     * @var ReservationItem
+     *
+     * @ORM\OneToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\ReservationItem", inversedBy="event")
+     * @ORM\JoinColumn(name="event_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $reservationItem;
 
     /**
      * @var Reservation
@@ -313,6 +322,30 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
 //        } else {
 //            throw new \LogicException(sprintf('Status "%s" is not supported', $status));
 //        }
+    }
+
+    /**
+     * Gets reservationItem
+     *
+     * @return ReservationItem|null
+     */
+    public function getReservationItem()
+    {
+        return $this->reservationItem;
+    }
+
+    /**
+     * Sets reservationItem
+     *
+     * @param ReservationItem $reservationItem
+     *
+     * @return SchedulerEvent
+     */
+    public function setReservationItem(ReservationItem $reservationItem)
+    {
+        $this->reservationItem = $reservationItem;
+
+        return $this;
     }
 
     /**
