@@ -17,8 +17,6 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 /**
  * @ORM\Entity
  * @ORM\Table(
@@ -126,13 +124,6 @@ class Offer
     protected $campaign;
 
     /**
-     * @var Reservation
-     *
-     * @ORM\OneToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Reservation", mappedBy="offer")
-     */
-    protected $reservation;
-
-    /**
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\OfferItem",
@@ -150,7 +141,27 @@ class Offer
      *      }
      * )
      */
-    protected $items;
+    protected $offerItems;
+
+    /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\ReservationItem",
+     *    mappedBy="offer", cascade={"all"}, orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "full"=true,
+     *              "order"=250
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $reservationItems;
 
     /**
      * @var User
@@ -240,7 +251,8 @@ class Offer
         $this->end = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->end->modify('+7 days');
 
-        $this->items = new ArrayCollection();
+        $this->offerItems = new ArrayCollection();
+        $this->reservationItems = new ArrayCollection();
     }
 
     /**
@@ -348,77 +360,113 @@ class Offer
     }
 
     /**
-     * Get items collection
+     * Get offerItems collection
      *
      * @return Collection
      */
-    public function getItems()
+    public function getOfferItems()
     {
-        return $this->items;
+        return $this->offerItems;
     }
 
     /**
-     * Set items collection
+     * Set offerItems collection
      *
      * @param Collection $items
      *
      * @return Offer
      */
-    public function setItems(Collection $items)
+    public function setOfferItems(Collection $items)
     {
-        $this->items = $items;
+        $this->offerItems = $items;
 
         return $this;
     }
 
     /**
-     * Add specified item
+     * Add specified offerItem
      *
      * @param OfferItem $item
      *
      * @return Offer
      */
-    public function addItem(OfferItem $item)
+    public function addOfferItem(OfferItem $item)
     {
-        if (!$this->getItems()->contains($item)) {
-            $this->getItems()->add($item);
+        if (!$this->getOfferItems()->contains($item)) {
+            $this->getOfferItems()->add($item);
         }
 
         return $this;
     }
 
     /**
-     * Remove specified item
+     * Remove specified offerItem
      *
      * @param OfferItem $item
      *
      * @return Offer
      */
-    public function removeItem(OfferItem $item)
+    public function removeOfferItem(OfferItem $item)
     {
-        if ($this->getItems()->contains($item)) {
-            $this->getItems()->removeElement($item);
+        if ($this->getOfferItems()->contains($item)) {
+            $this->getOfferItems()->removeElement($item);
         }
 
         return $this;
     }
 
     /**
-     * @return Reservation
+     * Get reservationItems collection
+     *
+     * @return Collection
      */
-    public function getReservation()
+    public function getReservationItems()
     {
-        return $this->reservation;
+        return $this->reservationItems;
     }
 
     /**
-     * @param Reservation $reservation
+     * Set reservationItems collection
+     *
+     * @param Collection $items
      *
      * @return Offer
      */
-    public function setReservation($reservation)
+    public function setReservationItems(Collection $items)
     {
-        $this->reservation = $reservation;
+        $this->reservationItems = $items;
+
+        return $this;
+    }
+
+    /**
+     * Add specified reservationItem
+     *
+     * @param ReservationItem $item
+     *
+     * @return Offer
+     */
+    public function addReservationItem(ReservationItem $item)
+    {
+        if (!$this->getOfferItems()->contains($item)) {
+            $this->getOfferItems()->add($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove specified reservationItem
+     *
+     * @param ReservationItem $item
+     *
+     * @return Offer
+     */
+    public function removeReservationItem(ReservationItem $item)
+    {
+        if ($this->getReservationItems()->contains($item)) {
+            $this->getReservationItems()->removeElement($item);
+        }
 
         return $this;
     }

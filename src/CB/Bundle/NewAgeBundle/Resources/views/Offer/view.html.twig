@@ -6,16 +6,20 @@
 
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
-        {{ UI.editButton({
-            'path' : path('cb_newage_offer_update', { id: entity.id }),
-            'entity_label': 'cb.newage.offer.entity_label'|trans
-        }) }}
-        {{ UI.editButton({
-            'path': path('cb_newage_offer_select', { 'id': entity.id }),
-            'aCss': 'no-hash',
-            'iCss': 'icon-ellipsis-vertical',
-            'label': 'cb.newage.offer.select_panel_views.label'|trans
-        }) }}
+        {% if not entity.offerItems or entity.offerItems|length==0%}
+            {{ UI.editButton({
+                'path' : path('cb_newage_offer_update', { id: entity.id }),
+                'entity_label': 'cb.newage.offer.entity_label'|trans
+            }) }}
+        {% endif %}
+        {% if not entity.reservationItems or entity.reservationItems|length==0%}
+            {{ UI.editButton({
+                'path': path('cb_newage_offer_select', { 'id': entity.id }),
+                'aCss': 'no-hash',
+                'iCss': 'icon-ellipsis-vertical',
+                'label': 'cb.newage.offer.select_panel_views.label'|trans
+            }) }}
+        {% endif %}
     {% endif %}
 {% endblock navButtons %}
 
@@ -69,7 +73,39 @@
     }
     ] %}
 
-    {% if entity.items %}
+    {% if entity.reservationItems and entity.reservationItems|length>0%}
+        {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+        {% set gridName = 'reservation-items-grid' %}
+
+        {% set params = {
+        offer: entity.id
+        } %}
+
+        {%- set gridReservationItems -%}
+            {% if gridName is defined %}
+                {% if gridScope is defined %}
+                    {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+                {% endif %}
+                {% if params is defined %}
+                    {{ dataGrid.renderGrid(gridName, params) }}
+                {% else %}
+                    {{ dataGrid.renderGrid(gridName) }}
+                {% endif %}
+            {% endif %}
+        {%- endset -%}
+
+        {% set dataBlocks = dataBlocks|merge([
+        {
+        'title': 'cb.newage.offer.reserved_panel_views.label'|trans,
+        'subblocks': [
+        {'data' : [gridReservationItems]}
+        ]
+        }
+        ]) %}
+    {% endif %}
+
+    {% if entity.offerItems and entity.offerItems|length>0 %}
         {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
         {% set gridName = 'offer-items-grid' %}

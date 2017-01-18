@@ -11,13 +11,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 /**
  * @ORM\Entity
  * @ORM\Table(
- *      name="cb_newage_offer_item"
+ *      name="cb_newage_reservation_item"
  * )
  * @ORM\HasLifecycleCallbacks()
  * @Oro\Loggable
  * @Config(
- *      routeName="cb_newage_offer_item_index",
- *      routeView="cb_newage_offer_item_view",
+ *      routeName="cb_newage_reservation_item_index",
+ *      routeView="cb_newage_reservation_item_view",
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
@@ -39,7 +39,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * )
  */
 
-class OfferItem
+class ReservationItem
 {
     /**
      * @var integer
@@ -58,7 +58,7 @@ class OfferItem
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Offer", inversedBy="offerItems", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Offer", inversedBy="reservationItems", cascade={"persist"})
      * @ORM\JoinColumn(name="offer_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
@@ -181,7 +181,7 @@ class OfferItem
     }
 
     /**
-     * Gets date an offer item begins.
+     * Gets date an reservation item begins.
      *
      * @return \DateTime
      */
@@ -191,7 +191,7 @@ class OfferItem
     }
 
     /**
-     * Sets date an offer item begins.
+     * Sets date an reservation item begins.
      *
      * @param \DateTime $start
      *
@@ -205,7 +205,7 @@ class OfferItem
     }
 
     /**
-     * Gets date an offer item ends.
+     * Gets date an reservation item ends.
      *
      * @return \DateTime
      */
@@ -215,7 +215,7 @@ class OfferItem
     }
 
     /**
-     * Sets date an offer item ends.
+     * Sets date an reservation item ends.
      *
      * @param \DateTime $end
      *
@@ -243,7 +243,7 @@ class OfferItem
      *
      * @param PanelVIew $panelVIew
      *
-     * @return OfferItem
+     * @return ReservationItem
      */
     public function setPanelVIew(PanelVIew $panelVIew = null)
     {
@@ -263,7 +263,7 @@ class OfferItem
     /**
      * @param Offer $offer
      *
-     * @return OfferItem
+     * @return ReservationItem
      */
     public function setOffer($offer)
     {
@@ -275,7 +275,7 @@ class OfferItem
     /**
      * @param User $owningUser
      *
-     * @return OfferItem
+     * @return ReservationItem
      */
     public function setOwner($owningUser)
     {
@@ -296,7 +296,7 @@ class OfferItem
      * Set organization
      *
      * @param Organization $organization
-     * @return OfferItem
+     * @return ReservationItem
      */
     public function setOrganization(Organization $organization = null)
     {

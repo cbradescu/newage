@@ -32,7 +32,6 @@ class ReserveMassAction extends AbstractMassAction
         }
 
         if (empty($options['frontend_handle'])) {
-//            $options['frontend_handle'] = 'ajax';
             $options['frontend_handle'] = 'redirect';
         }
 

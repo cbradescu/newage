@@ -127,6 +127,8 @@ cb:
             message:
                 saved:                     Offer saved
                 items.added:               %count% Panel views added
+                offer_items.removed:       Removed old panel views from current Offer
+                reservation_items.removed: Removed old panel views from current Reservation
             id.label:                      Id
             name.label:                    Name
             owner.label:                   Owner
@@ -135,12 +137,15 @@ cb:
             end.label:                     End
             campaign.label:                Campaign
             offered_panel_views.label:     Offered Panel Views
+            reserved_panel_views.label:    Reserved Panel Views
             select_panel_views.label:      Select Panel Views
             view_reservation.label:        View Reservation
             form:
                 select_panel_views:        Select Panel Views
             datagrid:
-                action.offer:              Add to offer
+                action.offer:              Offer items
+                action.reserve:            Reserve items
+                action.confirm:            Confirm items
 
       reservation:
             entity_label:                  Reservation

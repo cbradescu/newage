@@ -100,33 +100,33 @@ class ReservationController extends Controller
         );
     }
 
-    /**
-     * @Route("/{gridName}/reserveMassAction/{actionName}", name="cb_reserve_massaction")
-     * @AclAncestor("cb_newage_reservation_create")
-     * @Template("CBNewAgeBundle:Reservation:update.html.twig")
-     *
-     * @param string $gridName
-     * @param string $actionName
-     *
-     * @return array
-     */
-    public function reserveMassActionAction($gridName, $actionName)
-    {
-        /** @var MassActionDispatcher $massActionDispatcher */
-        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
-
-        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
-
-        $offer = $response->getOption('offer');
-        $panelViews = $response->getOption('panelViews');
-
-        /** @var Reservation $reservation */
-        $reservation = $this->get('cb_newage_reservation.manager')->createReservation();
-        $reservation->setOffer($offer);
-        $reservation->setReservedPanelViews($panelViews);
-
-        return $this->update($reservation);
-    }
+//    /**
+//     * @Route("/{gridName}/reserveMassAction/{actionName}", name="cb_reserve_massaction")
+//     * @AclAncestor("cb_newage_reservation_create")
+//     * @Template("CBNewAgeBundle:Reservation:update.html.twig")
+//     *
+//     * @param string $gridName
+//     * @param string $actionName
+//     *
+//     * @return array
+//     */
+//    public function reserveMassActionAction($gridName, $actionName)
+//    {
+//        /** @var MassActionDispatcher $massActionDispatcher */
+//        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+//
+//        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+//
+//        $offer = $response->getOption('offer');
+//        $panelViews = $response->getOption('panelViews');
+//
+//        /** @var Reservation $reservation */
+//        $reservation = $this->get('cb_newage_reservation.manager')->createReservation();
+//        $reservation->setOffer($offer);
+//        $reservation->setReservedPanelViews($panelViews);
+//
+//        return $this->update($reservation);
+//    }
 
 
     /**
