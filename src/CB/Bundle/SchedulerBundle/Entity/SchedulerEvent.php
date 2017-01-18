@@ -139,7 +139,7 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      * @var ReservationItem
      *
      * @ORM\OneToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\ReservationItem", inversedBy="event")
-     * @ORM\JoinColumn(name="event_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="reservation_item_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $reservationItem;
 
