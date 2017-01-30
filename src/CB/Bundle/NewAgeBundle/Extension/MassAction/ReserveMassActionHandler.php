@@ -101,15 +101,15 @@ class ReserveMassActionHandler implements MassActionHandlerInterface
         $isAllSelected = $this->isAllSelected($data);
 
         if (!array_key_exists('offer-items-grid', $data)) {
-            throw new InvalidArgumentException('Datagrid is missing.');
+            throw new \InvalidArgumentException('Datagrid is missing.');
         }
 
         if (!array_key_exists('offer', $data['offer-items-grid'])) {
-            throw new InvalidArgumentException('Offer is missing.');
+            throw new \InvalidArgumentException('Offer is missing.');
         }
 
         if (!array_key_exists('values', $data)) {
-            throw new InvalidArgumentException('Values are missing.');
+            throw new \InvalidArgumentException('Values are missing.');
         }
 
 

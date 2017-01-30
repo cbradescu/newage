@@ -50,67 +50,103 @@ class ConfirmMassActionHandler implements MassActionHandlerInterface
      */
     public function handle(MassActionHandlerArgs $args)
     {
-        $data = $args->getData();
+//        $data = $args->getData();
+//
+//        $massAction = $args->getMassAction();
+//        $options = $massAction->getOptions()->toArray();
+//
+//        $iteration = 0;
+//
+//        $this->entityManager->beginTransaction();
+//        try {
+//
+//            $isAllSelected = $this->isAllSelected($data);
+//
+//            $reservation = null;
+//            if (array_key_exists('reservation-with-confirm-panel_view-grid', $data)) {
+//                $reservationId = $data['reservation-with-confirm-panel_view-grid']['reservation'];
+//
+//                /** @var Reservation $reservation */
+//                $reservation = $this->entityManager->getRepository('CBNewAgeBundle:Reservation')->findOneBy(['id' => $reservationId]);
+//            }
+//
+//            if (array_key_exists('values', $data)) {
+//                $panelViewIds = explode(',', $data['values']);
+//
+//                $queryBuilder = $this
+//                    ->entityManager
+//                    ->getRepository('CBNewAgeBundle:PanelView')
+//                    ->createQueryBuilder('pv');
+//
+//                if ($isAllSelected)
+//                    $panelViewIds = $reservation->getReservedPanelViews()->map(function ($entity) {
+//                        /** @var PanelView $entity */
+//                        return $entity->getId();
+//                    })->toArray();
+//
+//                $queryBuilder->andWhere($queryBuilder->expr()->in('pv.id', $panelViewIds));
+//
+//                $results = $queryBuilder->getQuery()->getResult();
+//                foreach ($results as $entity) {
+//                    /** @var SchedulerEvent $event */
+//                    $event = $this->entityManager->getRepository('CBSchedulerBundle:SchedulerEvent')->findOneBy(
+//                        [
+//                            'reservation' => $reservation->getId(),
+//                            'panelView' => $entity->getId()
+//                        ]
+//                    );
+//
+//                    if ($event) {
+//                        $event->setStatus(SchedulerEvent::ACCEPTED);
+//                        $this->entityManager->flush($event);
+//                        $iteration++;
+//                    }
+//                }
+//            }
+//
+//            $this->entityManager->commit();
+//        } catch (\Exception $e) {
+//            $this->entityManager->rollback();
+//            throw $e;
+//        }
+//
+//        return $this->getResponse($args, $iteration);
 
         $massAction = $args->getMassAction();
         $options = $massAction->getOptions()->toArray();
 
-        $iteration = 0;
+        $data = $args->getData();
+        $isAllSelected = $this->isAllSelected($data);
 
-        $this->entityManager->beginTransaction();
-        try {
-
-            $isAllSelected = $this->isAllSelected($data);
-
-            $reservation = null;
-            if (array_key_exists('reservation-with-confirm-panel_view-grid', $data)) {
-                $reservationId = $data['reservation-with-confirm-panel_view-grid']['reservation'];
-
-                /** @var Reservation $reservation */
-                $reservation = $this->entityManager->getRepository('CBNewAgeBundle:Reservation')->findOneBy(['id' => $reservationId]);
-            }
-
-            if (array_key_exists('values', $data)) {
-                $panelViewIds = explode(',', $data['values']);
-
-                $queryBuilder = $this
-                    ->entityManager
-                    ->getRepository('CBNewAgeBundle:PanelView')
-                    ->createQueryBuilder('pv');
-
-                if ($isAllSelected)
-                    $panelViewIds = $reservation->getReservedPanelViews()->map(function ($entity) {
-                        /** @var PanelView $entity */
-                        return $entity->getId();
-                    })->toArray();
-
-                $queryBuilder->andWhere($queryBuilder->expr()->in('pv.id', $panelViewIds));
-
-                $results = $queryBuilder->getQuery()->getResult();
-                foreach ($results as $entity) {
-                    /** @var SchedulerEvent $event */
-                    $event = $this->entityManager->getRepository('CBSchedulerBundle:SchedulerEvent')->findOneBy(
-                        [
-                            'reservation' => $reservation->getId(),
-                            'panelView' => $entity->getId()
-                        ]
-                    );
-
-                    if ($event) {
-                        $event->setStatus(SchedulerEvent::ACCEPTED);
-                        $this->entityManager->flush($event);
-                        $iteration++;
-                    }
-                }
-            }
-
-            $this->entityManager->commit();
-        } catch (\Exception $e) {
-            $this->entityManager->rollback();
-            throw $e;
+        if (!array_key_exists('reservation-items-grid', $data)) {
+            throw new \InvalidArgumentException('Datagrid is missing.');
         }
 
-        return $this->getResponse($args, $iteration);
+        if (!array_key_exists('offer', $data['reservation-items-grid'])) {
+            throw new \InvalidArgumentException('Offer is missing.');
+        }
+
+        if (!array_key_exists('values', $data)) {
+            throw new \InvalidArgumentException('Values are missing.');
+        }
+
+
+        $offerId = $data['reservation-items-grid']['offer'];
+
+        /** @var Offer $offer */
+        $offer = $this->entityManager->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id' => $offerId]);
+
+        return new MassActionResponse(
+            true,
+            null,
+            array(
+                'offer' => $offer,
+                'values' => $data['values'],
+                'isAllSelected' => $isAllSelected,
+                'filters' => $data['filters'],
+                'options' => $options
+            )
+        );
     }
 
 

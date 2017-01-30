@@ -1044,6 +1044,7 @@ datagrid:
                 data_identifier: i.id
                 label: cb.newage.offer.datagrid.action.reserve
                 icon: external-link
+
     available-panel_view-grid:
         source:
             type: orm
@@ -1262,7 +1263,7 @@ datagrid:
         action_configuration:
             delete: false
         options:
-            entityHint: offerItem
+            entityHint: reservationItem
             mass_actions:
                 delete:
                     enabled: false
@@ -1274,3 +1275,118 @@ datagrid:
                 data_identifier: ri.id
                 label: cb.newage.offer.datagrid.action.confirm
                 icon: check
+
+    confirmed-items-grid:
+        source:
+            type: orm
+            acl_resource: cb_newage_offer_view
+            query:
+                select:
+                    - ri.id
+                    - ri.start
+                    - ri.end
+                    - pv.name as panelView
+                    - pv.url
+                    - p.name as panel
+                    - st.name as support
+                    - lt.name as lighting
+                    - ct.name as city
+                from:
+                    - { table: %cb_newage.reservation-item.entity.class%, alias: ri }
+                join:
+                    left:
+                        -
+                            join: ri.panelView
+                            alias: pv
+                        -
+                            join: pv.panel
+                            alias: p
+                        -
+                            join: p.supportType
+                            alias: st
+                        -
+                            join: p.lightingType
+                            alias: lt
+                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
+                        -
+                            join: addr.city
+                            alias: ct
+                        -
+                            join: ri.events
+                            alias: ev
+                where:
+                    and:
+                        - ri.offer = :offer
+                        - ev.status = %cb_scheduler.scheduler_event.entity.class%::CONFIRMED
+            bind_parameters:
+                - offer
+
+        columns:
+            url:
+                label:        cb.newage.panelview.url.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
+            panel:
+                label:        cb.newage.panel.entity_label
+            panelView:
+                label:        cb.newage.panelview.name.label
+            start:
+                label:         cb.newage.offer.start.label
+                frontend_type: date
+            end:
+                label:         cb.newage.offer.end.label
+                frontend_type: date
+            support:
+                label:        cb.newage.supporttype.entity_label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
+            city:
+                label:        oro.address.city.label
+        sorters:
+            columns:
+                city:
+                    data_name: ct.name
+                panel:
+                    data_name: p.name
+                panelView:
+                    data_name: pv.name
+            default:
+                city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+
+        filters:
+            columns:
+                city:
+                    type: choice-tree
+                    data_name: addr.city
+                    options:
+                        lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
+                        data: "@?cb_city.provider.filter.city_choice_tree->getList"
+                    enabled: true
+                support:
+                    type: choice-tree
+                    data_name: p.supportType
+                    options:
+                        lazy: "@cb_support.provider.filter.support_choice_tree->shouldBeLazy"
+                        data: "@?cb_support.provider.filter.support_choice_tree->getList"
+                    enabled: true
+                lighting:
+                    type: choice-tree
+                    data_name: p.lightingType
+                    options:
+                        lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
+                        data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
+                    enabled: true
+
+        properties:
+            id: ~
+        action_configuration:
+            delete: false
+        options:
+            entityHint: reservationItem
+            mass_actions:
+                delete:
+                    enabled: false
+            routerEnabled: false

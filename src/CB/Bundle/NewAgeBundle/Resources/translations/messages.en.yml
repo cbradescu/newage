@@ -126,7 +126,9 @@ cb:
                 available:                 Available Panel Views
             message:
                 saved:                     Offer saved
-                items.added:               %count% Panel views added
+                items:
+                    added:                 %count% Panel views added
+                    confirmed:             %count% Panel views confirmed
                 offer_items.removed:       Removed old panel views from current Offer
                 reservation_items.removed: Removed old panel views from current Reservation
             id.label:                      Id
@@ -138,6 +140,7 @@ cb:
             campaign.label:                Campaign
             offered_panel_views.label:     Offered Panel Views
             reserved_panel_views.label:    Reserved Panel Views
+            confirmed_panel_views.label:   Confirmed Panel Views
             select_panel_views.label:      Select Panel Views
             view_reservation.label:        View Reservation
             form:

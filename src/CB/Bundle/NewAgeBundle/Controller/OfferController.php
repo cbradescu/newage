@@ -7,12 +7,14 @@
  */
 namespace CB\Bundle\NewAgeBundle\Controller;
 
+use CB\Bundle\NewAgeBundle\Entity\Campaign;
 use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
 
 use CB\Bundle\NewAgeBundle\Entity\ReservationItem;
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -83,7 +85,7 @@ class OfferController extends Controller
     {
         return [
             'entity' => $offer,
-            'forbidden' => $this->getForbiddenPanelViews($offer)
+            'forbidden' => $this->getForbiddenPanelViews($offer) ?: 0
         ];
     }
 
@@ -439,6 +441,8 @@ class OfferController extends Controller
                             $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
                             $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
 
+                            $item->addDefaultEvent();
+
                             $em->persist($item);
                             $entitiesCount++;
                         }
@@ -452,6 +456,8 @@ class OfferController extends Controller
                     $item->setEnd($offer->getEnd());
                     $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
                     $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+
+                    $item->addDefaultEvent();
 
                     $em->persist($item);
                     $entitiesCount++;
@@ -483,6 +489,188 @@ class OfferController extends Controller
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
     }
 
+    /**
+     * @Route("/{gridName}/confirmMassAction/{actionName}", name="cb_confirm_massaction")
+     * @AclAncestor("cb_newage_offer_create")
+     * @Template("CBNewAgeBundle:Offer:view.html.twig")
+     *
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return RedirectResponse
+     */
+    public function confirmMassActionAction($gridName, $actionName)
+    {
+        /** @var MassActionDispatcher $massActionDispatcher */
+        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+
+        $offerId = $response->getOption('offer');
+        $isAllSelected = $response->getOption('isAllSelected');
+        $values = $response->getOption('values');
+        $filters = $response->getOption('filters');
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->beginTransaction();
+
+        /**
+         * Removing all events attached to current offer reservation items.
+         */
+        /** @var Offer $offer */
+        $offer = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id'=>$offerId]);
+        foreach ($offer->getReservationItems() as $ri)
+        {
+            /** @var ReservationItem $ri */
+            foreach ($ri->getEvents() as $event)
+                $ri->removeEvent($event);
+        }
+
+        $em->flush();
+
+
+        /** A trebuit sa folosesc native sql pentru ca $querybuilder intorcea doar o parte din inregistrari */
+        $conn = $this->getDoctrine()->getManager()->getConnection();
+        $query = '
+              SELECT 
+                  DISTINCT ri.id as id
+              FROM 
+                  cb_newage_reservation_item ri
+              LEFT JOIN
+                  cb_newage_panel_view pv ON pv.id=ri.panel_view_id 
+              LEFT JOIN 
+                  cb_newage_panel p ON p.id=pv.panel_id
+              LEFT JOIN 
+                  cb_newage_panel_address a ON a.owner_id = p.id AND (a.is_primary = 1)
+        ';
+
+        $hasWhere = false;
+
+        if ($isAllSelected) {
+            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offerId);
+            error_log("isAllSelectedL true | " . implode(",",$forbiddenPanelViewIds) . "\n",3,'/var/www/cteam.ro/newage/app/logs/cata');
+            if (count($forbiddenPanelViewIds)>0) {
+                $query .= ' WHERE ri.id NOT IN (' . implode(",",$forbiddenPanelViewIds) .')';
+                $hasWhere = true;
+            }
+
+            if (isset($filters['city']['value'])) {
+                if ($hasWhere) {
+                    $query .= ' AND';
+                } else{
+                    $query .= ' WHERE';
+                    $hasWhere = true;
+                }
+                $query .= ' a.city_id IN (' . $filters['city']['value'] . ')';
+            }
+
+            if (isset($filters['support']['value'])) {
+                if ($hasWhere) {
+                    $query .= ' AND';
+                } else{
+                    $query .= ' WHERE';
+                    $hasWhere = true;
+                }
+                $query .= ' p.support_type_id IN (' . $filters['support']['value'] . ')';
+            }
+
+            if (isset($filters['lighting']['value'])) {
+                if ($hasWhere) {
+                    $query .= ' AND';
+                } else{
+                    $query .= ' WHERE';
+                    $hasWhere = true;
+                }
+                $query .= ' p.lighting_type_id IN (' . $filters['lighting']['value'] . ')';
+            }
+
+            if (isset($filters['dimensions']['value'])) {
+                if ($hasWhere) {
+                    $query .= ' AND';
+                } else{
+                    $query .= ' WHERE';
+                }
+                $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
+            }
+        } else {
+            if ($hasWhere) {
+                $query .= ' AND';
+            } else{
+                $query .= ' WHERE';
+            }
+
+            $query .= ' ri.id IN (' . $values .')';
+        }
+        $stmt = $conn->prepare($query);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+
+        try {
+            $entitiesCount = 0;
+            /** @var ReservationItem $reservationItem */
+            foreach ($results as $row) {
+                error_log("ri id:" . $row['id'] . "\n",3,'/var/www/cteam.ro/newage/app/logs/cata');
+                $reservationItem = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem')->findOneBy(['id'=>$row['id']]);
+
+                /** @var PanelView $panelView */
+                $panelView = $reservationItem->getPanelView();
+
+                $confirmedEvents = $panelView->getConfirmedEvents($reservationItem->getStart(), $reservationItem->getEnd());
+
+                if (count($confirmedEvents)>0) { // Daca are evenimente confirmate, cautam intervale libere
+                    $freeIntervals = $panelView->getFreeIntervals(
+                        $confirmedEvents,
+                        $reservationItem->getStart(),
+                        $reservationItem->getEnd()
+                    );
+
+                    foreach ($freeIntervals as $freeInterval) {
+                        $interval = $freeInterval['end']->diff($freeInterval['start']);
+                        if ($interval->format('%a') >= 7) {
+
+                            $event = $this->newEvent($reservationItem,
+                                $reservationItem->getOffer()->getCampaign(),
+                                $panelView,
+                                $reservationItem->getStart(),
+                                $reservationItem->getEnd()
+                            );
+                            $reservationItem->addEvent($event);
+
+                            $em->persist($event);
+                            $entitiesCount++;
+                        }
+                    }
+                } else { // In caz contrar fata este libera pentru toata perioada ofertei
+                    $event = $this->newEvent($reservationItem,
+                        $reservationItem->getOffer()->getCampaign(),
+                        $panelView,
+                        $reservationItem->getStart(),
+                        $reservationItem->getEnd()
+                    );
+                    $reservationItem->addEvent($event);
+
+                    $em->persist($event);
+                    $entitiesCount++;
+                }
+            }
+
+            $em->flush();
+            $em->commit();
+
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                $this->get('translator')->transChoice(
+                    'cb.newage.offer.message.items.confirmed',
+                    $entitiesCount,
+                    ['%count%' => $entitiesCount]
+                )
+            );
+        } catch (\Exception $e) {
+            $em->rollback();
+        }
+
+        return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
+    }
 
     /**
      * Return Panel View ids that are not allow to be offered.
@@ -531,5 +719,27 @@ class OfferController extends Controller
         }
 
         return $forbiddenPanelViewsIds;
+    }
+
+    /**
+     * @param ReservationItem $reservationItem
+     * @param Campaign $campaign
+     * @param PanelView $panelView
+     * @param \DateTime $start
+     * @param \DateTime $end
+     * @return SchedulerEvent
+     */
+    private function newEvent(ReservationItem $reservationItem, Campaign $campaign, PanelView $panelView, \DateTime $start, \DateTime $end)
+    {
+        $event = new SchedulerEvent();
+
+        $event->setCampaign($campaign);
+        $event->setPanelView($panelView);
+        $event->setReservationItem($reservationItem);
+        $event->setStart($start);
+        $event->setEnd($end);
+        $event->setStatus(SchedulerEvent::CONFIRMED);
+
+        return $event;
     }
 }

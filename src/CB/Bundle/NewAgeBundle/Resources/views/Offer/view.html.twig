@@ -76,6 +76,39 @@
     {% if entity.reservationItems and entity.reservationItems|length>0%}
         {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
+        {% set gridName = 'confirmed-items-grid' %}
+
+        {% set params = {
+            offer: entity.id
+        } %}
+
+        {%- set gridConfirmedItems -%}
+            {% if gridName is defined %}
+                {% if gridScope is defined %}
+                    {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+                {% endif %}
+                {% if params is defined %}
+                    {{ dataGrid.renderGrid(gridName, params) }}
+                {% else %}
+                    {{ dataGrid.renderGrid(gridName) }}
+                {% endif %}
+            {% endif %}
+        {%- endset -%}
+
+        {% set dataBlocks = dataBlocks|merge([
+        {
+        'title': 'cb.newage.offer.confirmed_panel_views.label'|trans,
+        'subblocks': [
+        {'data' : [gridConfirmedItems]}
+        ]
+        }
+        ]) %}
+    {% endif %}
+
+
+    {% if entity.reservationItems and entity.reservationItems|length>0%}
+        {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
         {% set gridName = 'reservation-items-grid' %}
 
         {% set params = {

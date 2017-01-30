@@ -61,21 +61,22 @@ class OfferHandler extends ApiFormHandler
         return null;
     }
 
-    /**
-     * "Success" form handler
-     *
-     * @param mixed $entity
-     *
-     * @return mixed|null The instance of saved entity. Can be null if it is equal of the $entity argument
-     */
-    protected function onSuccess($entity)
-    {
-        foreach ($entity->getItems() as $item)
-        {
-            $this->entityManager->persist($item);
-        }
-        $this->entityManager->persist($entity);
-        $this->entityManager->flush();
-    }
+//    /**
+//     * "Success" form handler
+//     *
+//     * @param mixed $entity
+//     *
+//     * @return mixed|null The instance of saved entity. Can be null if it is equal of the $entity argument
+//     */
+//    protected function onSuccess($entity)
+//    {
+//        if ($entity->get)
+//        foreach ($entity->getItems() as $item)
+//        {
+//            $this->entityManager->persist($item);
+//        }
+//        $this->entityManager->persist($entity);
+//        $this->entityManager->flush();
+//    }
 
 }

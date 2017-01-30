@@ -47,12 +47,12 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
 
     const OFFERED  = 0;
     const RESERVED = 1;
-    const ACCEPTED = 2;
+    const CONFIRMED = 2;
 
     static $statuses = [
         self::OFFERED => 'Ofertat34',
         self::RESERVED => 'Reservat',
-        self::ACCEPTED => 'Acceptat'
+        self::CONFIRMED => 'Confirmat'
     ];
 
     /**
@@ -138,16 +138,8 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
     /**
      * @var ReservationItem
      *
-     * @ORM\OneToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\ReservationItem", inversedBy="event")
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\ReservationItem", inversedBy="events", cascade={"persist"})
      * @ORM\JoinColumn(name="reservation_item_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    private $reservationItem;
-
-    /**
-     * @var Reservation
-     *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Reservation", inversedBy="events")
-     * @ORM\JoinColumn(name="reservation_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -156,7 +148,8 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      *      }
      * )
      */
-    protected $reservation;
+    protected $reservationItem;
+
 
 
     public function __construct()

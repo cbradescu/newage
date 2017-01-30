@@ -7,7 +7,7 @@ parameters:
 #    cb_newage.mass_action.reserve_mass_action_listener.class: CB\Bundle\NewAgeBundle\EventListener\DataGrid\ReserveMassActionListener
     cb_newage.mass_action.confirm.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\ConfirmMassAction
     cb_newage.mass_action.confirm_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\ConfirmMassActionHandler
-    cb_newage.mass_action.confirm_mass_action_listener.class: CB\Bundle\NewAgeBundle\EventListener\DataGrid\ConfirmMassActionListener
+#    cb_newage.mass_action.confirm_mass_action_listener.class: CB\Bundle\NewAgeBundle\EventListener\DataGrid\ConfirmMassActionListener
 
 services:
     cb_newage.mass_action.offer:
@@ -69,10 +69,10 @@ services:
             - '@security.context'
             - '@oro_security.security_facade.link'
 
-    cb_newage.mass_action.confirm_mass_action_listener:
-        class: %cb_newage.mass_action.confirm_mass_action_listener.class%
-        arguments:
-            - '@oro_entity_merge.metadata.registry'
-            - '@doctrine.orm.entity_manager'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }
+#    cb_newage.mass_action.confirm_mass_action_listener:
+#        class: %cb_newage.mass_action.confirm_mass_action_listener.class%
+#        arguments:
+#            - '@oro_entity_merge.metadata.registry'
+#            - '@doctrine.orm.entity_manager'
+#        tags:
+#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }

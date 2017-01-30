@@ -118,7 +118,6 @@ class SchedulerEventRepository extends EntityRepository
                  pv.id as panelViewId,
                  pv.name as panelViewName,
                  p.id as panelId,
-                 o.id as offerId,
                  p.name as panelName,
                  st.id as supportTypeId,
                  lt.id as lightingTypeId,
@@ -134,8 +133,8 @@ class SchedulerEventRepository extends EntityRepository
             ->leftJoin('p.lightingType', 'lt')
             ->leftJoin('p.addresses', 'a')
             ->leftJoin('a.city', 'ct')
-            ->leftJoin('e.reservation', 'r')
-            ->leftJoin('r.offer', 'o')
+//            ->leftJoin('e.reservation', 'r')
+//            ->leftJoin('r.offer', 'o')
             ->addOrderBy('p.name', 'ASC')
             ->addOrderBy('pv.name', 'ASC')
         ;

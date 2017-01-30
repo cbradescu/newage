@@ -2,7 +2,12 @@
 namespace CB\Bundle\NewAgeBundle\Entity;
 
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
+
 use Doctrine\ORM\Mapping as ORM;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -89,9 +94,18 @@ class ReservationItem
     /**
      * @var SchedulerEvent
      *
-     * @ORM\OneToOne(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="reservationItem", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent",
+     *    mappedBy="reservationItem", cascade={"all"}, orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
-    protected $event;
+    protected $events;
 
     /**
      * @var \DateTime
@@ -172,12 +186,19 @@ class ReservationItem
      */
     protected $updatedAt;
 
+
+    public function __construct()
+    {
+
+        $this->events = new ArrayCollection();
+    }
+
     /**
      * @return string
      */
     public function __toString()
     {
-        return (string) $this->panelView->getName();
+        return (string)$this->panelView->getName();
     }
 
     /**
@@ -189,25 +210,74 @@ class ReservationItem
     }
 
     /**
-     * @param SchedulerEvent|null $event
+     * Get events collection
+     *
+     * @return Collection
+     */
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
+    /**
+     * Set events collection
+     *
+     * @param Collection $events
      *
      * @return ReservationItem
      */
-    public function setEvent(SchedulerEvent $event)
+    public function setEvents(Collection $events)
     {
-        $event->setReservationItem($this);
-        $this->event = $event;
+        $this->events = $events;
 
         return $this;
     }
 
     /**
-     * @return SchedulerEvent
+     * Add specified event
+     *
+     * @param SchedulerEvent $event
+     *
+     * @return ReservationItem
      */
-    public function getEvent()
+    public function addEvent(SchedulerEvent $event)
     {
-        return $this->event;
+        if (!$this->getEvents()->contains($event)) {
+            $this->getEvents()->add($event);
+        }
+
+        return $this;
     }
+
+    /**
+     * Remove specified event
+     *
+     * @param SchedulerEvent $event
+     *
+     * @return ReservationItem
+     */
+    public function removeEvent(SchedulerEvent $event)
+    {
+        if ($this->getEvents()->contains($event)) {
+            $this->getEvents()->removeElement($event);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove all events from collection
+     *
+     * @return ReservationItem
+     */
+
+    public function removeAllEvents()
+    {
+
+
+        return $this;
+    }
+
 
     /**
      * Gets date an reservation item begins.
@@ -395,19 +465,6 @@ class ReservationItem
     {
         $this->createdAt = $this->createdAt ? $this->createdAt : new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = clone $this->createdAt;
-
-        if ($this->event == null) {
-            $event = new SchedulerEvent();
-
-            $event->setCampaign($this->getOffer()->getCampaign());
-            $event->setPanelView($this->getPanelVIew());
-            $event->setStatus(SchedulerEvent::RESERVED);
-            $event->setReservationItem($this);
-            $event->setStart($this->getStart());
-            $event->setEnd($this->getEnd());
-
-            $this->event = $event;
-        }
     }
 
     /**
@@ -418,5 +475,28 @@ class ReservationItem
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Adds a default event for current ReservationItem.
+     * Has same start and end date as reservation item.
+     *
+     * @return ReservationItem
+     */
+    public function addDefaultEvent()
+    {
+        $this->removeAllEvents();
+
+        $event = new SchedulerEvent();
+        $event->setCampaign($this->getOffer()->getCampaign());
+        $event->setPanelView($this->getPanelView());
+        $event->setReservationItem($this);
+        $event->setStart($this->getStart());
+        $event->setEnd($this->getEnd());
+        $event->setStatus(SchedulerEvent::RESERVED);
+
+        $this->addEvent($event);
+
+        return $this;
     }
 }
