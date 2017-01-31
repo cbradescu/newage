@@ -303,6 +303,7 @@ class OfferController extends Controller
             );
         } catch (\Exception $e) {
             $em->rollback();
+            throw $e;
         }
 
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
@@ -485,6 +486,7 @@ class OfferController extends Controller
             );
         } catch (\Exception $e) {
             $em->rollback();
+            throw $e;
         }
 
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
@@ -519,7 +521,6 @@ class OfferController extends Controller
         /**
          * Removing all events attached to current offer reservation items.
          */
-//        $offer = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id'=>$offer]);
         foreach ($offer->getReservationItems() as $ri)
         {
             /** @var ReservationItem $ri */
@@ -633,7 +634,9 @@ class OfferController extends Controller
                         $reservationItem->getEnd()
                     );
 
+                    /** @var array $freeInterval */
                     foreach ($freeIntervals as $freeInterval) {
+                        /** @var \DateInterval $interval */
                         $interval = $freeInterval['end']->diff($freeInterval['start']);
                         if ($interval->format('%a') >= 7) {
 
@@ -676,6 +679,7 @@ class OfferController extends Controller
             );
         } catch (\Exception $e) {
             $em->rollback();
+            throw $e;
         }
 
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
@@ -715,8 +719,10 @@ class OfferController extends Controller
             $forbidden = true;
 
             if (count($freeIntervals)>0) {
+                /** @var array $freeInterval */
                 foreach ($freeIntervals as $freeInterval)
                 {
+                    /** @var \DateInterval $interval */
                     $interval = $freeInterval['end']->diff($freeInterval['start']);
                     if ($interval->format('%a')>=7)
                         $forbidden = false;

@@ -179,12 +179,12 @@ class SchedulerEventController extends RestController implements ClassResourceIn
 
                 $item['editable'] = false;
                 if ($this->get('oro_security.security_facade')->isGranted('cb_scheduler_event_update'))
-                    if ($row['status']!=2 || $this->get('oro_security.security_facade')->isGranted('ROLE_AVAILABLE'))
+                    if ($row['status']!=SchedulerEvent::CONFIRMED || $this->get('oro_security.security_facade')->isGranted('ROLE_AVAILABLE'))
                         $item['editable'] = true;
 
                 $item['removable'] = false;
                 if ($this->get('oro_security.security_facade')->isGranted('cb_scheduler_event_delete'))
-                    if ($row['status']!=2 || $this->get('oro_security.security_facade')->isGranted('ROLE_AVAILABLE'))
+                    if ($row['status']!=SchedulerEvent::CONFIRMED || $this->get('oro_security.security_facade')->isGranted('ROLE_AVAILABLE'))
                         $item['removable'] = true;
 
                 $events[] = $item;

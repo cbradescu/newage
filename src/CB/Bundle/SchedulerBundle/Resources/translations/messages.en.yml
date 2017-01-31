@@ -22,7 +22,6 @@ cb:
         schedulerevent:
             entity_label:                  Event
 
-cb.scheduler.scheduler_event.status.offered.label:  Offered
 cb.scheduler.scheduler_event.status.reserved.label: Reserved
-cb.scheduler.scheduler_event.status.accepted.label: Accepted
+cb.scheduler.scheduler_event.status.confirmed.label: Confirmat
 

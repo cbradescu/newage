@@ -45,14 +45,12 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
-    const OFFERED  = 0;
-    const RESERVED = 1;
-    const CONFIRMED = 2;
+    const RESERVED = 0;
+    const CONFIRMED = 1;
 
     static $statuses = [
-        self::OFFERED => 'Ofertat34',
-        self::RESERVED => 'Reservat',
-        self::CONFIRMED => 'Confirmat'
+        self::RESERVED,
+        self::CONFIRMED
     ];
 
     /**
@@ -151,12 +149,11 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
     protected $reservationItem;
 
 
-
     public function __construct()
     {
         parent::__construct();
 
-        $this->status = SchedulerEvent::OFFERED;
+        $this->status = SchedulerEvent::RESERVED;
     }
 
     /**
@@ -310,11 +307,11 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      */
     public function setStatus($status)
     {
-//        if ($this->isValid($status)) {
+        if ($this->isValid($status)) {
             $this->status = $status;
-//        } else {
-//            throw new \LogicException(sprintf('Status "%s" is not supported', $status));
-//        }
+        } else {
+            throw new \LogicException(sprintf('Status "%s" is not supported', $status));
+        }
     }
 
     /**
@@ -342,36 +339,12 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
     }
 
     /**
-     * Gets reservation
-     *
-     * @return Reservation|null
-     */
-    public function getReservation()
-    {
-        return $this->reservation;
-    }
-
-    /**
-     * Sets reservation
-     *
-     * @param Reservation $reservation
-     *
-     * @return self
-     */
-    public function setReservation(Reservation $reservation)
-    {
-        $this->reservation = $reservation;
-
-        return $this;
-    }
-
-    /**
      * @param string|null $status
      * @return bool
      */
     protected function isValid($status)
     {
-        return $status === self::OFFERED || in_array($status, SchedulerEvent::getStatuses());
+        return $status === self::RESERVED || in_array($status, SchedulerEvent::getStatuses());
     }
 
     /**

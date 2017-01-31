@@ -75,13 +75,11 @@ class StatusChoiceType extends AbstractType
      */
     protected function getChoices()
     {
-        $choices[0] = $this->translator->trans('cb.scheduler.scheduler_event.status.offered.label');
+        $choices[0] = $this->translator->trans('cb.scheduler.scheduler_event.status.reserved.label');
         if ($this->securityFacade->isGranted('cb_scheduler_event_update')) {
-            $choices[1] = $this->translator->trans('cb.scheduler.scheduler_event.status.reserved.label');
-
             if ($this->securityFacade->isGranted('ROLE_AVAILABLE'))
             {
-                $choices[2] = $this->translator->trans('cb.scheduler.scheduler_event.status.accepted.label');
+                $choices[1] = $this->translator->trans('cb.scheduler.scheduler_event.status.confirmed.label');
             }
         }
 

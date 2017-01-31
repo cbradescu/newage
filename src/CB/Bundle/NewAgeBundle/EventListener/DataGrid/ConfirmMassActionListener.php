@@ -4,6 +4,7 @@ namespace CB\Bundle\NewAgeBundle\EventListener\DataGrid;
 
 use CB\Bundle\NewAgeBundle\Entity\Reservation;
 
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -63,7 +64,7 @@ class ConfirmMassActionListener
                     $event = $reservation->findEventBy($reservation->getAttributes($reservedPanelView));
 
                     if ($event) {
-                        if ($event->getStatus() == 2)
+                        if ($event->getStatus() == SchedulerEvent::CONFIRMED)
                         $config->offsetUnsetByPath('[mass_actions][confirm]');
                         return;
                     }

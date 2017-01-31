@@ -1014,9 +1014,6 @@ define(function(require) {
             switch (parseInt(status))
             {
                 case 1:
-                    return '#99ccff';
-                    break;
-                case 2:
                     return '#84e184';
                     break;
                 default:

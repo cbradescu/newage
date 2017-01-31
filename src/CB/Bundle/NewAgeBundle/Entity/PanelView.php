@@ -333,16 +333,16 @@ class PanelView
     /**
      * Find confirmed events in an interval for current panel view.
      *
-     * @param $start
-     * @param $end
+     * @param \DateTime $start
+     * @param \DateTime $end
      * @return array
      */
-    public function getConfirmedEvents($start, $end)
+    public function getConfirmedEvents(\DateTime $start, \DateTime $end)
     {
         $confirmedEvents = [];
         foreach ($this->events as $event)
         {
-            if ($event->getStatus()==2 and
+            if ($event->getStatus()==SchedulerEvent::CONFIRMED and
                 (
                     ($event->getStart()>=$start and $event->getStart()<=$end) or
                     ($event->getEnd()>=$start and $event->getEnd()<=$end) or
@@ -375,11 +375,9 @@ class PanelView
             return $a['start']->getTimestamp() - $b['start']->getTimestamp();
         });
 
-
         $results = [];
 
         $first = array_shift($confirmed);
-
         /** @var array $int - current interval [start,end] */
         if ($first['start'] > $start)
             $results[] = [

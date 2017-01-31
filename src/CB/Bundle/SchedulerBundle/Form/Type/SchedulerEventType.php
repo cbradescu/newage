@@ -78,7 +78,7 @@ class SchedulerEventType extends AbstractType
      * @param SchedulerEvent $schedulerEvent
      * @param string        $status
      */
-    protected function setDefaultEventStatus(SchedulerEvent $schedulerEvent, $status = SchedulerEvent::OFFERED)
+    protected function setDefaultEventStatus(SchedulerEvent $schedulerEvent, $status = SchedulerEvent::RESERVED)
     {
         if (!$schedulerEvent->getStatus()) {
             $schedulerEvent->setStatus($status);

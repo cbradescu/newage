@@ -1229,10 +1229,13 @@ datagrid:
                     data_name: p.name
                 panelView:
                     data_name: pv.name
+                start:
+                    data_name: ri.start
             default:
                 city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                start:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
         filters:
             columns:
@@ -1351,10 +1354,13 @@ datagrid:
                     data_name: p.name
                 panelView:
                     data_name: pv.name
+                start:
+                    data_name: ev.start
             default:
                 city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                start:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
         filters:
             columns:

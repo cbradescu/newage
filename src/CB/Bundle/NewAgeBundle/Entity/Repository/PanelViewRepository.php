@@ -2,6 +2,8 @@
 
 namespace CB\Bundle\NewAgeBundle\Entity\Repository;
 
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
+use CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventType;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
@@ -95,7 +97,7 @@ class PanelViewRepository extends EntityRepository
         $evQb = $this->getEntityManager()->getRepository('CBSchedulerBundle:SchedulerEvent')->createQueryBuilder('ev')
             ->select('IDENTITY(ev.panelView)')
             ->where('(ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)')
-            ->andWhere('ev.status=2')
+            ->andWhere('ev.status=' . SchedulerEvent::CONFIRMED)
         ;
 
         $qb = $this->createQueryBuilder('pv')
@@ -145,7 +147,7 @@ class PanelViewRepository extends EntityRepository
                 'ev.end'
                 )
             ->where('(ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)')
-            ->andWhere('ev.status=2')
+            ->andWhere('ev.status=' . SchedulerEvent::CONFIRMED)
             ->setParameter('start', $start)
             ->setParameter('end', $end);
 

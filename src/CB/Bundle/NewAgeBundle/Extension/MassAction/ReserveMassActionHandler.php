@@ -48,52 +48,6 @@ class ReserveMassActionHandler implements MassActionHandlerInterface
      */
     public function handle(MassActionHandlerArgs $args)
     {
-//        $massAction = $args->getMassAction();
-//        $options = $massAction->getOptions()->toArray();
-//
-//        $data = $args->getData();
-//        $isAllSelected = $this->isAllSelected($data);
-//
-//        $offer = null;
-//        if (array_key_exists('select-panel_view-grid', $data)) {
-//            $offerId = $data['select-panel_view-grid']['offer'];
-//
-//            /** @var Offer $offer */
-//            $offer = $this->entityManager->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id' => $offerId]);
-//        }
-//
-//        $panelViews = new ArrayCollection();
-//        if (array_key_exists('values', $data)) {
-//            $panelViewIds = explode(',', $data['values']);
-//
-//            $queryBuilder = $this
-//                ->entityManager
-//                ->getRepository('CBNewAgeBundle:PanelView')
-//                ->createQueryBuilder('pv');
-//
-//            if ($isAllSelected)
-//                $panelViewIds = $offer->getPanelViews()->map(function ($entity){
-//                    /** @var PanelView $entity */
-//                    return $entity->getId();
-//                })->toArray();
-//
-//            $queryBuilder->andWhere($queryBuilder->expr()->in('pv.id', $panelViewIds));
-//
-//            $results = $queryBuilder->getQuery()->getResult();
-//            foreach ($results as $entity){
-//                $panelViews->add($entity);
-//            }
-//        }
-//
-//        return new MassActionResponse(
-//            true,
-//            null,
-//            array(
-//                'offer' => $offer,
-//                'panelViews' => $panelViews,
-//                'options' => $options
-//            )
-//        );
         $massAction = $args->getMassAction();
         $options = $massAction->getOptions()->toArray();
 
@@ -125,7 +79,7 @@ class ReserveMassActionHandler implements MassActionHandlerInterface
                 'offer' => $offer,
                 'values' => $data['values'],
                 'isAllSelected' => $isAllSelected,
-                'filters' => $data['filters'],
+                'filters' => isset($data['filters']) ? $data['filters'] : null,
                 'options' => $options
             )
         );
