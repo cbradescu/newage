@@ -17,6 +17,7 @@ CB\Bundle\NewAgeBundle\Entity\PanelAddress:
 CB\Bundle\NewAgeBundle\Entity\Offer:
     properties:
         name:
+            - NotBlank: ~
             - Length:
                 min:    3
                 max:    255
@@ -28,5 +29,5 @@ CB\Bundle\NewAgeBundle\Entity\Offer:
         end:
             - Date: ~
             - Expression:
-                expression: "this.isGreaterThanStart(5)"
+                expression: "this.isGreaterThanStart(7)"
                 message: End date should be greater with 5 days than start date

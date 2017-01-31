@@ -406,7 +406,6 @@ class PanelView
                 $cloneDate = clone $ev['end'];
                 $int['start'] = $int['end'] = $cloneDate->modify('+1 day');
             } else {
-//                error_log('##########################' ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
                 return $results;
             }
         }
@@ -417,8 +416,6 @@ class PanelView
             $results[] = $int;
         }
 
-//        error_log('Results[]: ' . $int['start']->format('Y-m-d') . "\t" . $int['end']->format('Y-m-d') . "\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
-//        error_log('##########################' ."\n", 3, '/var/www/newage/crm-application/app/logs/catalin');
         return $results;
     }
 }

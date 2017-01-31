@@ -1283,8 +1283,8 @@ datagrid:
             query:
                 select:
                     - ri.id
-                    - ri.start
-                    - ri.end
+                    - ev.start
+                    - ev.end
                     - pv.name as panelView
                     - pv.url
                     - p.name as panel

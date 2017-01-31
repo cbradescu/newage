@@ -415,6 +415,7 @@ class OfferController extends Controller
             {
                 $offer->removeReservationItem($item);
             }
+            $em->flush();
 
             $entitiesCount = 0;
             /** @var PanelView $panelView */
@@ -506,7 +507,8 @@ class OfferController extends Controller
 
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
 
-        $offerId = $response->getOption('offer');
+        /** @var Offer $offer */
+        $offer = $response->getOption('offer');
         $isAllSelected = $response->getOption('isAllSelected');
         $values = $response->getOption('values');
         $filters = $response->getOption('filters');
@@ -517,8 +519,7 @@ class OfferController extends Controller
         /**
          * Removing all events attached to current offer reservation items.
          */
-        /** @var Offer $offer */
-        $offer = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id'=>$offerId]);
+//        $offer = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id'=>$offer]);
         foreach ($offer->getReservationItems() as $ri)
         {
             /** @var ReservationItem $ri */
@@ -547,8 +548,7 @@ class OfferController extends Controller
         $hasWhere = false;
 
         if ($isAllSelected) {
-            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offerId);
-            error_log("isAllSelectedL true | " . implode(",",$forbiddenPanelViewIds) . "\n",3,'/var/www/cteam.ro/newage/app/logs/cata');
+            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
             if (count($forbiddenPanelViewIds)>0) {
                 $query .= ' WHERE ri.id NOT IN (' . implode(",",$forbiddenPanelViewIds) .')';
                 $hasWhere = true;
@@ -589,9 +589,18 @@ class OfferController extends Controller
                     $query .= ' AND';
                 } else{
                     $query .= ' WHERE';
+                    $hasWhere = true;
                 }
                 $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
             }
+
+            if ($hasWhere) {
+                $query .= ' AND';
+            } else{
+                $query .= ' WHERE';
+                $hasWhere = true;
+            }
+            $query .= ' ri.offer_id = ' . $offer->getId();
         } else {
             if ($hasWhere) {
                 $query .= ' AND';
@@ -601,6 +610,7 @@ class OfferController extends Controller
 
             $query .= ' ri.id IN (' . $values .')';
         }
+
         $stmt = $conn->prepare($query);
         $stmt->execute();
         $results = $stmt->fetchAll();
@@ -609,7 +619,6 @@ class OfferController extends Controller
             $entitiesCount = 0;
             /** @var ReservationItem $reservationItem */
             foreach ($results as $row) {
-                error_log("ri id:" . $row['id'] . "\n",3,'/var/www/cteam.ro/newage/app/logs/cata');
                 $reservationItem = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem')->findOneBy(['id'=>$row['id']]);
 
                 /** @var PanelView $panelView */
@@ -631,8 +640,8 @@ class OfferController extends Controller
                             $event = $this->newEvent($reservationItem,
                                 $reservationItem->getOffer()->getCampaign(),
                                 $panelView,
-                                $reservationItem->getStart(),
-                                $reservationItem->getEnd()
+                                $freeInterval['start'],
+                                $freeInterval['end']
                             );
                             $reservationItem->addEvent($event);
 
