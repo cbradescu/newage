@@ -71,9 +71,9 @@ class OfferItem
     protected $offer;
 
     /**
-     * @var PanelVIew
+     * @var PanelView
      *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelVIew")
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView")
      * @ORM\JoinColumn(name="panel_view_id", referencedColumnName="id")
      * @ConfigField(
      *      defaultValues={
@@ -231,9 +231,9 @@ class OfferItem
     /**
      * Gets panelView
      *
-     * @return PanelVIew|null
+     * @return PanelView|null
      */
-    public function getPanelVIew()
+    public function getPanelView()
     {
         return $this->panelView;
     }
@@ -241,13 +241,13 @@ class OfferItem
     /**
      * Sets panelView
      *
-     * @param PanelVIew $panelVIew
+     * @param PanelView $panelView
      *
      * @return OfferItem
      */
-    public function setPanelVIew(PanelVIew $panelVIew = null)
+    public function setPanelView(PanelView $panelView = null)
     {
-        $this->panelView = $panelVIew;
+        $this->panelView = $panelView;
 
         return $this;
     }

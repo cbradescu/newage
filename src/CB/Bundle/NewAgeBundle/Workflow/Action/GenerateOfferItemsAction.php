@@ -117,7 +117,7 @@ class GenerateOfferItemsAction extends AbstractAction
             } else {
                 $item = new OfferItem($offer, $panelView, $offer->getStart(), $offer->getEnd());
                 $item->setOffer($offer);
-                $item->setPanelVIew($panelView);
+                $item->setPanelView($panelView);
                 $item->setStart($offer->getStart());
                 $item->setEnd($offer->getEnd());
                 $item->setOwner($this->securityFacade->getLoggedUser());

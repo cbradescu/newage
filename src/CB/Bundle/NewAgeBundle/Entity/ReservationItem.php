@@ -77,9 +77,9 @@ class ReservationItem
     protected $offer;
 
     /**
-     * @var PanelVIew
+     * @var PanelView
      *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelVIew")
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView")
      * @ORM\JoinColumn(name="panel_view_id", referencedColumnName="id")
      * @ConfigField(
      *      defaultValues={
@@ -330,9 +330,9 @@ class ReservationItem
     /**
      * Gets panelView
      *
-     * @return PanelVIew|null
+     * @return PanelView|null
      */
-    public function getPanelVIew()
+    public function getPanelView()
     {
         return $this->panelView;
     }
@@ -340,13 +340,13 @@ class ReservationItem
     /**
      * Sets panelView
      *
-     * @param PanelVIew $panelVIew
+     * @param PanelView $panelView
      *
      * @return ReservationItem
      */
-    public function setPanelVIew(PanelVIew $panelVIew = null)
+    public function setPanelView(PanelView $panelView = null)
     {
-        $this->panelView = $panelVIew;
+        $this->panelView = $panelView;
 
         return $this;
     }
