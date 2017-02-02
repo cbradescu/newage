@@ -47,7 +47,7 @@ class Processor
         $senderName  = $this->configManager->get('oro_notification.email_notification_sender_name');
 
         $message = \Swift_Message::newInstance()
-            ->setSubject('CRM - Modificare oferta/rezervare ')
+            ->setSubject('Modificare oferta/rezervare ')
             ->setFrom($senderEmail, $senderName)
             ->setTo($affectedOffer->getOwner()->getEmail())
             ->setBody(

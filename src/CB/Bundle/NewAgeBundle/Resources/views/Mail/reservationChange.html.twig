@@ -3,8 +3,8 @@
 {% block content %}
     <h1>Hello, {{ affectedOffer.owner|oro_format_name }}!</h1>
     <p>Oferta <a href="{{ url('cb_newage_offer_view', { 'id': affectedOffer.id}) }}">{{ affectedOffer.name }}</a>,
-        initiata de dumneavoastra a suferit modificari in urma confirmarii ofertei
+        initiata de dumneavoastra pentru clientul {{ affectedOffer.campaign.title|upper }}, a suferit modificari in urma confirmarii ofertei
         <a href="{{ url('cb_newage_offer_view', { 'id': confirmedOffer.id}) }}">{{ confirmedOffer.name }}</a>,
-        initiata de {{ confirmedOffer.owner|oro_format_name }}
+        initiata de {{ confirmedOffer.owner|oro_format_name }} pentru clientul {{ confirmedOffer.campaign.title|upper }}!
     </p>
 {% endblock %}
