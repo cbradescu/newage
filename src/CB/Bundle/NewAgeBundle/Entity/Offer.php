@@ -448,8 +448,8 @@ class Offer
      */
     public function addReservationItem(ReservationItem $item)
     {
-        if (!$this->getOfferItems()->contains($item)) {
-            $this->getOfferItems()->add($item);
+        if (!$this->getReservationItems()->contains($item)) {
+            $this->getReservationItems()->add($item);
         }
 
         return $this;

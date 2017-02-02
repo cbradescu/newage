@@ -15,7 +15,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="CB\Bundle\NewAgeBundle\Entity\Repository\ReservationItemRepository")
  * @ORM\Table(
  *      name="cb_newage_reservation_item"
  * )
@@ -266,20 +266,6 @@ class ReservationItem
     }
 
     /**
-     * Remove all events from collection
-     *
-     * @return ReservationItem
-     */
-
-    public function removeAllEvents()
-    {
-
-
-        return $this;
-    }
-
-
-    /**
      * Gets date an reservation item begins.
      *
      * @return \DateTime
@@ -485,8 +471,6 @@ class ReservationItem
      */
     public function addDefaultEvent()
     {
-        $this->removeAllEvents();
-
         $event = new SchedulerEvent();
         $event->setCampaign($this->getOffer()->getCampaign());
         $event->setPanelView($this->getPanelView());
@@ -496,6 +480,17 @@ class ReservationItem
         $event->setStatus(SchedulerEvent::RESERVED);
 
         $this->addEvent($event);
+
+        return $this;
+    }
+
+    public function removeAllEvents()
+    {
+//        $this->events->clear();
+        foreach ($this->events as $event)
+        {
+            $this->removeEvent($event);
+        }
 
         return $this;
     }

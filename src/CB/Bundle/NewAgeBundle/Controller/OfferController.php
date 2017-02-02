@@ -12,10 +12,12 @@ use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
+use CB\Bundle\NewAgeBundle\Entity\Repository\ReservationItemRepository;
 
 use CB\Bundle\NewAgeBundle\Entity\ReservationItem;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
-use Doctrine\ORM\QueryBuilder;
+
+use Doctrine\ORM\EntityManager;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -173,15 +175,15 @@ class OfferController extends Controller
 
         if ($isAllSelected) {
             $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
-            if (count($forbiddenPanelViewIds)>0) {
-                $query .= ' WHERE pv.id NOT IN (' . implode(",",$forbiddenPanelViewIds) .')';
+            if (count($forbiddenPanelViewIds) > 0) {
+                $query .= ' WHERE pv.id NOT IN (' . implode(",", $forbiddenPanelViewIds) . ')';
                 $hasWhere = true;
             }
 
             if (isset($filters['city']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -191,7 +193,7 @@ class OfferController extends Controller
             if (isset($filters['support']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -201,7 +203,7 @@ class OfferController extends Controller
             if (isset($filters['lighting']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -212,7 +214,7 @@ class OfferController extends Controller
             if (isset($filters['dimensions']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                 }
                 $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
@@ -220,11 +222,11 @@ class OfferController extends Controller
         } else {
             if ($hasWhere) {
                 $query .= ' AND';
-            } else{
+            } else {
                 $query .= ' WHERE';
             }
 
-            $query .= ' pv.id IN (' . $values .')';
+            $query .= ' pv.id IN (' . $values . ')';
         }
         $stmt = $conn->prepare($query);
         $stmt->execute();
@@ -234,18 +236,17 @@ class OfferController extends Controller
         $em->beginTransaction();
 
         try {
-            foreach ($offer->getOfferItems() as $item)
-            {
+            foreach ($offer->getOfferItems() as $item) {
                 $offer->removeOfferItem($item);
             }
 
             $entitiesCount = 0;
             /** @var PanelView $panelView */
             foreach ($results as $row) {
-                $panelView = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView')->findOneBy(['id'=>$row['id']]);
+                $panelView = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView')->findOneBy(['id' => $row['id']]);
 
                 $confirmedEvents = $panelView->getConfirmedEvents($offer->getStart(), $offer->getEnd());
-                if (count($confirmedEvents)>0) { // Daca are evenimente confirmate, cautam intervale libere
+                if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
                     $freeIntervals = $panelView->getFreeIntervals(
                         $confirmedEvents,
                         $offer->getStart(),
@@ -350,15 +351,15 @@ class OfferController extends Controller
 
         if ($isAllSelected) {
             $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
-            if (count($forbiddenPanelViewIds)>0) {
-                $query .= ' WHERE oi.id NOT IN (' . implode(",",$forbiddenPanelViewIds) .')';
+            if (count($forbiddenPanelViewIds) > 0) {
+                $query .= ' WHERE oi.id NOT IN (' . implode(",", $forbiddenPanelViewIds) . ')';
                 $hasWhere = true;
             }
 
             if (isset($filters['city']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -368,7 +369,7 @@ class OfferController extends Controller
             if (isset($filters['support']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -378,7 +379,7 @@ class OfferController extends Controller
             if (isset($filters['lighting']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -389,7 +390,7 @@ class OfferController extends Controller
             if (isset($filters['dimensions']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                 }
                 $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
@@ -397,11 +398,11 @@ class OfferController extends Controller
         } else {
             if ($hasWhere) {
                 $query .= ' AND';
-            } else{
+            } else {
                 $query .= ' WHERE';
             }
 
-            $query .= ' oi.id IN (' . $values .')';
+            $query .= ' oi.id IN (' . $values . ')';
         }
         $stmt = $conn->prepare($query);
         $stmt->execute();
@@ -412,8 +413,7 @@ class OfferController extends Controller
 
         try {
             // delete old reservation items
-            foreach ($offer->getReservationItems() as $item)
-            {
+            foreach ($offer->getReservationItems() as $item) {
                 $offer->removeReservationItem($item);
             }
             $em->flush();
@@ -421,10 +421,10 @@ class OfferController extends Controller
             $entitiesCount = 0;
             /** @var PanelView $panelView */
             foreach ($results as $row) {
-                $panelView = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView')->findOneBy(['id'=>$row['id']]);
+                $panelView = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView')->findOneBy(['id' => $row['id']]);
 
                 $confirmedEvents = $panelView->getConfirmedEvents($offer->getStart(), $offer->getEnd());
-                if (count($confirmedEvents)>0) { // Daca are evenimente confirmate, cautam intervale libere
+                if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
                     $freeIntervals = $panelView->getFreeIntervals(
                         $confirmedEvents,
                         $offer->getStart(),
@@ -521,8 +521,7 @@ class OfferController extends Controller
         /**
          * Removing all events attached to current offer reservation items.
          */
-        foreach ($offer->getReservationItems() as $ri)
-        {
+        foreach ($offer->getReservationItems() as $ri) {
             /** @var ReservationItem $ri */
             foreach ($ri->getEvents() as $event)
                 $ri->removeEvent($event);
@@ -550,15 +549,15 @@ class OfferController extends Controller
 
         if ($isAllSelected) {
             $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
-            if (count($forbiddenPanelViewIds)>0) {
-                $query .= ' WHERE ri.id NOT IN (' . implode(",",$forbiddenPanelViewIds) .')';
+            if (count($forbiddenPanelViewIds) > 0) {
+                $query .= ' WHERE ri.id NOT IN (' . implode(",", $forbiddenPanelViewIds) . ')';
                 $hasWhere = true;
             }
 
             if (isset($filters['city']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -568,7 +567,7 @@ class OfferController extends Controller
             if (isset($filters['support']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -578,7 +577,7 @@ class OfferController extends Controller
             if (isset($filters['lighting']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -588,7 +587,7 @@ class OfferController extends Controller
             if (isset($filters['dimensions']['value'])) {
                 if ($hasWhere) {
                     $query .= ' AND';
-                } else{
+                } else {
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
@@ -597,7 +596,7 @@ class OfferController extends Controller
 
             if ($hasWhere) {
                 $query .= ' AND';
-            } else{
+            } else {
                 $query .= ' WHERE';
                 $hasWhere = true;
             }
@@ -605,11 +604,11 @@ class OfferController extends Controller
         } else {
             if ($hasWhere) {
                 $query .= ' AND';
-            } else{
+            } else {
                 $query .= ' WHERE';
             }
 
-            $query .= ' ri.id IN (' . $values .')';
+            $query .= ' ri.id IN (' . $values . ')';
         }
 
         $stmt = $conn->prepare($query);
@@ -620,14 +619,14 @@ class OfferController extends Controller
             $entitiesCount = 0;
             /** @var ReservationItem $reservationItem */
             foreach ($results as $row) {
-                $reservationItem = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem')->findOneBy(['id'=>$row['id']]);
+                $reservationItem = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem')->findOneBy(['id' => $row['id']]);
 
                 /** @var PanelView $panelView */
                 $panelView = $reservationItem->getPanelView();
 
                 $confirmedEvents = $panelView->getConfirmedEvents($reservationItem->getStart(), $reservationItem->getEnd());
 
-                if (count($confirmedEvents)>0) { // Daca are evenimente confirmate, cautam intervale libere
+                if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
                     $freeIntervals = $panelView->getFreeIntervals(
                         $confirmedEvents,
                         $reservationItem->getStart(),
@@ -650,6 +649,11 @@ class OfferController extends Controller
 
                             $em->persist($event);
                             $entitiesCount++;
+
+                            /**
+                             * Cautam rezervari in aceeasi perioda cu intervalul.
+                             */
+                            $this->processOverlapReservations($em, $offer, $panelView, $freeInterval['start'], $freeInterval['end']);
                         }
                     }
                 } else { // In caz contrar fata este libera pentru toata perioada ofertei
@@ -663,6 +667,11 @@ class OfferController extends Controller
 
                     $em->persist($event);
                     $entitiesCount++;
+
+                    /**
+                     * Cautam rezervari in aceeasi perioda cu intervalul.
+                     */
+                    $this->processOverlapReservations($em, $offer, $panelView, clone $reservationItem->getStart(),clone  $reservationItem->getEnd());
                 }
             }
 
@@ -694,15 +703,14 @@ class OfferController extends Controller
      */
     protected function getForbiddenPanelViews(Offer $offer)
     {
-        $forbiddenPanelViewsIds=[];
+        $forbiddenPanelViewsIds = [];
 
         /** @var PanelViewRepository $panelViewRepository */
         $panelViewRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView');
         $results = $panelViewRepository->getConfirmedPanelViews($offer->getStart(), $offer->getEnd())->getQuery()->getResult();
 
         $confirmedPanelViews = [];
-        foreach ($results as $row)
-        {
+        foreach ($results as $row) {
 
             $confirmedPanelViews[$row['panelView']][] = [
                 'start' => $row['start'],
@@ -718,13 +726,12 @@ class OfferController extends Controller
 
             $forbidden = true;
 
-            if (count($freeIntervals)>0) {
+            if (count($freeIntervals) > 0) {
                 /** @var array $freeInterval */
-                foreach ($freeIntervals as $freeInterval)
-                {
+                foreach ($freeIntervals as $freeInterval) {
                     /** @var \DateInterval $interval */
                     $interval = $freeInterval['end']->diff($freeInterval['start']);
-                    if ($interval->format('%a')>=7)
+                    if ($interval->format('%a') >= 7)
                         $forbidden = false;
                 }
             }
@@ -756,5 +763,93 @@ class OfferController extends Controller
         $event->setStatus(SchedulerEvent::CONFIRMED);
 
         return $event;
+    }
+
+    /**
+     * @param EntityManager $em
+     * @param Offer $offer
+     * @param PanelView $panelView
+     * @param \DateTime $start
+     * @param \DateTime $end
+     */
+    private function processOverlapReservations(EntityManager $em, Offer $offer, PanelView $panelView, \DateTime $start, \DateTime $end)
+    {
+        /** @var ReservationItemRepository $reservationItemRepository */
+        $reservationItemRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem');
+        $ris = $reservationItemRepository->getReservationItemsFromInterval(
+            $panelView,
+            $start,
+            $end
+        );
+
+        /** @var ReservationItem $ri */
+        foreach ($ris as $ri)
+        {
+            $localStart = clone $start;
+            $localEnd = clone $end;
+
+            if ($ri->getStart() >= $localStart) { // Incepe in cadrul intervalului
+                if ($ri->getEnd() <= $localEnd) // Incepe si se termina in cadrul intervalului (suprapunere). STERGEM!
+                {
+                    $em->remove($ri);
+                } else { // Depaseste intervalul. TRIM la inceput!
+                    /** @var \DateInterval $interval */
+                    $interval = $ri->getEnd()->diff($localStart); // Diferenta dupa micsorare.
+
+                    if ($interval->format('%a') >= 7) { // Mai mare sau egala cu 7 zile, TRIM!
+                        $ri->removeAllEvents();
+
+                        $ri->setStart($localEnd->modify('+1 day'));
+                        $ri->addDefaultEvent();
+                    } else { // Mai mica, STERGEM!
+                        $em->remove($ri);
+                    }
+                }
+            } else { // Incepe inaintea intervalului
+                if ($ri->getEnd() <= $localEnd) // Se termina in cadrul intervalului. TRIM la sfarsit!
+                {
+                    /** @var \DateInterval $interval */
+                    $interval = $localStart->diff($ri->getStart()); // Diferenta dupa micsorare.
+
+                    if ($interval->format('%a') >= 7) { // Mai mare sau egala cu 7 zile, TRIM!
+                        $ri->removeAllEvents();
+
+                        $ri->setEnd($localStart->modify('-1 day'));
+                        $ri->addDefaultEvent();
+                    } else { // Mai mica, STERGEM!
+                        $em->remove($ri);
+                    }
+                } else { // Depaseste intervalul. SPLIT!
+                    /** @var \DateInterval $interval */
+                    $firstInterval = $localStart->diff($ri->getStart()); // Diferenta dupa micsorare.
+                    $secondInterval = $ri->getEnd()->diff($localStart); // Diferenta dupa micsorare.
+
+                    $ri->removeAllEvents();
+
+                    $oldReservationItem = new ReservationItem();
+                    $oldReservationItem->setOffer($ri->getOffer());
+                    $oldReservationItem->setPanelView($ri->getPanelView());
+                    $oldReservationItem->setStart($ri->getStart());
+                    $oldReservationItem->setEnd($ri->getEnd());
+                    $oldReservationItem->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+                    $oldReservationItem->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+
+                    if ($firstInterval->format('%a') >= 7) { // Daca primul interval este valid, i-l adaugam.
+                        $ri->setEnd($localStart->modify('-1 day'));
+                        $ri->addDefaultEvent();
+                    } else { // Altfel stergem rezervarea
+                        $em->remove($ri);
+                    }
+
+                    if ($secondInterval->format('%a') >= 7) { // Daca al doilea este valid, adaugam o rezervare noua.
+                        $oldReservationItem->setStart($localEnd->modify("+1 day"));
+                        $oldReservationItem->addDefaultEvent();
+
+                        $offer->addReservationItem($oldReservationItem);
+                        $em->persist($oldReservationItem);
+                    }
+                }
+            }
+        }
     }
 }
