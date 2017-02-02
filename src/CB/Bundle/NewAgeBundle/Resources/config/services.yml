@@ -50,6 +50,8 @@ parameters:
 
     cb_newage.workflow.action.generate_offer_items.class:  CB\Bundle\NewAgeBundle\Workflow\Action\GenerateOfferItemsAction
 
+    cb_newage.mailer.processor.class:              CB\Bundle\NewAgeBundle\Mailer\Processor
+
 services:
     cb_newage_panel.manager:
         class: %cb_newage_panel.manager.class%
@@ -241,3 +243,10 @@ services:
             - '@oro_security.security_facade'
         tags:
             - { name: oro_workflow.action, alias: generate_offer_items }
+
+    cb_newage.mailer.processor:
+        class: %cb_newage.mailer.processor.class%
+        arguments:
+            - @templating
+            - @oro_config.global
+            - @oro_email.direct_mailer

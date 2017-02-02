@@ -617,6 +617,8 @@ class OfferController extends Controller
 
         try {
             $entitiesCount = 0;
+            $affectedOffers = [];
+
             /** @var ReservationItem $reservationItem */
             foreach ($results as $row) {
                 $reservationItem = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem')->findOneBy(['id' => $row['id']]);
@@ -653,7 +655,8 @@ class OfferController extends Controller
                             /**
                              * Cautam rezervari in aceeasi perioda cu intervalul.
                              */
-                            $this->processOverlapReservations($em, $offer, $panelView, $freeInterval['start'], $freeInterval['end']);
+                            $aff = $this->processOverlapReservations($em, $offer, $panelView, $freeInterval['start'], $freeInterval['end']);
+                            $affectedOffers = array_merge($affectedOffers, $aff);
                         }
                     }
                 } else { // In caz contrar fata este libera pentru toata perioada ofertei
@@ -671,12 +674,10 @@ class OfferController extends Controller
                     /**
                      * Cautam rezervari in aceeasi perioda cu intervalul.
                      */
-                    $this->processOverlapReservations($em, $offer, $panelView, clone $reservationItem->getStart(),clone  $reservationItem->getEnd());
+                    $aff = $this->processOverlapReservations($em, $offer, $panelView, clone $reservationItem->getStart(),clone  $reservationItem->getEnd());
+                    $affectedOffers = array_merge($affectedOffers, $aff);
                 }
             }
-
-            $em->flush();
-            $em->commit();
 
             $this->get('session')->getFlashBag()->add(
                 'success',
@@ -689,6 +690,21 @@ class OfferController extends Controller
         } catch (\Exception $e) {
             $em->rollback();
             throw $e;
+        }
+
+        $em->flush();
+        $em->commit();
+
+        $affectedOffers = array_unique($affectedOffers);
+        if (count($affectedOffers)>0) {
+
+            foreach ($affectedOffers as $aff) {
+                try {
+                    $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $aff);
+                } catch (\Exception $e) {
+                    throw $e;
+                }
+            }
         }
 
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
@@ -771,9 +787,13 @@ class OfferController extends Controller
      * @param PanelView $panelView
      * @param \DateTime $start
      * @param \DateTime $end
+     *
+     * @return array
      */
     private function processOverlapReservations(EntityManager $em, Offer $offer, PanelView $panelView, \DateTime $start, \DateTime $end)
     {
+        $affectedOffers = [];
+
         /** @var ReservationItemRepository $reservationItemRepository */
         $reservationItemRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem');
         $ris = $reservationItemRepository->getReservationItemsFromInterval(
@@ -850,6 +870,9 @@ class OfferController extends Controller
                     }
                 }
             }
+            $affectedOffers[] = $ri->getOffer();
         }
+
+        return $affectedOffers;
     }
 }

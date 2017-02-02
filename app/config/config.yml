@@ -61,6 +61,7 @@ swiftmailer:
     username:                 "%mailer_user%"
     password:                 "%mailer_password%"
     spool:                    { type: memory }
+    delivery_addresses:       ['bosumflici@gmail.com']
 
 fos_rest:
     body_listener:
