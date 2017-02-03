@@ -1,0 +1,31 @@
+{% extends 'OroDashboardBundle:Dashboard:widget.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% block content %}
+    {% set gridName = 'dashboard-old_offers-grid' %}
+
+    {% set params = {
+        ten_days_before_current_date: "now"|date_modify("-10 day")|date("Y-m-d")
+    } %}
+
+    {% if gridName is defined %}
+        {% if gridScope is defined %}
+            {% set gridName = oro_datagrid_build_fullname(gridName, gridScope) %}
+        {% endif %}
+        {% if params is defined %}
+            {{ dataGrid.renderGrid(gridName, params) }}
+        {% else %}
+            {{ dataGrid.renderGrid(gridName) }}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block actions %}
+    {% set actions = [{
+    'url': path('cb_newage_offer_unconfirmed'),
+    'type': 'link',
+    'label': 'cb.newage.dashboard.view_all.label'|trans
+    }] %}
+
+    {{ parent() }}
+{% endblock %}

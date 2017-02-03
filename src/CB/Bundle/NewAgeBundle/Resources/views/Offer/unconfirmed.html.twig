@@ -1,0 +1,9 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% set pageTitle = 'cb.newage.dashboard.title.old_offers'|trans %}
+
+{% set params = {
+    ten_days_before_current_date: "now"|date_modify("-10 day")|date("Y-m-d")
+} %}
+
+{% set gridName = 'old_offers-grid' %}

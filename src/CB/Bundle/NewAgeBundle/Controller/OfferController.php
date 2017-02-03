@@ -57,6 +57,18 @@ class OfferController extends Controller
     }
 
     /**
+     * @Route("/unconfirmed", name="cb_newage_offer_unconfirmed")
+     * @Template()
+     * @AclAncestor("cb_newage_offer_view")
+     */
+    public function unconfirmedAction()
+    {
+        return array(
+            'entity_class' => $this->container->getParameter('cb_newage_offer.entity.class')
+        );
+    }
+
+    /**
      * @Route("/create", name="cb_newage_offer_create")
      * @AclAncestor("cb_newage_offer_create")
      * @Template("CBNewAgeBundle:Offer:update.html.twig")

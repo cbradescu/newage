@@ -4,7 +4,7 @@ oro_dashboard_config:
             label:      cb.newage.dashboard.title.newage_launchpad
             route:      oro_dashboard_itemized_widget
             route_parameters: { bundle: OroDashboardBundle, name: quickLaunchpad }
-            description: cb.newage.dashboard.newage_launchpad_widget_description
+            description: cb.newage.dashboard.description.newage_launchpad_widget
             icon:       bundles/orodashboard/img/quick_launchpad.png
 
             items:
@@ -20,3 +20,12 @@ oro_dashboard_config:
                     route:      cb_newage_reservation_index
                     acl:        cb_newage_reservation_view
                     position:   20
+
+        old_offers:
+            label:      cb.newage.dashboard.title.old_offers
+            route:      oro_dashboard_widget        # you can use existing controller to render your TWIG template
+            route_parameters: { bundle: CBNewAgeBundle, name: old_offers }   # just specify a bundle and a TWIG template name
+            acl:         cb_newage_offer_view
+            description: cb.newage.dashboard.description.old_offers_widget
+            # TODO: We have to add our icon here.
+            icon:   bundles/orocrmcall/img/recent_calls.png

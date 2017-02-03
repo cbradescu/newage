@@ -80,6 +80,7 @@ cb:
                 saved:                     Support Type saved
             form:
                 choose_support_type:       Choose Support Type
+
       support_type:
             entity_label:                  Support Type
             entity_plural_label:           Support Types
@@ -96,14 +97,18 @@ cb:
                 saved:                     Lighting Type saved
             form:
                 choose_lighting_type:       Choose Lighting Type
+
       lighting_type:
             entity_label:                  Lighting Type
             entity_plural_label:           Lighting Types
             block.general:                 Lighting Type
 
       dashboard:
+          view_all.label: View All
           title.newage_launchpad: New Age Launchpad
-          newage_launchpad_widget_description: This widget gives you access to most commonly used actions and pages
+          title.old_offers: Unconfirmed offers < 10 days
+          description.newage_launchpad_widget: This widget gives you access to most commonly used actions and pages
+          description.old_offers_widget: This widget show unconfirmed offers that are older than 10 days.
 
       city:
             entity_label:                  City
