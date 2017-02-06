@@ -11,6 +11,7 @@ use CB\Bundle\NewAgeBundle\Entity\Campaign;
 use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
+use CB\Bundle\NewAgeBundle\Entity\Repository\OfferRepository;
 use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
 use CB\Bundle\NewAgeBundle\Entity\Repository\ReservationItemRepository;
 
@@ -20,6 +21,7 @@ use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -886,5 +888,40 @@ class OfferController extends Controller
         }
 
         return $affectedOffers;
+    }
+
+    /**
+     * @Route(
+     *     "/{offerItemId}/{panelViewId}",
+     *     name="cb_newage_panel_view_reservations",
+     *     requirements={"offerItemId"="\d+","panelViewId"="\d+"}
+     * )
+     * @Template
+     * @ParamConverter("offerItem", class="CBNewAgeBundle:OfferItem", options={"id"="offerItemId"})
+     * @ParamConverter("panelView", class="CBNewAgeBundle:PanelView", options={"id"="panelViewId"})
+     * @AclAncestor("cb_newage_panel_view_view")
+     * @param OfferItem $offerItem
+     * @param PanelView $panelView
+     *
+     * @return array
+     */
+    public function reservationsAction(OfferItem $offerItem, PanelView $panelView)
+    {
+//        /** @var OfferRepository $offerRepository */
+//        $offerRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer');
+//        $offers = $offerRepository->getOfferWithReservationsFromInterval(
+//            $panelView,
+//            $offerItem->getStart(),
+//            $offerItem->getEnd()
+//        );
+//
+//        return [
+//            'offers' => $offers,
+//        ];
+
+        return [
+            'panelView' => $panelView,
+            'offerItem' => $offerItem
+        ];
     }
 }

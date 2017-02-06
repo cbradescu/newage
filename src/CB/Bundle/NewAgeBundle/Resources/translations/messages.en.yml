@@ -43,7 +43,7 @@ cb:
             campaigns.label:               Campaigns
             events.label:                  Events
             panel.label:                   Panel
-            url.label:                     Photo url
+            url.label:                     Photo
             add:
                 label:                     Add Panel View
                 title:                     Add Panel View
@@ -148,6 +148,7 @@ cb:
             confirmed_panel_views.label:   Confirmed Panel Views
             select_panel_views.label:      Select Panel Views
             view_reservation.label:        View Reservation
+            reservations.label:            Reservations
             form:
                 select_panel_views:        Select Panel Views
             datagrid:

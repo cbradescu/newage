@@ -8,6 +8,7 @@
 namespace CB\Bundle\NewAgeBundle\Controller;
 
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
+use CB\Bundle\NewAgeBundle\Entity\ReservationItem;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;

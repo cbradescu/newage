@@ -1,0 +1,28 @@
+<span class="reservations_link">
+    <a href="{{ path('cb_newage_panel_view_reservations', {'offerItemId': record.getValue('id'), 'panelViewId': record.getValue('panelViewId')}) }}" class="action no-hash" title="Reservations">
+        <i class="icon-file-text"></i>
+    </a>
+</span>
+
+<script type="text/javascript">
+    require(['jquery', 'routing', 'oro/dialog-widget'],
+        function($, routing, DialogWidget) {
+            $('.reservations_link').delegate('a', 'click', function(e) {
+                var $el = $(this);
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                var widget = new DialogWidget({
+                    'url': $el.attr('href'),
+                    'title': 'Reservations',
+                    stateEnabled: false,
+                    dialogOptions: {
+                        'modal': true,
+                        'allowMinimize': false,
+                        'width': 600,
+                        'autoResize':false
+                    }
+                });
+                widget.render();
+            });
+        });
+</script>
