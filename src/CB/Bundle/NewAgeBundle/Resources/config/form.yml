@@ -29,8 +29,6 @@ parameters:
     cb_newage_offer.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\OfferApiType
     cb_newage_offer.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\OfferHandler
 
-    cb_form.type.panel_view_multiple_entity.class: CB\Bundle\NewAgeBundle\Form\Type\PanelViewMultipleEntityType
-
 services:
     cb_newage_panel.form.type.entity:
         class: %cb_newage_panel.form.type.entity.class%
@@ -365,12 +363,3 @@ services:
         arguments:
             - 'offer'
             - 'cb_newage_offer_api'
-
-    cb_form.type.panel_view_multiple_entity:
-        class: %cb_form.type.panel_view_multiple_entity.class%
-        arguments:
-            - '@router'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_security.security_facade'
-        tags:
-            - { name: form.type, alias: cb_panel_view_multiple_entity }

@@ -591,90 +591,6 @@ datagrid:
     offer-grid:
         extends: base-offer-grid
 
-    free-panel_view-grid:
-        source:
-            type: orm
-            entity: CBNewAgeBundle:PanelView # The name of your entity
-            repository_method: getFreePanelViewsQueryBuilder # The function name for query builder
-            bind_parameters:
-                - offer
-                - start
-                - end
-
-        columns:
-            hasContact:
-                label:   orocrm.account.assigned.label
-                editable: true
-                frontend_type: boolean
-            url:
-                label:        cb.newage.panelview.url.label
-                type: twig
-                frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
-            panel:
-                label:        cb.newage.panel.entity_label
-            name:
-                label:        cb.newage.panelview.name.label
-            support:
-                label:        cb.newage.supporttype.entity_label
-            lighting:
-                label:        cb.newage.lightingtype.entity_label
-            city:
-                label:        oro.address.city.label
-        sorters:
-            columns:
-                panel:
-                    data_name: p.name
-                name:
-                    data_name: pv.name
-            default:
-                panel: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-
-        filters:
-            columns:
-                hasContact:
-                    data_name: hasContact
-                    type:      boolean
-                support:
-                    type: choice-tree
-                    data_name: p.supportType
-                    options:
-                        lazy: "@cb_support.provider.filter.support_choice_tree->shouldBeLazy"
-                        data: "@?cb_support.provider.filter.support_choice_tree->getList"
-                    enabled: true
-                lighting:
-                    type: choice-tree
-                    data_name: p.lightingType
-                    options:
-                        lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
-                        data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
-                    enabled: true
-                city:
-                    type: choice-tree
-                    data_name: a.city
-                    options:
-                        lazy: "@cb_city.provider.filter.city_choice_tree->shouldBeLazy"
-                        data: "@?cb_city.provider.filter.city_choice_tree->getList"
-                    enabled: true
-
-        properties:
-            id: ~
-        action_configuration:
-            delete: false
-        options:
-            entityHint: panelView
-            mass_actions:
-                delete:
-                    enabled: false
-            routerEnabled: false
-            rowSelection:
-                dataField: id
-                columnName: hasContact
-                selectors:
-                    included: '#appendPanelViews'
-                    excluded: '#removePanelViews'
-
     selected-panel_view-grid:
         source:
             type: orm
@@ -854,20 +770,6 @@ datagrid:
             mass_actions:
                 delete:
                     enabled: false
-
-
-    reservation-with-confirm-panel_view-grid:
-        extends: reservation-panel_view-grid
-
-        action_configuration: "@cb_newage.reservation.datagrid_helper->getActionConfigurationClosure"
-
-        mass_actions:
-            confirm:
-                type: confirm
-                entity_name: %cb_newage_panel_view.entity.class%
-                data_identifier: pv.id
-                label: cb.newage.reservation.datagrid.action.confirm
-                icon: random
 
     offer-items-grid:
         source:

@@ -131,26 +131,6 @@ class OfferController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/widget/panel_views/{id}",
-     *      name="cb_offer_widget_panel_views_info",
-     *      requirements={"id"="\d+"},
-     *      defaults={"id"=0}
-     * )
-     * @AclAncestor("cb_newage_panel_view_view")
-     * @Template()
-     *
-     * @param Offer $offer
-     * @return array
-     */
-    public function panelViewsInfoAction(Offer $offer = null)
-    {
-        return [
-            'offer' => $offer
-        ];
-    }
-
-    /**
      * @Route("/{gridName}/offerMassAction/{actionName}", name="cb_offer_massaction")
      * @AclAncestor("cb_newage_offer_create")
      * @Template("CBNewAgeBundle:Offer:view.html.twig")

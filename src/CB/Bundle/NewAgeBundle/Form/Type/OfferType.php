@@ -76,75 +76,8 @@ class OfferType extends AbstractType
                     'required' => true
                 ]
             )
-//            ->add(
-//                'panelViews',
-//                'cb_panel_view_multiple_entity',
-//                array(
-//                    'add_acl_resource'      => 'cb_newage_panel_view_view',
-//                    'class'                 => 'CBNewAgeBundle:PanelView',
-//                    'selector_window_title' => 'cb.newage.offer.form.select_panel_views',
-//                    'required'              => true
-//                )
-//            )
         ;
     }
-
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function buildView(FormView $view, FormInterface $form, array $options)
-//    {
-//        $view->children['panelViews']->vars['grid_url'] = $this->router->generate(
-//            'oro_entity_relation',
-//            [
-//                'id' => 0,
-//                'entityName' => 'CB_Bundle_NewAgeBundle_Entity_Offer',
-//                'fieldName' => 'panelViews'
-//            ]
-//        );
-//    }
-//
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function finishView(FormView $view, FormInterface $form, array $options)
-//    {
-//        /** @var Offer $offer */
-//        $offer = $form->getData();
-//        $view->children['panelViews']->vars['grid_url'] = $this->router->generate(
-//            'cb_offer_widget_panel_views_info',
-//            array('id' => $offer->getId())
-//        );
-//        $view->children['panelViews']->vars['initial_elements']
-//            = $this->getInitialPanelViews($offer->getPanelViews());
-//    }
-//
-//    /**
-//     * @param Collection $panelViews
-//     * @return array
-//     */
-//    protected function getInitialPanelViews(Collection $panelViews)
-//    {
-//        $result = array();
-//
-//        /** @var PanelView $panelView */
-//        foreach ($panelViews as $panelView) {
-//            $result[] = array(
-//                'id' => $panelView->getId(),
-//                'label' => 'cb.newage.panel_view.entity_plural_label',
-//                'link' => $this->router->generate(
-//                    'cb_offer_widget_panel_views_info',
-//                    array('id' => $panelView->getId())
-//                ),
-//                'extraData' => array(
-//                    array('label' => 'Name', 'value' => $panelView->getName() ?: 'N/A'),
-//                    array('label' => 'Panel', 'value' => $panelView->getPanel()->getName() ?: 'N/A'),
-//                ),
-//                'isDefault' => false
-//            );
-//        }
-//        return $result;
-//    }
 
     /**
      * {@inheritdoc}

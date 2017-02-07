@@ -42,8 +42,6 @@ parameters:
     cb_newage.offer_item.entity.class:               CB\Bundle\NewAgeBundle\Entity\OfferItem
     cb_newage.reservation-item.entity.class:         CB\Bundle\NewAgeBundle\Entity\ReservationItem
 
-    cb_newage.workflow.action.generate_offer_items.class:  CB\Bundle\NewAgeBundle\Workflow\Action\GenerateOfferItemsAction
-
     cb_newage.mailer.processor.class:              CB\Bundle\NewAgeBundle\Mailer\Processor
 
 services:
@@ -209,15 +207,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
-
-    cb_newage.workflow.action.generate_offer_items:
-        class: %cb_newage.workflow.action.generate_offer_items.class%
-        arguments:
-            - '@oro_action.context_accessor'
-            - '@doctrine'
-            - '@oro_security.security_facade'
-        tags:
-            - { name: oro_workflow.action, alias: generate_offer_items }
 
     cb_newage.mailer.processor:
         class: %cb_newage.mailer.processor.class%

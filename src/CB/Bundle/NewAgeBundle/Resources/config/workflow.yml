@@ -1,2 +1,0 @@
-imports:
-    - { resource: 'oro/workflow/offer.yml' }  # Create new offer flow
