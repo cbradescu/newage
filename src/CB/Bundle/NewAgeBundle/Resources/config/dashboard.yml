@@ -14,12 +14,6 @@ oro_dashboard_config:
                     route:      cb_newage_offer_index
                     acl:        cb_newage_offer_view
                     position:   10
-                reservations:
-                    label:      cb.newage.reservation.entity_plural_label
-                    icon:       file-text
-                    route:      cb_newage_reservation_index
-                    acl:        cb_newage_reservation_view
-                    position:   20
 
         old_offers:
             label:      cb.newage.dashboard.title.old_offers

@@ -4,7 +4,6 @@ namespace CB\Bundle\SchedulerBundle\Entity;
 
 use CB\Bundle\NewAgeBundle\Entity\Campaign;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
-use CB\Bundle\NewAgeBundle\Entity\Reservation;
 use CB\Bundle\NewAgeBundle\Entity\ReservationItem;
 use CB\Bundle\SchedulerBundle\Model\ExtendSchedulerEvent;
 

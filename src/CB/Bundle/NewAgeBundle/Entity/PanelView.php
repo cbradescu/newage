@@ -120,14 +120,6 @@ class PanelView
     protected $events;
 
     /**
-     * @var Collection
-     *
-     * @ORM\ManyToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\Reservation", mappedBy="reservedPanelViews")
-     * @ORM\JoinTable(name="cb_newage_reservation_to_panel_view")
-     */
-    protected $reservations;
-
-    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -204,57 +196,6 @@ class PanelView
         $this->panel = $panel;
     }
 
-    /**
-     * Get reservations collection
-     *
-     * @return Collection|Reservation[]
-     */
-    public function getReservations()
-    {
-        return $this->reservations;
-    }
-
-    /**
-     * Add specified reservation
-     *
-     * @param Reservation $reservation
-     *
-     * @return PanelView
-     */
-    public function addReservation(Reservation $reservation)
-    {
-        if (!$this->getReservations()->contains($reservation)) {
-            $this->getReservations()->add($reservation);
-            $reservation->addPanelView($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove specified reservation
-     *
-     * @param Reservation $reservation
-     *
-     * @return PanelView
-     */
-    public function removeReservation(Reservation $reservation)
-    {
-        if ($this->getReservations()->contains($reservation)) {
-            $this->getReservations()->removeElement($reservation);
-            $reservation->removePanelView($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasReservations()
-    {
-        return count($this->reservations) > 0;
-    }
 
     /**
      * @return string

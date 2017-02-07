@@ -11,11 +11,6 @@ oro_menu_config:
             route:   cb_newage_offer_index
             extras:
                 position: 1
-        reservation_tab:
-            label: 'cb.newage.reservation.entity_plural_label'
-            route:   cb_newage_reservation_index
-            extras:
-                position: 2
         admin_tab:
             aclResourceId: cb_newage_admin_menu
             label: 'cb.newage.menu.admin_tab_label'
@@ -83,7 +78,6 @@ oro_menu_config:
     tree:
         application_menu:
             children:
-                reservation_tab: ~
                 offer_tab: ~
                 admin_tab:
                     children:

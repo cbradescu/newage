@@ -19,7 +19,6 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 
-use CB\Bundle\NewAgeBundle\Entity\Reservation;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerEventRepository;
 
@@ -330,10 +329,6 @@ class SchedulerEventController extends RestController implements ClassResourceIn
             if (!$schedulerEvent) {
                 throw new EntityNotFoundException();
             }
-
-//            /** @var Reservation $reservation */
-//            $reservation = $schedulerEvent->getReservation();
-//            $reservation->removeReservedPanelView($schedulerEvent->getPanelView());
 
             $em = $this->getManager()->getObjectManager();
             $em->remove($schedulerEvent);

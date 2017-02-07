@@ -156,25 +156,5 @@ cb:
                 action.reserve:            Reserve items
                 action.confirm:            Confirm items
 
-      reservation:
-            entity_label:                  Reservation
-            entity_plural_label:           Reservations
-            block:
-                general:                   Reservation
-                offered_panel_views:       Offered Panel Views
-                reserved_panel_views:      Reserved Panel Views
-            message:
-                saved:                     Reservation saved
-            id.label:                      Id
-            name.label:                    Name
-            owner.label:                   Owner
-            organization.label:            Organization
-            datagrid:
-                status.label:              Status
-                action.reserve:            Make Reservation
-                action.confirm:            Confirm all
-                reserve.success_message: "{0} No reservation was made|{1} One Panel View was reserved|]1,Inf[ %count% Panel Views were added."
-                confirm.success_message: "{0} No confirmation was made|{1} One Panel View was confirmed|]1,Inf[ %count% Panel Views were confirmed."
-
       menu:
           admin_tab_label:      Administration

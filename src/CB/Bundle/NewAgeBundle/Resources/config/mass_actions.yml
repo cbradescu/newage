@@ -4,10 +4,9 @@ parameters:
 
     cb_newage.mass_action.reserve.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\ReserveMassAction
     cb_newage.mass_action.reserve_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\ReserveMassActionHandler
-#    cb_newage.mass_action.reserve_mass_action_listener.class: CB\Bundle\NewAgeBundle\EventListener\DataGrid\ReserveMassActionListener
+
     cb_newage.mass_action.confirm.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\ConfirmMassAction
     cb_newage.mass_action.confirm_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\ConfirmMassActionHandler
-#    cb_newage.mass_action.confirm_mass_action_listener.class: CB\Bundle\NewAgeBundle\EventListener\DataGrid\ConfirmMassActionListener
 
 services:
     cb_newage.mass_action.offer:
@@ -32,7 +31,6 @@ services:
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: reserve }
 
-
     cb_newage.mass_action.reserve_handler:
         class: %cb_newage.mass_action.reserve_handler.class%
         arguments:
@@ -42,16 +40,6 @@ services:
             - '@oro_security.security_facade.link'
             - '@oro_email.email.manager'
 
-#    @TODO: Not used anymore.
-#    cb_newage.mass_action.reserve_mass_action_listener:
-#        class: %cb_newage.mass_action.reserve_mass_action_listener.class%
-#        calls:
-#            - [setRequest , ["@service_container"]]
-#        arguments:
-#            - '@doctrine.orm.entity_manager'
-#        tags:
-#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }
-
     cb_newage.mass_action.confirm:
         class: %cb_newage.mass_action.confirm.class%
         arguments:
@@ -60,7 +48,6 @@ services:
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: confirm }
 
-
     cb_newage.mass_action.confirm_handler:
         class: %cb_newage.mass_action.confirm_handler.class%
         arguments:
@@ -68,11 +55,3 @@ services:
             - '@translator'
             - '@security.context'
             - '@oro_security.security_facade.link'
-
-#    cb_newage.mass_action.confirm_mass_action_listener:
-#        class: %cb_newage.mass_action.confirm_mass_action_listener.class%
-#        arguments:
-#            - '@oro_entity_merge.metadata.registry'
-#            - '@doctrine.orm.entity_manager'
-#        tags:
-#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }
