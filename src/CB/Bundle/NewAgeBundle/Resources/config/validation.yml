@@ -30,4 +30,4 @@ CB\Bundle\NewAgeBundle\Entity\Offer:
             - Date: ~
             - Expression:
                 expression: "this.isGreaterThanStart(7)"
-                message: End date should be greater with 5 days than start date
+                message: End date should be greater with 7 days than start date

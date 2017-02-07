@@ -87,37 +87,6 @@ class CampaignController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/widget/panel_views/{id}",
-     *      name="cb_newage_campaign_widget_panel_views_info",
-     *      requirements={"id"="\d+"},
-     *      defaults={"id"=0}
-     * )
-     * @Template()
-     * @param Campaign $campaign
-     * @return array
-     */
-    public function panelViewsInfoAction(Campaign $campaign = null)
-    {
-        $panelViewsIds = array();
-        if ($campaign) {
-            $id = $campaign->getId();
-            $manager = $this->getDoctrine()->getManager();
-            $result = $manager->createQuery("
-                SELECT pv.id
-                FROM CBNewAgeBundle:Campaign c JOIN c.panelViews pv
-                WHERE c.id = :c
-                ")->setParameter('c', $id)->getScalarResult();
-            $panelViewsIds = array_map('current', $result);
-        }
-
-        return [
-            'campaign' => $campaign,
-            'panel_views_ids' => $panelViewsIds
-        ];
-    }
-
-    /**
      * @Route("/add", name="cb_newage_campaign_add")
      * @AclAncestor("cb_newage_campaign_create")
      * @Template("CBNewAgeBundle:Campaign:update.html.twig")

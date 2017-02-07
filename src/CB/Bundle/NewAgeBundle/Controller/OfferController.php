@@ -887,18 +887,6 @@ class OfferController extends Controller
      */
     public function reservationsAction(OfferItem $offerItem, PanelView $panelView)
     {
-//        /** @var OfferRepository $offerRepository */
-//        $offerRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer');
-//        $offers = $offerRepository->getOfferWithReservationsFromInterval(
-//            $panelView,
-//            $offerItem->getStart(),
-//            $offerItem->getEnd()
-//        );
-//
-//        return [
-//            'offers' => $offers,
-//        ];
-
         return [
             'panelView' => $panelView,
             'offerItem' => $offerItem
