@@ -703,74 +703,6 @@ datagrid:
                 label: cb.newage.reservation.datagrid.action.reserve
                 icon: random
 
-    reservation-panel_view-grid:
-        source:
-            type: orm
-            entity: CBNewAgeBundle:PanelView # The name of your entity
-            repository_method: getReservedPanelViewsWithStatusQueryBuilder # The function name for query builder
-            bind_parameters:
-                - reservation
-            acl_resource: cb_newage_panel_view_view
-        columns:
-            available:
-                label:        cb.newage.reservation.datagrid.status.label
-                type: twig
-                frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/available.html.twig
-            panelViewUrl:
-                label:        cb.newage.panelview.url.label
-                type: twig
-                frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
-            city:
-                label:        oro.address.city.label
-            address:
-                label:        cb.newage.panel.address.label
-            panel:
-                label:        cb.newage.panel.entity_label
-            support:
-                label:        cb.newage.supporttype.entity_label
-            dimensions:
-                label:        cb.newage.panel.dimensions.label
-            lighting:
-                label:        cb.newage.lightingtype.entity_label
-            name:
-                label:        cb.newage.panelview.name.label
-
-        sorters:
-            columns:
-                panel:
-                    data_name: p.name
-                name:
-                    data_name: pv.name
-            default:
-                panel: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-        properties:
-            id: ~
-            delete_link:
-                type:         url
-                route:        cb_newage_reservation_api_delete_reservation_pview
-                params:
-                    rid: rid
-                    id: id
-        actions:
-            delete:
-                type:         delete
-                acl_resource: cb_newage_reservation_delete
-                label:        oro.grid.action.delete
-                icon:         trash
-                link:         delete_link
-        filters:
-            columns:
-
-        options:
-            entityHint: panel_view
-            export: true
-            mass_actions:
-                delete:
-                    enabled: false
-
     offer-items-grid:
         source:
             type: orm
@@ -784,6 +716,7 @@ datagrid:
                     - pv.name as panelView
                     - pv.url
                     - p.name as panel
+                    - p.dimensions
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
@@ -812,7 +745,6 @@ datagrid:
                         - i.offer = :offer
             bind_parameters:
                 - offer
-
         columns:
             reservations:
                 label:        cb.newage.offer.reservations.label
@@ -821,9 +753,9 @@ datagrid:
                 template: CBNewAgeBundle:Datagrid:Property/reservationsUrl.html.twig
             url:
                 label:        cb.newage.panelview.url.label
-                type: twig
-                frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
+#                type: twig
+#                frontend_type: html
+#                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
             panel:
                 label:        cb.newage.panel.entity_label
             panelView:
@@ -838,6 +770,8 @@ datagrid:
                 label:        cb.newage.supporttype.entity_label
             lighting:
                 label:        cb.newage.lightingtype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
             city:
                 label:        oro.address.city.label
         sorters:
@@ -852,7 +786,6 @@ datagrid:
                 city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-
         filters:
             columns:
                 city:
@@ -876,17 +809,21 @@ datagrid:
                         lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
                         data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
                     enabled: true
-
+                dimensions:
+                    type: string
+                    data_name: p.dimesnions
+                    enabled: true
         properties:
             id: ~
         action_configuration:
             delete: false
         options:
-            entityHint: offerItem
+            entityHint: offer item
             mass_actions:
                 delete:
                     enabled: false
             routerEnabled: false
+            export: true
         mass_actions:
             reserve:
                 type: reserve
@@ -995,7 +932,7 @@ datagrid:
         action_configuration:
             delete: false
         options:
-            entityHint: panelView
+            entityHint: panel view
             mass_actions:
                 delete:
                     enabled: false
@@ -1020,6 +957,7 @@ datagrid:
                     - pv.name as panelView
                     - pv.url
                     - p.name as panel
+                    - p.dimensions
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
@@ -1069,6 +1007,8 @@ datagrid:
                 label:        cb.newage.supporttype.entity_label
             lighting:
                 label:        cb.newage.lightingtype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
             city:
                 label:        oro.address.city.label
         sorters:
@@ -1085,7 +1025,7 @@ datagrid:
                 city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-                start:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                start:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
         filters:
             columns:
@@ -1110,17 +1050,22 @@ datagrid:
                         lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
                         data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
                     enabled: true
+                dimensions:
+                    type: string
+                    data_name: p.dimesnions
+                    enabled: true
 
         properties:
             id: ~
         action_configuration:
             delete: false
         options:
-            entityHint: reservationItem
+            entityHint: reservation item
             mass_actions:
                 delete:
                     enabled: false
             routerEnabled: false
+            export: true
         mass_actions:
             confirm:
                 type: confirm
@@ -1141,6 +1086,7 @@ datagrid:
                     - pv.name as panelView
                     - pv.url
                     - p.name as panel
+                    - p.dimensions
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
@@ -1177,9 +1123,9 @@ datagrid:
         columns:
             url:
                 label:        cb.newage.panelview.url.label
-                type: twig
-                frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
+#                type: twig
+#                frontend_type: html
+#                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
             panel:
                 label:        cb.newage.panel.entity_label
             panelView:
@@ -1194,6 +1140,8 @@ datagrid:
                 label:        cb.newage.supporttype.entity_label
             lighting:
                 label:        cb.newage.lightingtype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
             city:
                 label:        oro.address.city.label
         sorters:
@@ -1235,17 +1183,22 @@ datagrid:
                         lazy: "@cb_lighting.provider.filter.lighting_choice_tree->shouldBeLazy"
                         data: "@?cb_lighting.provider.filter.lighting_choice_tree->getList"
                     enabled: true
+                dimensions:
+                    type: string
+                    data_name: p.dimesnions
+                    enabled: true
 
         properties:
             id: ~
         action_configuration:
             delete: false
         options:
-            entityHint: reservationItem
+            entityHint: reservation item
             mass_actions:
                 delete:
                     enabled: false
             routerEnabled: false
+            export: true
 
     old_offers-grid:
         source:
