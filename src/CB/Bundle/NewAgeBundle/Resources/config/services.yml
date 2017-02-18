@@ -12,7 +12,6 @@ parameters:
     cb_newage_campaign.manager.api.class:          CB\Bundle\NewAgeBundle\Model\CampaignApiManager
 
     cb_newage_panel_address.entity.class:               CB\Bundle\NewAgeBundle\Entity\PanelAddress
-#    cb_newage_panel_address.manager.class:              CB\Bundle\NewAgeBundle\Model\PanelAddressManager
     cb_newage_panel_address.manager.api.class:          Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     cb_newage_panel_address.form.handler.class:         CB\Bundle\NewAgeBundle\Form\Handler\PanelAddressHandler
 
@@ -30,14 +29,14 @@ parameters:
     cb_newage_city.manager.class:              CB\Bundle\NewAgeBundle\Model\CityManager
     cb_newage_city.manager.api.class:          CB\Bundle\NewAgeBundle\Model\CityApiManager
 
-    cb_city.provider.filter.city_choice_tree.class: CB\Bundle\NewAgeBundle\Provider\Filter\ChoiceTreeCityProvider
-    cb_lighting.provider.filter.lighting_choice_tree.class: CB\Bundle\NewAgeBundle\Provider\Filter\ChoiceTreeLightingProvider
-    cb_support.provider.filter.support_choice_tree.class: CB\Bundle\NewAgeBundle\Provider\Filter\ChoiceTreeSupportProvider
+    cb_newage.multiple_choice.datagrid_helper.class:    CB\Bundle\NewAgeBundle\Datagrid\MultipleChoiceGridHelper
 
     cb_newage_offer.entity.class:               CB\Bundle\NewAgeBundle\Entity\Offer
     cb_newage_offer.manager.class:              CB\Bundle\NewAgeBundle\Model\OfferManager
     cb_newage_offer.manager.api.class:          CB\Bundle\NewAgeBundle\Model\OfferApiManager
+
     cb_newage.subscriber.offer_listener.class: CB\Bundle\NewAgeBundle\EventListener\OfferListener
+    cb_newage.subscriber.panel_listener.class: CB\Bundle\NewAgeBundle\EventListener\PanelListener
 
     cb_newage.offer_item.entity.class:               CB\Bundle\NewAgeBundle\Entity\OfferItem
     cb_newage.reservation-item.entity.class:         CB\Bundle\NewAgeBundle\Entity\ReservationItem
@@ -86,12 +85,6 @@ services:
             - %cb_newage_campaign.entity.class%
             - @doctrine.orm.entity_manager
             - @cb_newage_campaign.manager
-
-#    cb_newage_panel_address.manager:
-#        class: %cb_newage_panel_address.manager.class%
-#        arguments:
-#            - @doctrine.orm.entity_manager
-#            - @oro_security.acl_helper
 
     cb_newage_panel_address.manager.api:
         class: %cb_newage_panel_address.manager.api.class%
@@ -165,27 +158,6 @@ services:
             - @doctrine.orm.entity_manager
             - @cb_newage_city.manager
 
-    cb_city.provider.filter.city_choice_tree:
-        class: %cb_city.provider.filter.city_choice_tree.class%
-        arguments:
-            - '@doctrine'
-            - '@oro_security.acl_helper'
-            - '@oro_locale.dql.formatter.name'
-
-    cb_lighting.provider.filter.lighting_choice_tree:
-        class: %cb_lighting.provider.filter.lighting_choice_tree.class%
-        arguments:
-            - '@doctrine'
-            - '@oro_security.acl_helper'
-            - '@oro_locale.dql.formatter.name'
-
-    cb_support.provider.filter.support_choice_tree:
-        class: %cb_support.provider.filter.support_choice_tree.class%
-        arguments:
-            - '@doctrine'
-            - '@oro_security.acl_helper'
-            - '@oro_locale.dql.formatter.name'
-
     cb_newage_offer.manager:
         class: %cb_newage_offer.manager.class%
         arguments:
@@ -208,9 +180,24 @@ services:
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: preUpdate }
 
+    cb_newage.subscriber.panel_listener:
+        class: %cb_newage.subscriber.panel_listener.class%
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
     cb_newage.mailer.processor:
         class: %cb_newage.mailer.processor.class%
         arguments:
             - @templating
             - @oro_config.global
             - @oro_email.direct_mailer
+
+    cb_newage.multiple_choice.datagrid_helper:
+        class: %cb_newage.multiple_choice.datagrid_helper.class%
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@translator'

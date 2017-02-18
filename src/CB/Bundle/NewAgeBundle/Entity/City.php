@@ -21,7 +21,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      name="cb_newage_city"
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
  *      routeName="cb_newage_city_index",
  *      routeView="cb_newage_city_view",

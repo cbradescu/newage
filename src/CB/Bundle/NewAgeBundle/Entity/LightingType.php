@@ -24,7 +24,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      name="cb_newage_lighting_type"
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
  *      routeName="cb_newage_lighting_type_index",
  *      routeView="cb_newage_lighting_type_view",

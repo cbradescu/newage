@@ -21,6 +21,10 @@ parameters:
     websocket_backend_host:  "*"        # Websocket host the application server will connect to
     websocket_backend_port:  8080       # Websocket port the application server will connect to
 
+    # Used to hide backend under specified prefix, should be started with "/", for instance "/admin"
+    # You can use this default value when only backend is present
+    web_backend_prefix:         ''
+
     session_handler:   session.handler.native_file
 
     locale:            en
@@ -31,3 +35,6 @@ parameters:
                                        # null        - the assets version stays unchanged
                                        # time_hash   - a hash of the current time
                                        # incremental - the next assets version is the previous version is incremented by one (e.g. 'ver1' -> 'ver2' or '1' -> '2')
+
+    message_queue_transport: 'dbal'
+    message_queue_transport_config: ~

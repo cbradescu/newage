@@ -24,7 +24,6 @@ use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
  *      name="cb_newage_campaign"
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
  *      routeName="cb_newage_campaign_index",
  *      routeView="cb_newage_campaign_view",

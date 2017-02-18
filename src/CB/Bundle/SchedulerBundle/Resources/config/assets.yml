@@ -1,5 +1,0 @@
-css:
-    'cbscheduler':
-        - 'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/fullcalendar.min.css'
-        - 'bundles/cbscheduler/css/less/print.less'
-        - 'bundles/cbscheduler/lib/fullcalendar-scheduler/scheduler.min.css'

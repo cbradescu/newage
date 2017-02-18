@@ -14,7 +14,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      name="cb_newage_offer_item"
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
  *      routeName="cb_newage_offer_item_index",
  *      routeView="cb_newage_offer_item_view",

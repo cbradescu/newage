@@ -1,0 +1,16 @@
+dashboards:
+    widgets:
+        newage_launchpad:
+            items:
+                scheduler_events:
+                    label:      cb.scheduler.scheduler_event.entity_plural_label
+                    icon:       calendar-o
+                    route:      cb_scheduler_scheduler_event_index
+                    acl:        cb_scheduler_event_view
+                    position:   30
+                scheduler:
+                    label:      cb.scheduler.entity_label
+                    icon:       calendar
+                    route:      cb_scheduler_view
+                    acl:        cb_scheduler_event_view
+                    position:   40

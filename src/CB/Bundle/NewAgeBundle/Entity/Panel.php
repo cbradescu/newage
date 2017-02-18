@@ -25,7 +25,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      name="cb_newage_panel"
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
  *      routeName="cb_newage_panel_index",
  *      routeView="cb_newage_panel_view",
@@ -165,7 +164,7 @@ class Panel
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="string", length=255)
+     * @ORM\Column(name="url", type="string", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -218,6 +217,36 @@ class Panel
     protected $photo;
 
     /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="created_by_user_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $createdBy;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="updated_by_user_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedBy;
+
+    /**
      * @var \DateTime $createdAt
      *
      * @ORM\Column(type="datetime")
@@ -244,7 +273,6 @@ class Panel
      * )
      */
     protected $updatedAt;
-
 
     /**
      * init addresses with empty collection
@@ -542,6 +570,47 @@ class Panel
     {
         $this->photo = $photo;
     }
+
+    /**
+     * @param User $createdBy
+     *
+     * @return Panel
+     */
+    public function setCreatedBy($createdBy)
+    {
+        $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getCreatedBy()
+    {
+        return $this->createdBy;
+    }
+
+    /**
+     * @param User $updatedBy
+     *
+     * @return Panel
+     */
+    public function setUpdatedBy($updatedBy)
+    {
+        $this->updatedBy = $updatedBy;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUpdatedBy()
+    {
+        return $this->updatedBy;
+    }
+
 
     /**
      * Get contact last update date/time

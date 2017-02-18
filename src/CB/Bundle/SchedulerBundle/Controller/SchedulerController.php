@@ -32,24 +32,8 @@ class SchedulerController extends Controller
         // !!! Este nevoie de o entitate pentru view.
         $entity = new SchedulerEvent();
 
-        /** @var SecurityFacade $securityFacade */
-//        $securityFacade = $this->get('oro_security.security_facade');
-
         /** @var CalendarDateTimeConfigProvider $schedulerConfigProvider */
         $schedulerConfigProvider = $this->get('oro_calendar.provider.calendar_config');
-
-        /** @var Organization $organization */
-//        $organization = $this->get('oro_security.security_facade')->getOrganization();
-
-//        $em = $this->getDoctrine()->getManager();
-
-//        $campaigns = $em->getRepository('CBNewAgeBundle:Campaign')->findAll();
-//        $campaign = array_shift($campaigns);
-
-        /** @var SchedulerRepository $repo */
-//        $repo     = $em->getRepository('CBSchedulerBundle:Scheduler');
-
-//        $scheduler = $repo->findDefaultScheduler($campaign->getId(), $organization->getId());
 
         $dateRange = $schedulerConfigProvider->getDateRange();
 
@@ -70,6 +54,4 @@ class SchedulerController extends Controller
             'endDate' => $dateRange['endDate'],
         ];
     }
-
-
 }

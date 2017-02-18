@@ -1,0 +1,28 @@
+acls:
+    cb_scheduler_event_create:
+        type: entity
+        class: CBSchedulerBundle:SchedulerEvent
+        permission: CREATE
+        group_name: ""
+        bindings: ~
+
+    cb_scheduler_event_view:
+        type: entity
+        class: CBSchedulerBundle:SchedulerEvent
+        permission: VIEW
+        group_name: ""
+        bindings: ~
+
+    cb_scheduler_event_update:
+        type: entity
+        class: CBSchedulerBundle:SchedulerEvent
+        permission: EDIT
+        group_name: ""
+        bindings: ~
+
+    cb_scheduler_event_delete:
+        type: entity
+        class: CBSchedulerBundle:SchedulerEvent
+        permission: DELETE
+        group_name: ""
+        bindings: ~

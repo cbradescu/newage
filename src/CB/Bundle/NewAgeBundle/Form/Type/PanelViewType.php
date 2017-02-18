@@ -46,6 +46,14 @@ class PanelViewType extends AbstractType
                     'required' => true
                 ]
             )
+            ->add(
+                'url',
+                'text',
+                [
+                    'label' => 'cb.newage.panelview.url.label',
+                    'required' => false
+                ]
+            )
         ;
     }
 

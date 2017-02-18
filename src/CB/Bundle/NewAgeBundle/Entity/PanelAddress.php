@@ -2,8 +2,6 @@
 
 namespace CB\Bundle\NewAgeBundle\Entity;
 
-use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -51,7 +49,6 @@ class PanelAddress implements PrimaryItem
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @Soap\ComplexType("int", nillable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -66,7 +63,6 @@ class PanelAddress implements PrimaryItem
      * @var boolean
      *
      * @ORM\Column(name="is_primary", type="boolean", nullable=true)
-     * @Soap\ComplexType("boolean", nillable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -81,7 +77,6 @@ class PanelAddress implements PrimaryItem
      * @var string
      *
      * @ORM\Column(name="street", type="string", length=500, nullable=true)
-     * @Soap\ComplexType("string", nillable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -97,7 +92,6 @@ class PanelAddress implements PrimaryItem
      * @var string
      *
      * @ORM\Column(name="street2", type="string", length=500, nullable=true)
-     * @Soap\ComplexType("string", nillable=true)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={

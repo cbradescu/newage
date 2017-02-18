@@ -20,7 +20,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      name="cb_newage_reservation_item"
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
  *      routeName="cb_newage_reservation_item_index",
  *      routeView="cb_newage_reservation_item_view",

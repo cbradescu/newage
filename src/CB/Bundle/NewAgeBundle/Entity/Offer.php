@@ -23,7 +23,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      name="cb_newage_offer"
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
  *      routeName="cb_newage_offer_index",
  *      routeView="cb_newage_offer_view",
@@ -515,7 +514,7 @@ class Offer
     }
 
     /**
-     * @param \Oro\Bundle\UserBundle\Entity\User $createdBy
+     * @param User $createdBy
      *
      * @return Offer
      */
@@ -527,7 +526,7 @@ class Offer
     }
 
     /**
-     * @return \Oro\Bundle\UserBundle\Entity\User
+     * @return User
      */
     public function getCreatedBy()
     {
@@ -535,7 +534,7 @@ class Offer
     }
 
     /**
-     * @param \Oro\Bundle\UserBundle\Entity\User $updatedBy
+     * @param User $updatedBy
      *
      * @return Offer
      */
@@ -547,7 +546,7 @@ class Offer
     }
 
     /**
-     * @return \Oro\Bundle\UserBundle\Entity\User
+     * @return User
      */
     public function getUpdatedBy()
     {
@@ -603,6 +602,4 @@ class Offer
         $start = clone $this->start;
         return $this->end >= $start->modify('+' . $days. ' days');
     }
-
-
 }

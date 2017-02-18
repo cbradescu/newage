@@ -24,7 +24,7 @@
     {% endblock content_datagrid %}
 
     {% set schedulerOptions = {
-        schedulerOptions: scheduler,
+        schedulerOptions: null,
         eventsItemsJson: render(path('cb_api_get_schedulerevents', {scheduler: null, start: startDate|date('c'), end: endDate|date('c'), subordinate: true})),
         eventsOptions: {
             defaultDate: 'now'|date('c', oro_timezone()),
@@ -43,9 +43,8 @@
     } %}
 
 <div class="oro-page collapsible-sidebar clearfix" id="calendar"
-    data-page-component-module="cbscheduler/js/app/components/scheduler-component"
-    data-page-component-options="{{ schedulerOptions | json_encode }}">
-
+     data-page-component-module="cbscheduler/js/app/components/scheduler-component"
+     data-page-component-options="{{ schedulerOptions | json_encode }}">
 
     <style type="text/css">
         .oro-page-sidebar {

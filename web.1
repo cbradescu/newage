@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html class="desktop-version">
+<head>
+        <title>Login</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
+
+            <link rel="shortcut icon" href="/crm/web/bundles/oroui/themes/oro/images/favicon.ico?version=5b2bac67" />
+    
+        <link rel="stylesheet" media="all" href="/crm/web/css/oro.css?version=5b2bac67" />
+
+        <script type="text/javascript">
+        var require = (function(){
+            var r=function(c){m(r.c,c)};r.c={};function m(a,b){
+                for (var i in b)b[i]!=null&&b[i].toString()==='[object Object]'?m(a[i]||(a[i]={}),b[i]):a[i]=b[i]}
+            return r;
+        }());
+            require({
+        baseUrl: "\/crm\/web\/bundles",
+        urlArgs: 'version=5b2bac67'
+    });
+    
+
+        require = require.c;
+    </script>
+    <script type="text/javascript" src="/crm/web/js/oro.min.js?version=5b2bac67"></script>
+    <script type="text/javascript">
+        require(['jquery', 'oroui/js/init-layout'],
+        function($) {
+            $(function() {
+                // emulates 'document ready state' for selenium tests
+                document['page-rendered'] = true;
+            });
+        });
+    </script>
+        
+<script type="text/javascript">
+    require(['orowindows/js/dialog/state/model'],
+    function(StateModel) {
+        StateModel.prototype.urlRoot = "\/crm\/web\/api\/rest\/latest\/windows";
+    });
+</script>
+<script type="text/javascript">
+    require(['orosync/js/sync', 'oroui/js/modal', 'orotranslation/js/translator'],
+    function(sync, Modal, __) {
+        var dialog = null;
+
+        sync.subscribe('oro/maintenance', function (response) {
+            var userId = null;
+            
+            if (response.isOn && (!userId || parseInt(userId) != parseInt(response.userId))) {
+                var regExp = new RegExp('\n', 'g');
+                if (dialog) {
+                    dialog.close();
+                    dialog.remove();
+                }
+                dialog = new Modal({
+                    'content': __('oro.platform.maintenance_mode_on_message').replace(regExp, '<br/>'),
+                    'className': 'modal oro-modal-danger oro-modal-maintenance',
+                    'allowCancel': false,
+                    'title': __('oro.platform.maintenance_mode_on_title')
+                });
+                dialog.open();
+            } else if (dialog) {
+                dialog.close();
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    require(['orosync/js/sync'],
+    function(sync) {
+        sync.subscribe('oro/ping', function () {});
+    });
+</script>
+<script type="text/javascript">
+require(['oroconfig/js/configuration', 'orolocale/js/locale-settings'],
+    function(configuration, localeSettings) {
+        configuration.set('currency-view-type', 'symbol');
+        configuration.set('is-currency-symbol-prepend', true);
+        localeSettings.extendSettings({'currency_data': {"USD":{"symbol":"$"}} });
+    });
+</script>
+</head>
+<body class="desktop-version login-page">
+    <div id="page">
+        <div id="top-page">
+            
+            
+                        
+                            <div class="container">
+
+    <form id="login-form" action="/crm/web/user/login-check" method="post" class="form-signin">
+        <div class="title-box">
+                        <h2 class="title">Login</h2>
+        </div>
+        <fieldset>
+            <script type="text/javascript">
+                require(['jquery'], function ($) {
+                    var $form = $('#login-form');
+                    $form.on('submit', function () {
+                        $form.find('button').attr('disabled', 'disabled');
+                    });
+                });
+            </script>
+                                                            <div class="input-prepend">
+                                <label for="prependedInput" class="add-on">Username</label>
+                                <input type="text" id="prependedInput" class="span2" name="_username" value="" required="required" placeholder="Username or Email" autofocus/>
+            </div>
+            <div class="input-prepend">
+                                <label for="prependedInput2" class="add-on">Password</label>
+                                <input type="password" id="prependedInput2" class="span2" name="_password" required="required" placeholder="Password" autocomplete="off" />
+            </div>
+            <label class="checkbox oro-remember-me">
+                <input type="checkbox" id="remember_me" name="_remember_me" value="on" /> Remember me on this computer
+            </label>
+            <div class="control-group form-row">
+                <a href="/crm/web/user/reset-request">Forgot your password?</a>
+                <button type="submit" class="btn btn-large  btn-primary pull-right" id="_submit" name="_submit">Log in</button>
+            </div>
+                    </fieldset>
+        <input type="hidden" name="_target_path" value="http://oro.demo/crm/web/" />
+        <input type="hidden" name="_csrf_token" value="R3OiZ1CJlw7ye7LYhwHf-_NzFvCcVqneKrs0Am6pIJA" />
+    </form>
+</div>
+                    </div>
+    </div>
+</body>
+</html>

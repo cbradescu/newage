@@ -25,7 +25,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      name="cb_newage_panel_view"
  * )
  * @ORM\HasLifecycleCallbacks()
- * @Oro\Loggable
  * @Config(
  *      routeName="cb_newage_panel_view_index",
  *      routeView="cb_newage_panel_view_view",
@@ -101,7 +100,7 @@ class PanelView
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="string", length=255)
+     * @ORM\Column(name="url", type="string", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -237,7 +236,7 @@ class PanelView
      * Set organization
      *
      * @param Organization $organization
-     * @return Panelview
+     * @return PanelView
      */
     public function setOrganization(Organization $organization = null)
     {

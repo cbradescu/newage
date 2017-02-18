@@ -26,7 +26,7 @@ class CBNewAgeBundle implements Migration
     {
         /** Generate table oro_access_group **/
         $table = $schema->createTable('cb_newage_lighting_type');
-        $table->addColumn('id', 'smallint', ['notnull' => true, 'autoincrement' => true]);
+        $table->addColumn('id', 'integer', ['notnull' => true, 'autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
 //        $table->addUniqueIndex(['name'], 'UNIQ_FEF9EDB75E237F04');
@@ -42,7 +42,7 @@ class CBNewAgeBundle implements Migration
     {
         /** Generate table oro_access_group **/
         $table = $schema->createTable('cb_newage_support_type');
-        $table->addColumn('id', 'smallint', ['notnull' => true, 'autoincrement' => true]);
+        $table->addColumn('id', 'integer', ['notnull' => true, 'autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
 //        $table->addUniqueIndex(['name'], 'UNIQ_FEF9EDB75E237F03');

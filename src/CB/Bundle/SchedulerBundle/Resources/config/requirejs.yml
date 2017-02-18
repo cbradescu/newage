@@ -1,13 +1,8 @@
 config:
-    shim:
-        'fullscheduler':
-            deps:
-                - 'jquery'
-                - 'moment'
     paths:
+        'jquery':  'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/jquery.min.js'
+        'fullcalendar':  'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/fullcalendar.min.js'
         'fullscheduler':  'bundles/cbscheduler/lib/fullcalendar-scheduler/scheduler.min.js'
-        'fullcalendar':   'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/fullcalendar.min.js'
-
         'cbscheduler/js/scheduler-view': 'bundles/cbscheduler/js/scheduler-view.js'
         'cbscheduler/js/scheduler/event/collection': 'bundles/cbscheduler/js/scheduler/event/collection.js'
         'cbscheduler/js/scheduler/event/model': 'bundles/cbscheduler/js/scheduler/event/model.js'
@@ -16,10 +11,8 @@ config:
         'cbscheduler/js/scheduler/panelView/model': 'bundles/cbscheduler/js/scheduler/panelView/model.js'
         'cbscheduler/js/scheduler/campaign/collection': 'bundles/cbscheduler/js/scheduler/campaign/collection.js'
         'cbscheduler/js/scheduler/campaign/model': 'bundles/cbscheduler/js/scheduler/campaign/model.js'
-        'cbscheduler/js/form-validation': 'bundles/cbscheduler/js/form-validation.js'
         'cbscheduler/js/app/components/scheduler-component': 'bundles/cbscheduler/js/app/components/scheduler-component.js'
         'cbscheduler/js/app/modules/scheduler-module': 'bundles/cbscheduler/js/app/modules/scheduler-module.js'
         'cbscheduler/js/validator/dateearlierthan': 'bundles/cbscheduler/js/validator/dateearlierthan.js'
-
     appmodules:
         - cbscheduler/js/app/modules/scheduler-module

@@ -5,7 +5,7 @@ define([
     'routing',
     'oro/dialog-widget',
     'oroui/js/app/views/loading-mask-view',
-    'cbscheduler/js/form-validation',
+    'orocalendar/js/form-validation',
     'oroui/js/delete-confirmation',
     'oroform/js/formatter/field'
 ], function(

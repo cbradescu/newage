@@ -1,0 +1,128 @@
+navigation:
+    menu_config:
+        items:
+            customers_tab: ~
+            sales_tab: ~
+            activities_tab: ~
+            marketing_tab: ~
+            reports_tab: ~
+
+            offer_tab:
+                label: 'cb.newage.offer.entity_plural_label'
+                route:   cb_newage_offer_index
+                extras:
+                    position: 1
+            admin_tab:
+                acl_resource_id: cb_newage_admin_menu
+                label: 'cb.newage.menu.admin_tab_label'
+                uri: '#'
+                extras:
+                    position: 5
+
+            campaign_tab:
+                acl_resource_id: cb_newage_admin_menu
+                label: 'cb.newage.campaign.entity_plural_label'
+                route:   cb_newage_campaign_index
+                extras:
+                    position: 10
+            panel_divider:
+                acl_resource_id: cb_newage_admin_menu
+                label: ''
+                extras:
+                    position: 20
+                attributes:
+                    class: 'divider'
+            panel_tab:
+                acl_resource_id: cb_newage_admin_menu
+                label: 'cb.newage.panel.entity_plural_label'
+                route:   cb_newage_panel_index
+                extras:
+                    position: 30
+            panel_view_tab:
+                acl_resource_id: cb_newage_admin_menu
+                label: 'cb.newage.panelview.entity_plural_label'
+                route:   cb_newage_panel_view_index
+                extras:
+                    position: 40
+            city_divider:
+                acl_resource_id: cb_newage_admin_menu
+                label: ''
+                extras:
+                    position: 50
+                attributes:
+                    class: 'divider'
+            city_tab:
+                acl_resource_id: cb_newage_admin_menu
+                label: 'cb.newage.city.entity_plural_label'
+                route:   cb_newage_city_index
+                extras:
+                    position: 60
+
+            panel_tab_support_type_index_link:
+                acl_resource_id: cb_newage_admin_menu
+                label: 'cb.newage.support_type.entity_plural_label'
+                route: cb_newage_support_type_index
+            panel_tab_lighting_type_index_link:
+                acl_resource_id: cb_newage_admin_menu
+                label: 'cb.newage.lighting_type.entity_plural_label'
+                route: cb_newage_lighting_type_index
+            panel_tab_index_link:
+                label: 'cb.newage.panel.entity_plural_label'
+                route: cb_newage_panel_index
+            newage_tab_panel_view_link:
+                label: 'cb.newage.panelview.entity_plural_label'
+                route: cb_newage_panel_view_index
+            newage_tab_campaign_link:
+                label: 'cb.newage.campaign.entity_plural_label'
+                route: cb_newage_campaign_index
+
+        tree:
+            application_menu:
+                children:
+                    offer_tab: ~
+                    admin_tab:
+                        children:
+                            campaign_tab: ~
+                            panel_divider: ~
+                            panel_tab:
+                                children:
+                                    panel_tab_support_type_index_link: ~
+                                    panel_tab_lighting_type_index_link: ~
+                            panel_view_tab: ~
+                            city_divider: ~
+                            city_tab: ~
+    titles:
+        cb_newage_panel_index: ~
+        cb_newage_panel_view: '%%entity.name%%'
+        cb_newage_panel_create: 'oro.ui.create_entity'
+        cb_newage_panel_update: '%%entity.name%% - oro.ui.edit'
+
+        cb_newage_panel_view_index: ~
+        cb_newage_panel_view_view: '%%entity.name%%'
+        cb_newage_panel_view_create: 'oro.ui.create_entity'
+        cb_newage_panel_view_update: '%%entity.name%% - oro.ui.edit'
+
+        cb_newage_campaign_index: ~
+        cb_newage_campaign_view: '%%entity.name%%'
+        cb_newage_campaign_create: 'oro.ui.create_entity'
+        cb_newage_campaign_update: '%%entity.name%% - oro.ui.edit'
+
+        cb_newage_support_type_index: ~
+        cb_newage_support_type_view: '%%entity.name%%'
+        cb_newage_support_type_create: 'oro.ui.create_entity'
+        cb_newage_support_type_update: '%%entity.name%% - oro.ui.edit'
+
+        cb_newage_lighting_type_index: ~
+        cb_newage_lighting_type_view: '%%entity.name%%'
+        cb_newage_lighting_type_create: 'oro.ui.create_entity'
+        cb_newage_lighting_type_update: '%%entity.name%% - oro.ui.edit'
+
+        cb_newage_city_index: ~
+        cb_newage_city_view: '%%entity.name%%'
+        cb_newage_city_create: 'oro.ui.create_entity'
+        cb_newage_city_update: '%%entity.name%% - oro.ui.edit'
+
+        cb_newage_offer_index: ~
+        cb_newage_offer_view: '%%entity.name%%'
+        cb_newage_offer_create: 'oro.ui.create_entity'
+        cb_newage_offer_update: '%%entity.name%% - oro.ui.edit'
