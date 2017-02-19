@@ -788,7 +788,7 @@ define(function(require) {
                 events: _.bind(this.loadEvents, this),
                 resources: _.bind(this.loadResources, this),
                 // select: _.bind(this.onFcSelect, this),
-                eventClick: _.bind(this.onFcEventClick, this),
+                // eventClick: _.bind(this.onFcEventClick, this),
                 loading: _.bind(function(show) {
                     if (show) {
                         this.showLoadingMask();

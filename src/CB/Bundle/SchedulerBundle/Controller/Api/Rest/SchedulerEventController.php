@@ -158,18 +158,20 @@ class SchedulerEventController extends RestController implements ClassResourceIn
             {
                 $item['id'] = $row['id'];
                 $item['title'] = $row['campaignName'];
-                $item['start'] = $row['start']->format('c');
 
                 // For correct display in Js Scheduler.
-                $endDate = $row['end'];
-                $endDate->modify("+1 day");
+                $startDate = clone $row['start'];
+                $startDate->modify("+1 day");
+                $item['start'] = $startDate->format('c');
 
+                $endDate = clone $row['end'];
+                $endDate->modify("+2 day");
                 $item['end'] = $endDate->format('c');
+
                 $item['resourceId'] = $row['panelViewId'];
                 $item['resourceName'] = $row['panelName'] . ' ' . $row['panelViewName'];
                 $item['panelView'] = $row['panelViewId'];
                 $item['campaign'] = $row['campaignId'];
-//                $item['offer'] = $row['offerId'];
                 $item['panel'] = $row['panelId'];
                 $item['supportType'] = $row['supportTypeId'];
                 $item['lightingType'] = $row['lightingTypeId'];
