@@ -97,11 +97,20 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         $panelViewId  = (int)$this->getRequest()->get('id', 0);
         $offerId  = (int)$this->getRequest()->get('offer', 0);
         $panelId  = (int)$this->getRequest()->get('panel', 0);
-        $supportTypeId  = (int)$this->getRequest()->get('supportType', 0);
-        $lightingTypeId  = (int)$this->getRequest()->get('lightingType', 0);
+        $supportType  = (int)$this->getRequest()->get('supportType', null);
+        if ($supportType)
+            $supportTypes = explode(',', $supportType);
+        else
+            $supportTypes = [];
+
+        $lightingType  = (int)$this->getRequest()->get('lightingType', null);
+        if ($lightingType)
+            $lightingTypes = explode(',', $lightingType);
+        else
+            $lightingTypes = [];
 
         $city = $this->getRequest()->get('city', null);
-        if ($city and $city!='All')
+        if ($city)
             $cities = explode(',', $city);
         else
             $cities = [];
@@ -115,12 +124,12 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         if ($panelId)
             $qb->andWhere('p.id=:panelId')
                 ->setParameter('panelId', $panelId);
-        if ($supportTypeId)
-            $qb->andWhere('p.supportType=:supportTypeId')
-                ->setParameter('supportTypeId', $supportTypeId);
-        if ($lightingTypeId)
-            $qb->andWhere('p.lightingType=:lightingTypeId')
-                ->setParameter('lightingTypeId', $lightingTypeId);
+        if (count($supportTypes)!=0)
+            $qb->andWhere($qb->expr()->in('p.supportType', ':supportTypes'))
+                ->setParameter('supportTypes', $supportTypes);
+        if (count($lightingTypes)!=0)
+            $qb->andWhere($qb->expr()->in('p.lightingType', ':lightingTypes'))
+                ->setParameter('lightingTypes', $lightingTypes);
         if (count($cities)!=0)
             $qb->andWhere($qb->expr()->in('a.city', ':cities'))
                 ->setParameter('cities', $cities);

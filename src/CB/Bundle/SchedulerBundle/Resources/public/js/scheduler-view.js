@@ -169,17 +169,17 @@ define(function(require) {
         // },
 
         setSchedulerFilters: function (activeFilters) {
-            activeFilters = _.filter(activeFilters, function(filter) {
-                switch (filter.name) {
-                    case 'city':
-                    case 'supportType':
-                    case 'lightingType':
-                        return filter.value != 'All';
-                        break;
-                    default:
-                        return true;
-                }
-            });
+            // activeFilters = _.filter(activeFilters, function(filter) {
+            //     switch (filter.name) {
+            //         case 'city':
+            //         case 'supportType':
+            //         case 'lightingType':
+            //             return filter.value != 'All';
+            //             break;
+            //         default:dd
+            //             return true;
+            //     }
+            // });
 
             this.filters = activeFilters;
 
@@ -561,12 +561,12 @@ define(function(require) {
             else
                 this.city = null;
 
-            if (this.offer || this.panel || this.panelView || this.supportType || this.lightingType || this.city) {
+            // if (this.offer || this.panel || this.panelView || this.supportType || this.lightingType || this.city) {
+            //     this.getCalendarElement().fullCalendar('refetchResources');
+            // } else if (oldOffer != this.offer || oldPanel != this.panel || oldPanelView != this.panelView || this.supportType != oldSupportType
+            // || this.lightingType != oldLightingType || this.city != oldCity) {
                 this.getCalendarElement().fullCalendar('refetchResources');
-            } else if (oldOffer != this.offer || oldPanel != this.panel || oldPanelView != this.panelView || this.supportType != oldSupportType
-            || this.lightingType != oldLightingType || this.city != oldCity) {
-                this.getCalendarElement().fullCalendar('refetchResources');
-            }
+            // }
 
             var oldEnableEventLoading = this.enableEventLoading;
             this.enableEventLoading = true;
@@ -663,7 +663,8 @@ define(function(require) {
         filterEvents: function(events) {
             _.each(this.filters, function (filter) {
                 events = _.filter(events, function(event) {
-                    return event.get(filter.name)==filter.value;
+                    // return event.get(filter.name)==filter.value;
+                    return $.inArray(event.get(filter.name),filter.value);
                 })
             });
 

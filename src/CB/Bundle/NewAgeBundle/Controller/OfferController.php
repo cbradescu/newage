@@ -181,7 +181,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' a.city_id IN (' . $filters['city']['value'] . ')';
+                $query .= ' a.city_id IN (' . implode(",",$filters['city']['value']) . ')';
             }
 
             if (isset($filters['support']['value'])) {
@@ -191,7 +191,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' p.support_type_id IN (' . $filters['support']['value'] . ')';
+                $query .= ' p.support_type_id IN (' . implode(",",$filters['support']['value']) . ')';
             }
 
             if (isset($filters['lighting']['value'])) {
@@ -201,7 +201,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' p.lighting_type_id IN (' . $filters['lighting']['value'] . ')';
+                $query .= ' p.lighting_type_id IN (' . implode(",",$filters['lighting']['value']) . ')';
             }
 
 
@@ -357,7 +357,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' a.city_id IN (' . $filters['city']['value'] . ')';
+                $query .= ' a.city_id IN (' . implode(",",$filters['city']['value']) . ')';
             }
 
             if (isset($filters['support']['value'])) {
@@ -367,7 +367,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' p.support_type_id IN (' . $filters['support']['value'] . ')';
+                $query .= ' p.support_type_id IN (' . implode(",",$filters['support']['value']) . ')';
             }
 
             if (isset($filters['lighting']['value'])) {
@@ -377,7 +377,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' p.lighting_type_id IN (' . $filters['lighting']['value'] . ')';
+                $query .= ' p.lighting_type_id IN (' . implode(",",$filters['lighting']['value']) . ')';
             }
 
 
@@ -555,7 +555,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' a.city_id IN (' . $filters['city']['value'] . ')';
+                $query .= ' a.city_id IN (' . implode(",",$filters['city']['value']) . ')';
             }
 
             if (isset($filters['support']['value'])) {
@@ -565,7 +565,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' p.support_type_id IN (' . $filters['support']['value'] . ')';
+                $query .= ' p.support_type_id IN (' . implode(",",$filters['support']['value']) . ')';
             }
 
             if (isset($filters['lighting']['value'])) {
@@ -575,7 +575,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' p.lighting_type_id IN (' . $filters['lighting']['value'] . ')';
+                $query .= ' p.lighting_type_id IN (' . implode(",",$filters['lighting']['value']) . ')';
             }
 
             if (isset($filters['dimensions']['value'])) {

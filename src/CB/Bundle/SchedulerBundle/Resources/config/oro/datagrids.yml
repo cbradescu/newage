@@ -66,13 +66,13 @@ datagrids:
             city:
                 label:  oro.address.city.label
         sorters:
-            columns:
-                start:
-                    data_name: se.start
-                campaign:
-                    data_name: c.title
-            default:
-                start:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
+              columns:
+                  start:
+                      data_name: se.start
+                  campaign:
+                      data_name: c.title
+              default:
+                  start:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
 
         properties:
             id: ~
@@ -111,7 +111,7 @@ datagrids:
         action_configuration:
 #            delete: false
 
-    scheduler_event-grid:
+    scheduler-grid:
         extends: base-scheduler_event-grid
         filters:
             columns:
@@ -138,12 +138,6 @@ datagrids:
                             multiple:       true
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_city.entity.class%)
                             translatable_options: false
-                start:
-                    type:        datetime
-                    data_name:   se.start
-                end:
-                    type:        datetime
-                    data_name:   se.end
                 panel:
                     type: entity
                     data_name: pv.panel
@@ -158,7 +152,7 @@ datagrids:
                         field_options:
                             class: CBNewAgeBundle:PanelView
                     enabled: false
-                support:
+                supportType:
                     type:      choice
                     label:  cb.newage.supporttype.entity_label
                     data_name: p.supportType
@@ -168,7 +162,7 @@ datagrids:
                             multiple:       true
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_support_type.entity.class%)
                             translatable_options: false
-                lighting:
+                lightingType:
                     type:      choice
                     label:  cb.newage.lightingtype.entity_label
                     data_name: p.lightingType
@@ -178,9 +172,21 @@ datagrids:
                             multiple:       true
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_lighting_type.entity.class%)
                             translatable_options: false
+    scheduler_event-grid:
+        extends: scheduler-grid
+        filters:
+            columns:
+                start:
+                    type:        datetime
+                    data_name:   se.start
+                end:
+                    type:        datetime
+                    data_name:   se.end
+
 #            default:
 #                status:
 #                    value: 2
+
         options:
             mass_actions:
                 delete:
