@@ -3,6 +3,7 @@ define(function(require) {
 
     var CBFiltersManager;
     var FiltersManager = require('orofilter/js/filters-manager');
+    var mediator = require('oroui/js/mediator');
 
     CBFiltersManager = FiltersManager.extend({
         /* define extended logic here */
