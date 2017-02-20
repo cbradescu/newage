@@ -1,4 +1,9 @@
 config:
+    map:
+        '*':
+            'orofilter/js/filters-manager': 'cbscheduler/js/filters-manager'
+        'cbscheduler/js/filters-manager':
+            'orofilter/js/filters-manager': 'bundles/orofilter/js/filters-manager.js'
     paths:
         'jquery':  'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/jquery.min.js'
         'fullcalendar':  'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/fullcalendar.min.js'
