@@ -3,11 +3,12 @@ config:
         '*':
             'orofilter/js/filters-manager': 'cbscheduler/js/filters-manager'
         'cbscheduler/js/filters-manager':
-            'orofilter/js/filters-manager': 'bundles/orofilter/js/filters-manager.js'
+            'orofilter/js/filters-manager': 'orofilter/js/filters-manager.js'
     paths:
         'jquery':  'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/jquery.min.js'
         'fullcalendar':  'bundles/cbscheduler/lib/fullcalendar-scheduler/lib/fullcalendar.min.js'
         'fullscheduler':  'bundles/cbscheduler/lib/fullcalendar-scheduler/scheduler.min.js'
+        'cbscheduler/js/filters-manager': 'bundles/cbscheduler/js/filters-manager.js'
         'cbscheduler/js/scheduler-view': 'bundles/cbscheduler/js/scheduler-view.js'
         'cbscheduler/js/scheduler/event/collection': 'bundles/cbscheduler/js/scheduler/event/collection.js'
         'cbscheduler/js/scheduler/event/model': 'bundles/cbscheduler/js/scheduler/event/model.js'
