@@ -397,7 +397,19 @@ class OfferController extends Controller
             }
 
             $query .= ' oi.id IN (' . $values . ')';
+            $hasWhere = true;
         }
+
+        if ($hasWhere) {
+            $query .= ' AND';
+        } else {
+            $query .= ' WHERE';
+        }
+        $query .= ' oi.offer_id =' . $offer->getId();
+
+        $logger = $this->get('logger');
+        $logger->crit($query);
+
         $stmt = $conn->prepare($query);
         $stmt->execute();
         $results = $stmt->fetchAll();
@@ -594,7 +606,6 @@ class OfferController extends Controller
                 $query .= ' WHERE';
                 $hasWhere = true;
             }
-            $query .= ' ri.offer_id = ' . $offer->getId();
         } else {
             if ($hasWhere) {
                 $query .= ' AND';
@@ -603,7 +614,15 @@ class OfferController extends Controller
             }
 
             $query .= ' ri.id IN (' . $values . ')';
+            $hasWhere = true;
         }
+
+        if ($hasWhere) {
+            $query .= ' AND';
+        } else {
+            $query .= ' WHERE';
+        }
+        $query .= ' ri.offer_id = ' . $offer->getId();
 
         $stmt = $conn->prepare($query);
         $stmt->execute();
