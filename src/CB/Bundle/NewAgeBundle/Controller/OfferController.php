@@ -407,8 +407,8 @@ class OfferController extends Controller
         }
         $query .= ' oi.offer_id =' . $offer->getId();
 
-        $logger = $this->get('logger');
-        $logger->crit($query);
+//        $logger = $this->get('logger');
+//        $logger->crit($query);
 
         $stmt = $conn->prepare($query);
         $stmt->execute();
@@ -598,13 +598,6 @@ class OfferController extends Controller
                     $hasWhere = true;
                 }
                 $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
-            }
-
-            if ($hasWhere) {
-                $query .= ' AND';
-            } else {
-                $query .= ' WHERE';
-                $hasWhere = true;
             }
         } else {
             if ($hasWhere) {
