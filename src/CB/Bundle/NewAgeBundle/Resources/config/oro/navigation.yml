@@ -6,6 +6,7 @@ navigation:
             activities_tab: ~
             marketing_tab: ~
             reports_tab: ~
+            system_tab: ~
 
             offer_tab:
                 label: 'cb.newage.offer.entity_plural_label'
@@ -18,7 +19,6 @@ navigation:
                 uri: '#'
                 extras:
                     position: 5
-
             campaign_tab:
                 acl_resource_id: cb_newage_admin_menu
                 label: 'cb.newage.campaign.entity_plural_label'

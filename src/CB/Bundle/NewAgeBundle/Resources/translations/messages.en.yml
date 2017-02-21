@@ -24,6 +24,24 @@ cb:
             url.label:                     Photo url
             owner.label:                   Owner
             organization.label:            Organization
+            created_by.label:              Created By
+            updated_by.label:              Updated By
+            addresses.label:               Adresses
+            lighting_type.label:           Lighting Type
+            support_type.label:            Support Type
+      paneladdress:
+            entity_label:                  Panel Address
+            entity_plural_label:           Panel Addresses
+            id.label:                      Id
+            city.label:                    City
+            latitude.label:                Latitude
+            longitude.label:               Longitude
+            owner.label:                   Owner
+            primary.label:                 Primary
+            street.label:                  Street
+            street2.label:                 Street 2
+
+
 
       panel_view:
             entity_label:                  Panel View
@@ -63,6 +81,7 @@ cb:
             description.label:             Description
             start.label:                   Start
             end.label:                     End
+            events.label:                     Events
             owner.label:                   Owner
             organization.label:            Organization
             add.label:                     Add Campaign
@@ -143,6 +162,10 @@ cb:
             start.label:                   Start
             end.label:                     End
             campaign.label:                Campaign
+            created_by.label:              Created By
+            updated_by.label:              Updated By
+            offer_items.label:             Offer Items
+            reservation_items.label:       Reservation Items
             offered_panel_views.label:     Offered Panel Views
             reserved_panel_views.label:    Reserved Panel Views
             confirmed_panel_views.label:   Confirmed Panel Views
@@ -155,6 +178,13 @@ cb:
                 action.offer:              Offer items
                 action.reserve:            Reserve items
                 action.confirm:            Confirm items
+
+      offeritem:
+            entity_label:                  Offer Item
+            entity_plural_label:           Offer Items
+      reservationitem:
+            entity_label:                  Reservation Item
+            entity_plural_label:           Reservation Items
 
       menu:
           admin_tab_label:      Administration

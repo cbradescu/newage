@@ -20,7 +20,15 @@ cb:
             status.label: Status
 
         schedulerevent:
-            entity_label:                  Event
+            entity_label:                  Scheduler Event
+            campaign.label:                Campaign
+            end.label:                     End
+            start.label:                   Start
+            id.label:                      Id
+            panel_view.label:              Panel View
+            reservation_item.label:        Reservation_item
+            status.label:                  Status
+
 
 cb.scheduler.scheduler_event.status.reserved.label: Reserved
 cb.scheduler.scheduler_event.status.confirmed.label: Confirmat
