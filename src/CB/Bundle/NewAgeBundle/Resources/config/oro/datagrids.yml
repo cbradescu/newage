@@ -764,9 +764,9 @@ datagrids:
                 template: CBNewAgeBundle:Datagrid:Property/reservationsUrl.html.twig
             url:
                 label:        cb.newage.panelview.url.label
-#                type: twig
-#                frontend_type: html
-#                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
             panel:
                 label:        cb.newage.panel.entity_label
             panelView:
@@ -1021,7 +1021,7 @@ datagrids:
                 label:        cb.newage.panelview.url.label
                 type: twig
                 frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
             panel:
                 label:        cb.newage.panel.entity_label
             panelView:
@@ -1163,9 +1163,9 @@ datagrids:
         columns:
             url:
                 label:        cb.newage.panelview.url.label
-#                type: twig
-#                frontend_type: html
-#                template: CBNewAgeBundle:Datagrid:Property/photo.html.twig
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
             panel:
                 label:        cb.newage.panel.entity_label
             panelView:
