@@ -19,14 +19,14 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 
 /**
- * @ORM\Entity(repositoryClass="CB\Bundle\NewAgeBundle\Entity\Repository\CampaignRepository")
+ * @ORM\Entity(repositoryClass="CB\Bundle\NewAgeBundle\Entity\Repository\ClientRepository")
  * @ORM\Table(
- *      name="cb_newage_campaign"
+ *      name="cb_newage_client"
  * )
  * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      routeName="cb_newage_campaign_index",
- *      routeView="cb_newage_campaign_view",
+ *      routeName="cb_newage_client_index",
+ *      routeView="cb_newage_client_view",
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
@@ -48,7 +48,7 @@ use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
  * )
  */
 
-class Campaign
+class Client
 {
     /**
      * @var integer
@@ -97,7 +97,7 @@ class Campaign
     /**
      * @var ArrayCollection|SchedulerEvent[]
      *
-     * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="campaign", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="client", cascade={"persist"})
      */
     protected $events;
 
@@ -147,7 +147,7 @@ class Campaign
     }
 
     /**
-     * Gets campaign title.
+     * Gets client title.
      *
      * @return string
      */
@@ -157,7 +157,7 @@ class Campaign
     }
 
     /**
-     * Sets campaign title.
+     * Sets client title.
      *
      * @param string $title
      *
@@ -171,7 +171,7 @@ class Campaign
     }
 
     /**
-     * Gets campaign description.
+     * Gets client description.
      *
      * @return string|null
      */
@@ -181,7 +181,7 @@ class Campaign
     }
 
     /**
-     * Sets campaign description.
+     * Sets client description.
      *
      * @param  string $description
      *
@@ -197,7 +197,7 @@ class Campaign
     /**
      * @param User $owningUser
      *
-     * @return Campaign
+     * @return Client
      */
     public function setOwner($owningUser)
     {
@@ -218,7 +218,7 @@ class Campaign
      * Set organization
      *
      * @param Organization $organization
-     * @return Campaign
+     * @return Client
      */
     public function setOrganization(Organization $organization = null)
     {

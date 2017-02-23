@@ -8,12 +8,12 @@
 
 namespace CB\Bundle\NewAgeBundle\Model;
 
-use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\Client;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-class CampaignManager
+class ClientManager
 {
     /**
      * @var EntityManager
@@ -38,18 +38,18 @@ class CampaignManager
     }
 
     /**
-     * @return Campaign
+     * @return Client
      */
-    public function createCampaign()
+    public function createClient()
     {
-        return $this->createCampaignObject();
+        return $this->createClientObject();
     }
 
     /**
-     * @return Campaign
+     * @return Client
      */
-    protected function createCampaignObject()
+    protected function createClientObject()
     {
-        return new Campaign();
+        return new Client();
     }
 }

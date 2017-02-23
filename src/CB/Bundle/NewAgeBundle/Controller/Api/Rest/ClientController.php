@@ -8,7 +8,7 @@
 
 namespace CB\Bundle\NewAgeBundle\Controller\Api\Rest;
 
-use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\Client;
 use Symfony\Component\HttpFoundation\Response;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -20,10 +20,10 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
- * @Rest\RouteResource("campaign")
- * @Rest\NamePrefix("cb_newage_campaign_api_")
+ * @Rest\RouteResource("client")
+ * @Rest\NamePrefix("cb_newage_client_api_")
  */
-class CampaignController extends RestController implements ClassResourceInterface
+class ClientController extends RestController implements ClassResourceInterface
 {
     /**
      * REST GET list
@@ -41,10 +41,10 @@ class CampaignController extends RestController implements ClassResourceInterfac
      *     description="Number of items per page. defaults to 10."
      * )
      * @ApiDoc(
-     *     description="Get all Campaign items",
+     *     description="Get all Client items",
      *     resource=true
      * )
-     * @AclAncestor("cb_newage_campaign_view")
+     * @AclAncestor("cb_newage_client_view")
      * @return Response
      */
     public function cgetAction()
@@ -61,10 +61,10 @@ class CampaignController extends RestController implements ClassResourceInterfac
      * @param string $id
      *
      * @ApiDoc(
-     *     description="Get Campaign item",
+     *     description="Get Client item",
      *     resource=true
      * )
-     * @AclAncestor("cb_newage_campaign_view")
+     * @AclAncestor("cb_newage_client_view")
      * @return Response
      */
     public function getAction($id)
@@ -75,13 +75,13 @@ class CampaignController extends RestController implements ClassResourceInterfac
     /**
      * REST PUT
      *
-     * @param int $id Campaign item id
+     * @param int $id Client item id
      *
      * @ApiDoc(
-     *     description="Update Campaign",
+     *     description="Update Client",
      *     resource=true
      * )
-     * @AclAncestor("cb_newage_campaign_update")
+     * @AclAncestor("cb_newage_client_update")
      * @return Response
      */
     public function putAction($id)
@@ -90,13 +90,13 @@ class CampaignController extends RestController implements ClassResourceInterfac
     }
 
     /**
-     * Create new campaign
+     * Create new client
      *
      * @ApiDoc(
-     *     description="Create new Campaign",
+     *     description="Create new Client",
      *     resource=true
      * )
-     * @AclAncestor("cb_newage_campaign_create")
+     * @AclAncestor("cb_newage_client_create")
      */
     public function postAction()
     {
@@ -109,10 +109,10 @@ class CampaignController extends RestController implements ClassResourceInterfac
      * @param int $id
      *
      * @ApiDoc(
-     *     description="Delete Campaign",
+     *     description="Delete Client",
      *     resource=true
      * )
-     * @AclAncestor("cb_newage_campaign_delete")
+     * @AclAncestor("cb_newage_client_delete")
      * @return Response
      */
     public function deleteAction($id)
@@ -125,7 +125,7 @@ class CampaignController extends RestController implements ClassResourceInterfac
      */
     public function getManager()
     {
-        return $this->get('cb_newage_campaign.manager.api');
+        return $this->get('cb_newage_client.manager.api');
     }
 
     /**
@@ -133,7 +133,7 @@ class CampaignController extends RestController implements ClassResourceInterfac
      */
     public function getForm()
     {
-        return $this->get('cb_newage_campaign.form.entity.api');
+        return $this->get('cb_newage_client.form.entity.api');
     }
 
     /**
@@ -141,7 +141,7 @@ class CampaignController extends RestController implements ClassResourceInterfac
      */
     public function getFormHandler()
     {
-        return $this->get('cb_newage_campaign.form.handler.entity.api');
+        return $this->get('cb_newage_client.form.handler.entity.api');
     }
 
     /**
@@ -162,7 +162,7 @@ class CampaignController extends RestController implements ClassResourceInterfac
      */
     protected function fixFormData(array &$data, $entity)
     {
-        /** @var Campaign $entity */
+        /** @var Client $entity */
         parent::fixFormData($data, $entity);
 
         unset($data['id']);

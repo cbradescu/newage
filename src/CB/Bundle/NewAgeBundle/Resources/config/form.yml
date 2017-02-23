@@ -7,9 +7,9 @@ parameters:
     cb_newage_panel_view.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\PanelViewApiType
     cb_newage_panel_view.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\PanelViewHandler
 
-    cb_newage_campaign.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\CampaignType
-    cb_newage_campaign.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\CampaignApiType
-    cb_newage_campaign.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\CampaignHandler
+    cb_newage_client.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\ClientType
+    cb_newage_client.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\ClientApiType
+    cb_newage_client.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\ClientHandler
 
     cb_newage_support_type.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\SupportTypeType
     cb_newage_support_type.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\SupportTypeApiType
@@ -124,52 +124,52 @@ services:
             - 'panel_view'
             - 'cb_newage_panel_view_api'
 
-    cb_newage_campaign.form.type.entity:
-        class: %cb_newage_campaign.form.type.entity.class%
+    cb_newage_client.form.type.entity:
+        class: %cb_newage_client.form.type.entity.class%
         arguments:
             - @router
             - @oro_security.security_facade
         tags:
-            - { name: form.type, alias: cb_newage_campaign }
+            - { name: form.type, alias: cb_newage_client }
 
-    cb_newage_campaign.form.handler.entity:
-        class: %cb_newage_campaign.form.handler.entity.class%
+    cb_newage_client.form.handler.entity:
+        class: %cb_newage_client.form.handler.entity.class%
         scope: request
         arguments:
-            - @cb_newage_campaign.form.entity
+            - @cb_newage_client.form.entity
             - @request
             - @doctrine.orm.entity_manager
             - @event_dispatcher
 
-    cb_newage_campaign.form.entity:
+    cb_newage_client.form.entity:
         class: Symfony\Component\Form\Form
         factory_method: createNamed
         factory_service: form.factory
         arguments:
-            - 'cb_newage_campaign_form'
-            - 'cb_newage_campaign'
+            - 'cb_newage_client_form'
+            - 'cb_newage_client'
 
-    cb_newage_campaign.form.type.entity.api:
-        class: %cb_newage_campaign.form.type.entity.api.class%
+    cb_newage_client.form.type.entity.api:
+        class: %cb_newage_client.form.type.entity.api.class%
         tags:
-            - { name: form.type, alias: cb_newage_campaign_api }
+            - { name: form.type, alias: cb_newage_client_api }
 
-    cb_newage_campaign.form.handler.entity.api:
-        class: %cb_newage_campaign.form.handler.entity.class%
+    cb_newage_client.form.handler.entity.api:
+        class: %cb_newage_client.form.handler.entity.class%
         scope: request
         arguments:
-            - @cb_newage_campaign.form.entity.api
+            - @cb_newage_client.form.entity.api
             - @request
             - @doctrine.orm.entity_manager
             - @event_dispatcher
 
-    cb_newage_campaign.form.entity.api:
+    cb_newage_client.form.entity.api:
         class: Symfony\Component\Form\Form
         factory_method: createNamed
         factory_service: form.factory
         arguments:
-            - 'campaign'
-            - 'cb_newage_campaign_api'
+            - 'client'
+            - 'cb_newage_client_api'
 
     cb_newage_support_type.form.type.entity:
         class: %cb_newage_support_type.form.type.entity.class%

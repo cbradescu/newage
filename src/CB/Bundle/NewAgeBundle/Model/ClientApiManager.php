@@ -12,23 +12,23 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 
-class CampaignApiManager extends ApiEntityManager
+class ClientApiManager extends ApiEntityManager
 {
     /**
-     * @var CampaignManager
+     * @var ClientManager
      */
-    protected $campaignManager;
+    protected $clientManager;
 
     /**
      * Constructor
      *
      * @param string $class Entity name
      * @param ObjectManager $om Object manager
-     * @param CampaignManager $campaignManager
+     * @param ClientManager $clientManager
      */
-    public function __construct($class, ObjectManager $om, CampaignManager $campaignManager)
+    public function __construct($class, ObjectManager $om, ClientManager $clientManager)
     {
-        $this->campaignManager = $campaignManager;
+        $this->clientManager = $clientManager;
         parent::__construct($class, $om);
     }
 
@@ -37,6 +37,6 @@ class CampaignApiManager extends ApiEntityManager
      */
     public function createEntity()
     {
-        return $this->campaignManager->createCampaign();
+        return $this->clientManager->createClient();
     }
 }

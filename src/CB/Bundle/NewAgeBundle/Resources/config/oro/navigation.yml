@@ -19,10 +19,10 @@ navigation:
                 uri: '#'
                 extras:
                     position: 5
-            campaign_tab:
+            client_tab:
                 acl_resource_id: cb_newage_admin_menu
-                label: 'cb.newage.campaign.entity_plural_label'
-                route:   cb_newage_campaign_index
+                label: 'cb.newage.client.entity_plural_label'
+                route:   cb_newage_client_index
                 extras:
                     position: 10
             panel_divider:
@@ -72,9 +72,9 @@ navigation:
             newage_tab_panel_view_link:
                 label: 'cb.newage.panelview.entity_plural_label'
                 route: cb_newage_panel_view_index
-            newage_tab_campaign_link:
-                label: 'cb.newage.campaign.entity_plural_label'
-                route: cb_newage_campaign_index
+            newage_tab_client_link:
+                label: 'cb.newage.client.entity_plural_label'
+                route: cb_newage_client_index
 
         tree:
             application_menu:
@@ -82,7 +82,7 @@ navigation:
                     offer_tab: ~
                     admin_tab:
                         children:
-                            campaign_tab: ~
+                            client_tab: ~
                             panel_divider: ~
                             panel_tab:
                                 children:
@@ -102,10 +102,10 @@ navigation:
         cb_newage_panel_view_create: 'oro.ui.create_entity'
         cb_newage_panel_view_update: '%%entity.name%% - oro.ui.edit'
 
-        cb_newage_campaign_index: ~
-        cb_newage_campaign_view: '%%entity.name%%'
-        cb_newage_campaign_create: 'oro.ui.create_entity'
-        cb_newage_campaign_update: '%%entity.name%% - oro.ui.edit'
+        cb_newage_client_index: ~
+        cb_newage_client_view: '%%entity.name%%'
+        cb_newage_client_create: 'oro.ui.create_entity'
+        cb_newage_client_update: '%%entity.name%% - oro.ui.edit'
 
         cb_newage_support_type_index: ~
         cb_newage_support_type_view: '%%entity.name%%'

@@ -210,70 +210,70 @@ datagrids:
             bind_parameters:
                 - panel_id
 
-    base-campaign-grid:
+    base-client-grid:
         source:
             type: orm
-            acl_resource: cb_newage_campaign_view
+            acl_resource: cb_newage_client_view
             query:
                 select:
-                    - campaign.id
-                    - campaign.title
+                    - client.id
+                    - client.title
                     - own.id as owner
                 from:
-                    - { table: %cb_newage_campaign.entity.class%, alias: campaign }
+                    - { table: %cb_newage_client.entity.class%, alias: client }
                 join:
                     inner:
-                        - { join: campaign.owner, alias: own }
+                        - { join: client.owner, alias: own }
         columns:
             id:
-                label: cb.newage.campaign.id.label
+                label: cb.newage.client.id.label
             title:
-                label: cb.newage.campaign.title.label
+                label: cb.newage.client.title.label
 
         filters:
             columns:
                 title:
                     type: string
-                    data_name: campaign.title
+                    data_name: client.title
         properties:
             id: ~
             view_link:
                 type:         url
-                route:        cb_newage_campaign_view
+                route:        cb_newage_client_view
                 params:       [ id ]
             update_link:
                 type:         url
-                route:        cb_newage_campaign_update
+                route:        cb_newage_client_update
                 params:       [ id ]
             delete_link:
                 type:         url
-                route:        cb_newage_campaign_api_delete_campaign
+                route:        cb_newage_client_api_delete_client
                 params:       [ id ]
         actions:
             view:
                 type:         navigate
-                acl_resource: cb_newage_campaign_view
+                acl_resource: cb_newage_client_view
                 label:        oro.grid.action.view
                 icon:         eye-open
                 link:         view_link
                 rowAction:    true
             update:
                 type:         navigate
-                acl_resource: cb_newage_campaign_update
+                acl_resource: cb_newage_client_update
                 label:        oro.grid.action.update
                 icon:         edit
                 link:         update_link
             delete:
                 type:         delete
-                acl_resource: cb_newage_campaign_delete
+                acl_resource: cb_newage_client_delete
                 label:        oro.grid.action.delete
                 icon:         trash
                 link:         delete_link
 
-    campaign-grid:
-        extends: base-campaign-grid
+    client-grid:
+        extends: base-client-grid
 
-    base-campaign-to-panel-view-update-grid:
+    base-client-to-panel-view-update-grid:
         source:
             type: orm
             acl_resource: cb_newage_panel_view_view
@@ -291,7 +291,7 @@ datagrids:
                             join: panelView.panel
                             alias: panel
             bind_parameters:
-                - campaign
+                - client
         sorters:
             columns:
                 name:
@@ -510,7 +510,7 @@ datagrids:
                 select:
                     - offer.id
                     - offer.name
-                    - c.title as campaign
+                    - c.title as client
                     - offer.start
                     - offer.end
                 from:
@@ -518,7 +518,7 @@ datagrids:
                 join:
                     left:
                         -
-                            join: offer.campaign
+                            join: offer.client
                             alias: c
 
         columns:
@@ -526,8 +526,8 @@ datagrids:
                 label:  cb.newage.offer.id.label
             name:
                 label:  cb.newage.offer.name.label
-            campaign:
-                label:  cb.newage.campaign.entity_label
+            client:
+                label:  cb.newage.client.entity_label
             start:
                 label: cb.newage.offer.start.label
                 frontend_type: date
@@ -540,7 +540,7 @@ datagrids:
                     data_name: offer.id
                 name:
                     data_name: offer.name
-                campaign:
+                client:
                     data_name: c.title
 
             default:
@@ -551,12 +551,12 @@ datagrids:
                 name:
                     type: string
                     data_name: offer.name
-                campaign:
+                client:
                     type: entity
-                    data_name: offer.campaign
+                    data_name: offer.client
                     options:
                         field_options:
-                            class: CBNewAgeBundle:Campaign
+                            class: CBNewAgeBundle:Client
                 start:
                     type:      date
                     data_name: offer.start
@@ -1262,8 +1262,8 @@ datagrids:
                 label:  cb.newage.offer.id.label
             name:
                 label:  cb.newage.offer.name.label
-            campaign:
-                label:  cb.newage.campaign.entity_label
+            client:
+                label:  cb.newage.client.entity_label
             start:
                 label: cb.newage.offer.start.label
                 frontend_type: date
@@ -1276,7 +1276,7 @@ datagrids:
                     data_name: o.id
                 name:
                     data_name: o.name
-                campaign:
+                client:
                     data_name: c.title
                 start:
                     data_name: o.start
@@ -1336,7 +1336,7 @@ datagrids:
                 join:
                     left:
                         -
-                            join: o.campaign
+                            join: o.client
                             alias: c
                         -
                             join: o.reservationItems
@@ -1358,7 +1358,7 @@ datagrids:
             name:
                 label:  cb.newage.offer.name.label
             title:
-                label:  cb.newage.campaign.entity_label
+                label:  cb.newage.client.entity_label
             start:
                 label: cb.newage.offer.start.label
                 frontend_type: date

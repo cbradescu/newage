@@ -2,7 +2,7 @@
 
 namespace CB\Bundle\SchedulerBundle\Entity;
 
-use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\Client;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\ReservationItem;
 use CB\Bundle\SchedulerBundle\Model\ExtendSchedulerEvent;
@@ -75,10 +75,10 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
     protected $panelView;
 
     /**
-     * @var Campaign
+     * @var Client
      *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Campaign", inversedBy="events")
-     * @ORM\JoinColumn(name="campaign_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Client", inversedBy="events")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -87,7 +87,7 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      *      }
      * )
      */
-    protected $campaign;
+    protected $client;
 
 
     /**
@@ -215,25 +215,25 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
     }
 
     /**
-     * Gets owning campaign
+     * Gets owning client
      *
-     * @return Campaign|null
+     * @return Client|null
      */
-    public function getCampaign()
+    public function getClient()
     {
-        return $this->campaign;
+        return $this->client;
     }
 
     /**
-     * Sets owning campaign
+     * Sets owning client
      *
-     * @param Campaign $campaign
+     * @param Client $client
      *
      * @return self
      */
-    public function setCampaign(Campaign $campaign = null)
+    public function setClient(Client $client = null)
     {
-        $this->campaign = $campaign;
+        $this->client = $client;
 
         return $this;
     }
@@ -351,8 +351,8 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      */
     public function __toString()
     {
-        if ($this->campaign)
-            return (string)$this->getCampaign()->getTitle();
+        if ($this->client)
+            return (string)$this->getClient()->getTitle();
         else
             return 'default';
     }

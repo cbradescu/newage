@@ -471,7 +471,7 @@ class ReservationItem
     public function addDefaultEvent()
     {
         $event = new SchedulerEvent();
-        $event->setCampaign($this->getOffer()->getCampaign());
+        $event->setClient($this->getOffer()->getClient());
         $event->setPanelView($this->getPanelView());
         $event->setReservationItem($this);
         $event->setStart($this->getStart());

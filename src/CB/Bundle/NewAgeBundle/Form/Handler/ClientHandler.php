@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
 
-class CampaignHandler extends ApiFormHandler
+class ClientHandler extends ApiFormHandler
 {
     /**
      * @var EventDispatcherInterface

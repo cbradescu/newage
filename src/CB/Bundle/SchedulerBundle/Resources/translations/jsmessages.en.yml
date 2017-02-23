@@ -3,6 +3,6 @@ cb:
         scheduler_event.saved.successfully: Scheduler event saved
         error_message:
             scheduler_event_model:
-                campaign_not_blank:   Campaign value should not be blank.
+                client_not_blank:   Client value should not be blank.
             event_model:
                 end_date_earlier_than_start: "The end date can't be earlier than start date"

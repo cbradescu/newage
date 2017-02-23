@@ -58,7 +58,7 @@ cb:
             owner.label:                   Owner
             organization.label:            Organization
             # ORM relations
-            campaigns.label:               Campaigns
+            clients.label:               Clients
             events.label:                  Events
             panel.label:                   Panel
             url.label:                     Photo
@@ -68,14 +68,14 @@ cb:
             form:
                 choose_panel_view:         Choose Panel View
 
-      campaign:
-            entity_label:                  Campaign
-            entity_plural_label:           Campaigns
+      client:
+            entity_label:                  Client
+            entity_plural_label:           Clients
             block:
-                general:                   Campaign
+                general:                   Client
                 panel_views:               Panel Views
             message:
-                saved:                     Campaign saved
+                saved:                     Client saved
             id.label:                      Id
             title.label:                   Title
             description.label:             Description
@@ -84,9 +84,9 @@ cb:
             events.label:                     Events
             owner.label:                   Owner
             organization.label:            Organization
-            add.label:                     Add Campaign
+            add.label:                     Add Client
             form:
-                choose_campaign:          Choose Campaign
+                choose_client:          Choose Client
 
       # SupportType entity
       supporttype:
@@ -161,7 +161,7 @@ cb:
             organization.label:            Organization
             start.label:                   Start
             end.label:                     End
-            campaign.label:                Campaign
+            client.label:                Client
             created_by.label:              Created By
             updated_by.label:              Updated By
             offer_items.label:             Offer Items

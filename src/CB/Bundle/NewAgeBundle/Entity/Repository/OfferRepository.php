@@ -28,7 +28,7 @@ class OfferRepository extends EntityRepository
         $qb = $this->createQueryBuilder('o')
             ->select('o')
             ->addSelect('c')
-            ->leftJoin('o.campaign', 'c')
+            ->leftJoin('o.client', 'c')
             ->where('o.id NOT IN (' . $evQb->getDQL() . ')')
             ->andWhere('o.end <= :ten_days_before_current_date')
         ;

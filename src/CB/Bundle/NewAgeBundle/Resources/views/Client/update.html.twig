@@ -2,7 +2,7 @@
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 {% oro_title_set({params : {"%entity.name%": form.vars.value.title|default('N/A')} }) %}
 
-{% set formAction = form.vars.value.id ? path('cb_newage_campaign_update', { 'id': form.vars.value.id }) : path('cb_newage_campaign_create')  %}
+{% set formAction = form.vars.value.id ? path('cb_newage_client_update', { 'id': form.vars.value.id }) : path('cb_newage_client_create')  %}
 
 {% block head_script %}
     {{ parent() }}
@@ -14,18 +14,18 @@
 {% block navButtons %}
     {% if form.vars.value.id and resource_granted('DELETE', form.vars.value) %}
         {{ UI.deleteButton({
-        'dataUrl': path('cb_newage_campaign_api_delete_campaign', {'id': form.vars.value.id}),
-        'dataRedirect': path('cb_newage_campaign_index'),
+        'dataUrl': path('cb_newage_client_api_delete_client', {'id': form.vars.value.id}),
+        'dataRedirect': path('cb_newage_client_index'),
         'aCss': 'no-hash remove-button',
         'dataId': form.vars.value.id,
-        'id': 'btn-remove-campaign',
-        'entity_label': 'cb.newage.campaign.entity_label'|trans,
+        'id': 'btn-remove-client',
+        'entity_label': 'cb.newage.client.entity_label'|trans,
         }) }}
         {{ UI.buttonSeparator() }}
     {% endif %}
-    {{ UI.cancelButton(path('cb_newage_campaign_index')) }}
+    {{ UI.cancelButton(path('cb_newage_client_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if form.vars.value.id or resource_granted('cb_newage_campaign_update') %}
+    {% if form.vars.value.id or resource_granted('cb_newage_client_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -35,20 +35,20 @@
     {% if form.vars.value.id %}
         {% set breadcrumbs = {
         'entity':      form.vars.value,
-        'indexPath':   path('cb_newage_campaign_index'),
-        'indexLabel': 'cb.newage.campaign.entity_plural_label'|trans,
+        'indexPath':   path('cb_newage_client_index'),
+        'indexLabel': 'cb.newage.client.entity_plural_label'|trans,
         'entityTitle': form.vars.value.title|default('N/A')
         }
         %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.campaign.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'cb.newage.client.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
 
 {% block content_data %}
-    {% set id = 'campaign-profile' %}
+    {% set id = 'client-profile' %}
 
     {% set dataBlocks = [{
     'title': 'General'|trans,
@@ -81,7 +81,7 @@
 
     {% if form.panelViews is defined%}
         {% set dataBlocks = dataBlocks|merge([{
-        'title' : 'cb.newage.campaign.block.panel_views'|trans,
+        'title' : 'cb.newage.client.block.panel_views'|trans,
         'subblocks': [{
         'title' : null,
         'useSpan': false,

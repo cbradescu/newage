@@ -19,13 +19,13 @@ define([
 
         defaults: {
             id: null,
-            title: null, // campaign name
+            title: null, // client name
             start: null,
             end: null,
             resourceId: null, // panel view id
             resourceName: null, //panel view name
             panelView: null,
-            campaign: null,
+            client: null,
             status: 0,
             backgroundColor: '#ffff99',
             editable: false,
@@ -75,8 +75,8 @@ define([
         validate: function(attrs) {
             var errors = [];
 
-            if (!attrs.campaign) {
-                errors.push('cb.scheduler.error_message.scheduler_event_model.campaign_not_blank');
+            if (!attrs.client) {
+                errors.push('cb.scheduler.error_message.scheduler_event_model.client_not_blank');
             }
 
             if (moment(attrs.end).diff(attrs.start) < 0) {

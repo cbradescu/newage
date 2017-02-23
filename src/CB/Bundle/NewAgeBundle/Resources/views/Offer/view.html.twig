@@ -47,9 +47,9 @@
             {{ UI.renderProperty('cb.newage.offer.end.label'|trans, entity.end|oro_format_date) }}
 
             {%- set offerData -%}
-                {%- if entity.campaign -%}
-                    <a href="{{ path('cb_newage_campaign_view', {'id': entity.campaign.id}) }}">
-                        {{ entity.campaign }}
+                {%- if entity.client -%}
+                    <a href="{{ path('cb_newage_client_view', {'id': entity.client.id}) }}">
+                        {{ entity.client }}
                     </a>
                 {%- endif -%}
             {%- endset -%}

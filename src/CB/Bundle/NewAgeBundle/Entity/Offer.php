@@ -108,10 +108,10 @@ class Offer
     protected $end;
 
     /**
-     * @var Campaign
+     * @var Client
      *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Campaign", inversedBy="events")
-     * @ORM\JoinColumn(name="campaign_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Client", inversedBy="events")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -120,7 +120,7 @@ class Offer
      *      }
      * )
      */
-    protected $campaign;
+    protected $client;
 
     /**
      * @var Collection
@@ -335,25 +335,25 @@ class Offer
     }
 
     /**
-     * Gets campaign
+     * Gets client
      *
-     * @return Campaign|null
+     * @return Client|null
      */
-    public function getCampaign()
+    public function getClient()
     {
-        return $this->campaign;
+        return $this->client;
     }
 
     /**
-     * Sets campaign
+     * Sets client
      *
-     * @param Campaign $campaign
+     * @param Client $client
      *
      * @return Offer
      */
-    public function setCampaign(Campaign $campaign = null)
+    public function setClient(Client $client = null)
     {
-        $this->campaign = $campaign;
+        $this->client = $client;
 
         return $this;
     }

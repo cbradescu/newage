@@ -113,8 +113,8 @@ class SchedulerEventRepository extends EntityRepository
         $qb = $this->createQueryBuilder('e')
             ->select(
                 'e.id,
-                 c.id as campaignId,
-                 c.title as campaignName,
+                 c.id as clientId,
+                 c.title as clientName,
                  pv.id as panelViewId,
                  pv.name as panelViewName,
                  p.id as panelId,
@@ -127,7 +127,7 @@ class SchedulerEventRepository extends EntityRepository
                  e.status'
             )
             ->leftJoin('e.panelView', 'pv')
-            ->leftJoin('e.campaign', 'c')
+            ->leftJoin('e.client', 'c')
             ->leftJoin('pv.panel', 'p')
             ->leftJoin('p.supportType', 'st')
             ->leftJoin('p.lightingType', 'lt')

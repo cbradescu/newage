@@ -13,7 +13,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var EventCollection = require('cbscheduler/js/scheduler/event/collection');
     var ResourceCollection = require('cbscheduler/js/scheduler/panelView/collection');
-    var CampaignCollection = require('cbscheduler/js/scheduler/campaign/collection');
+    var ClientCollection = require('cbscheduler/js/scheduler/client/collection');
     var EventModel = require('cbscheduler/js/scheduler/event/model');
     var EventView = require('cbscheduler/js/scheduler/event/view');
     var eventDecorator = require('cbscheduler/js/scheduler/event-decorator');
@@ -76,7 +76,7 @@ define(function(require) {
                 eventStartEditable: false, // disable event drag drop
                 collection: null,
                 resourceCollection: null,
-                campaignCollection: null,
+                clientCollection: null,
                 fixedWeekCount: false, // http://fullcalendar.io/docs/display/fixedWeekCount/
                 itemViewTemplateSelector: null,
                 itemFormTemplateSelector: null,
@@ -141,10 +141,10 @@ define(function(require) {
             // init resource collection
             this.resourceCollection = this.resourceCollection || new ResourceCollection();
 
-            // init campaign collection
-            this.campaignCollection = this.campaignCollection || new CampaignCollection();
-            this.campaignCollection.setUrl();
-            this.campaignCollection.fetch();
+            // init client collection
+            this.clientCollection = this.clientCollection || new ClientCollection();
+            this.clientCollection.setUrl();
+            this.clientCollection.fetch();
 
             this.filters = [];
 
@@ -279,12 +279,12 @@ define(function(require) {
         },
 
         onEventAdded: function(eventModel) {
-            if(eventModel.get('campaign')) {
-                var campaign = this.campaignCollection.get(eventModel.attributes.campaign);
+            if(eventModel.get('client')) {
+                var client = this.clientCollection.get(eventModel.attributes.client);
                 var resource = this.resourceCollection.get(eventModel.attributes.panelView);
 
                 _.extend(eventModel.attributes, {
-                    title: campaign.get('title'),
+                    title: client.get('title'),
                     resourceId: resource.id,
                     resourceName: resource.get('name')
                 });
@@ -303,11 +303,11 @@ define(function(require) {
             // find and update fullCalendar event model
             fcEvent = calendarElement.fullCalendar('clientEvents', eventModel.id)[0];
 
-            var campaign = this.campaignCollection.get(eventModel.attributes.campaign);
+            var client = this.clientCollection.get(eventModel.attributes.client);
             var resource = this.resourceCollection.get(eventModel.attributes.panelView);
 
             _.extend(eventModel.attributes, {
-                title: campaign.get('title'),
+                title: client.get('title'),
                 resourceId: resource.id,
                 resourceName: resource.get('name')
             });
@@ -679,7 +679,7 @@ define(function(require) {
         createViewModel: function(eventModel) {
             var fcEvent = _.pick(
                 eventModel.attributes,
-                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'campaign', 'offer','panel', 'supportType', 'lightingType', 'status', 'city','editable', 'removable']
+                ['id', 'title', 'start', 'end', 'resourceId', 'resourceName', 'panelView', 'client', 'offer','panel', 'supportType', 'lightingType', 'status', 'city','editable', 'removable']
             );
 
             fcEvent.backgroundColor = this.getBackgroundColor(fcEvent.status);
@@ -713,13 +713,13 @@ define(function(require) {
             return fcResource;
         },
 
-        createCampaignViewModel: function(campaignModel) {
-            var fcCampaign = _.pick(
-                campaignModel.attributes,
+        createClientViewModel: function(clientModel) {
+            var fcClient = _.pick(
+                clientModel.attributes,
                 ['id', 'name']
             );
 
-            return fcCampaign;
+            return fcClient;
         },
 
         showSavingMask: function() {
@@ -761,8 +761,8 @@ define(function(require) {
             this._showError(__('Sorry, calendar resources were not loaded correctly'), err);
         },
 
-        showLoadCampaignsError: function(err) {
-            this._showError(__('Sorry, calendar campaigns were not loaded correctly'), err);
+        showLoadClientsError: function(err) {
+            this._showError(__('Sorry, calendar clients were not loaded correctly'), err);
         },
 
         initCalendarContainer: function() {

@@ -5,16 +5,16 @@ namespace CB\Bundle\NewAgeBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
-class CampaignRepository extends EntityRepository
+class ClientRepository extends EntityRepository
 {
     /**
-     * Returns a query builder which can be used to get list of campaigns
+     * Returns a query builder which can be used to get list of clients
      *
      * @param int $organizationId
      *
      * @return QueryBuilder
      */
-    public function getCampaignsQueryBuilder($organizationId)
+    public function getClientsQueryBuilder($organizationId)
     {
         return $this->createQueryBuilder('c')
             ->select('c')

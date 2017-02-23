@@ -21,7 +21,7 @@ cb:
 
         schedulerevent:
             entity_label:                  Scheduler Event
-            campaign.label:                Campaign
+            client.label:                Client
             end.label:                     End
             start.label:                   Start
             id.label:                      Id

@@ -12,7 +12,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use CB\Bundle\SchedulerBundle\Manager\SchedulerEventManager;
 
-class CampaignChoiceType extends AbstractType
+class ClientChoiceType extends AbstractType
 {
     /** @var SchedulerEventManager */
     protected $schedulerEventManager;
@@ -55,7 +55,7 @@ class CampaignChoiceType extends AbstractType
         $resolver->setNormalizers(
             array(
                 'empty_value' => function (Options $options) {
-                    return count($options['choices']) !== 1 ? 'cb.newage.campaign.form.choose_campaign' : null;
+                    return count($options['choices']) !== 1 ? 'cb.newage.client.form.choose_client' : null;
                 },
             )
         );
@@ -81,7 +81,7 @@ class CampaignChoiceType extends AbstractType
      */
     public function getName()
     {
-        return 'cb_campaign_choice';
+        return 'cb_client_choice';
     }
 
     /**
@@ -93,21 +93,21 @@ class CampaignChoiceType extends AbstractType
     }
 
     /**
-     * @return array key = campaignId, value = campaignName
+     * @return array key = clientId, value = clientName
      */
     protected function getChoices()
     {
-        $campaigns = $this->schedulerEventManager->getCampaigns();
+        $clients = $this->schedulerEventManager->getClients();
             usort(
-                $campaigns,
+                $clients,
                 function ($a, $b) {
                     return strcasecmp($a['name'], $b['name']);
                 }
             );
 
         $choices = [];
-        foreach ($campaigns as $campaign) {
-            $choices[$campaign['id']] = $campaign['name'];
+        foreach ($clients as $client) {
+            $choices[$client['id']] = $client['name'];
         }
 
         return $choices;

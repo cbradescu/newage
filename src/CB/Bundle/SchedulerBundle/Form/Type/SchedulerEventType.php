@@ -47,13 +47,13 @@ class SchedulerEventType extends AbstractType
                 )
             )
             ->add(
-                'campaign',
+                'client',
                 'entity',
                 array(
-                    'label'       => 'cb.newage.campaign.entity_label',
-                    'class'       => 'CBNewAgeBundle:Campaign',
+                    'label'       => 'cb.newage.client.entity_label',
+                    'class'       => 'CBNewAgeBundle:Client',
                     'property'    => 'title',
-                    'empty_value' => 'cb.newage.campaign.form.choose_campaign'
+                    'empty_value' => 'cb.newage.client.form.choose_client'
                 )
             )
             ->add(
@@ -112,14 +112,14 @@ class SchedulerEventType extends AbstractType
         $data = $event->getData();
         $form->add(
             $form->getConfig()->getFormFactory()->createNamed(
-                'campaign',
-                'cb_campaign_choice',
-                $data ? $data->getCampaign() : null,
+                'client',
+                'cb_client_choice',
+                $data ? $data->getClient() : null,
                 [
                     'required'        => true,
                     'mapped'          => false,
                     'auto_initialize' => false,
-                    'label'           => 'cb.newage.campaign.entity_label'
+                    'label'           => 'cb.newage.client.entity_label'
                 ]
             )
         );

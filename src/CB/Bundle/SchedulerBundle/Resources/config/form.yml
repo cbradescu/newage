@@ -3,7 +3,7 @@ parameters:
     cb_scheduler.scheduler_event.form.type.api.class:       CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventApiType
     cb_scheduler.scheduler_event.form.handler.class:        CB\Bundle\SchedulerBundle\Form\Handler\SchedulerEventHandler
     cb_scheduler.scheduler_event.form.handler.api.class:    CB\Bundle\SchedulerBundle\Form\Handler\SchedulerEventApiHandler
-    cb_scheduler.campaign_choice.form.type.class:           CB\Bundle\SchedulerBundle\Form\Type\CampaignChoiceType
+    cb_scheduler.client_choice.form.type.class:           CB\Bundle\SchedulerBundle\Form\Type\ClientChoiceType
     cb_scheduler.panel_view_choice.form.type.class:         CB\Bundle\SchedulerBundle\Form\Type\PanelViewChoiceType
     cb_scheduler.status_choice.form.type.class:             CB\Bundle\SchedulerBundle\Form\Type\StatusChoiceType
 
@@ -54,13 +54,13 @@ services:
             - ~
             - 'cb_scheduler_event_api'
 
-    cb_scheduler.campaign_choice.form.type:
-        class: %cb_scheduler.campaign_choice.form.type.class%
+    cb_scheduler.client_choice.form.type:
+        class: %cb_scheduler.client_choice.form.type.class%
         arguments:
             - '@cb_scheduler.scheduler_event.manager'
             - '@translator'
         tags:
-            - { name: form.type, alias: cb_campaign_choice }
+            - { name: form.type, alias: cb_client_choice }
 
     cb_scheduler.panel_view_choice.form.type:
         class: %cb_scheduler.panel_view_choice.form.type.class%

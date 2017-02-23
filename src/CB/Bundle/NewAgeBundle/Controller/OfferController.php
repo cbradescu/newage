@@ -7,7 +7,7 @@
  */
 namespace CB\Bundle\NewAgeBundle\Controller;
 
-use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\Client;
 use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
@@ -648,7 +648,7 @@ class OfferController extends Controller
                         if ($interval->format('%a') >= 7) {
 
                             $event = $this->newEvent($reservationItem,
-                                $reservationItem->getOffer()->getCampaign(),
+                                $reservationItem->getOffer()->getClient(),
                                 $panelView,
                                 $freeInterval['start'],
                                 $freeInterval['end']
@@ -667,7 +667,7 @@ class OfferController extends Controller
                     }
                 } else { // In caz contrar fata este libera pentru toata perioada ofertei
                     $event = $this->newEvent($reservationItem,
-                        $reservationItem->getOffer()->getCampaign(),
+                        $reservationItem->getOffer()->getClient(),
                         $panelView,
                         $reservationItem->getStart(),
                         $reservationItem->getEnd()
@@ -767,17 +767,17 @@ class OfferController extends Controller
 
     /**
      * @param ReservationItem $reservationItem
-     * @param Campaign $campaign
+     * @param Client $client
      * @param PanelView $panelView
      * @param \DateTime $start
      * @param \DateTime $end
      * @return SchedulerEvent
      */
-    private function newEvent(ReservationItem $reservationItem, Campaign $campaign, PanelView $panelView, \DateTime $start, \DateTime $end)
+    private function newEvent(ReservationItem $reservationItem, Client $client, PanelView $panelView, \DateTime $start, \DateTime $end)
     {
         $event = new SchedulerEvent();
 
-        $event->setCampaign($campaign);
+        $event->setClient($client);
         $event->setPanelView($panelView);
         $event->setReservationItem($reservationItem);
         $event->setStart($start);

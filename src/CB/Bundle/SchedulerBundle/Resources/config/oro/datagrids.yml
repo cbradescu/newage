@@ -10,7 +10,7 @@ datagrids:
                     - se.end
                     - se.status
                     - pv.name as panelView
-                    - c.title as campaign
+                    - c.title as client
                     - p.name as panel
                     - st.name as supportType
                     - lt.name as lightingType
@@ -24,7 +24,7 @@ datagrids:
                             join: se.panelView
                             alias: pv
                         -
-                            join: se.campaign
+                            join: se.client
                             alias: c
                         -
                             join: pv.panel
@@ -57,8 +57,8 @@ datagrids:
                 label:  cb.newage.panel.entity_label
             panelView:
                 label:  cb.newage.panelview.entity_label
-            campaign:
-                label:  cb.newage.campaign.entity_label
+            client:
+                label:  cb.newage.client.entity_label
             supportType:
                 label:  cb.newage.supporttype.entity_label
             lightingType:
@@ -69,7 +69,7 @@ datagrids:
               columns:
                   start:
                       data_name: se.start
-                  campaign:
+                  client:
                       data_name: c.title
               default:
                   start:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
@@ -123,12 +123,12 @@ datagrids:
                             choices:
                                 1: Reserved
                                 2: Confirmed
-                campaign:
+                client:
                     type: entity
-                    data_name: se.campaign
+                    data_name: se.client
                     options:
                         field_options:
-                            class: CBNewAgeBundle:Campaign
+                            class: CBNewAgeBundle:Client
                 city:
                     type:      choice
                     data_name: addr.city
@@ -194,12 +194,12 @@ datagrids:
             routerEnabled: false
 
     # Campaing view
-    campaign-scheduler_event-grid:
+    client-scheduler_event-grid:
         extends: base-scheduler_event-grid
         source:
             query:
                 where:
                     and:
-                        - ( se.campaign = :campaign_id)
+                        - ( se.client = :client_id)
             bind_parameters:
-                - campaign_id
+                - client_id

@@ -4,9 +4,9 @@ define([
 ], function (Backbone) {
     'use strict';
 
-    var CampaignModel;
+    var ClientModel;
 
-    CampaignModel = Backbone.Model.extend({
+    ClientModel = Backbone.Model.extend({
 
         defaults: {
             id: null,
@@ -16,5 +16,5 @@ define([
 
 
 
-    return CampaignModel;
+    return ClientModel;
 });

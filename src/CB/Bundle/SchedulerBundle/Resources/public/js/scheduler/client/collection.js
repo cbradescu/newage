@@ -1,19 +1,19 @@
 define([
     'backbone',
     'routing',
-    'cbscheduler/js/scheduler/campaign/model'
-], function(Backbone, routing, CampaignModel) {
+    'cbscheduler/js/scheduler/client/model'
+], function(Backbone, routing, ClientModel) {
     'use strict';
 
     /**
-     * @export  cbscheduler/js/scheduler/campaign/collection
-     * @class   cbscheduler.scheduler.campaign.Collection
+     * @export  cbscheduler/js/scheduler/client/collection
+     * @class   cbscheduler.scheduler.client.Collection
      * @extends Backbone.Collection
      */
     return Backbone.Collection.extend({
-        route: 'cb_newage_campaign_api_get_campaigns',
+        route: 'cb_newage_client_api_get_clients',
         url: null,
-        model: CampaignModel,
+        model: ClientModel,
 
         setUrl: function() {
             this.url = routing.generate(

@@ -67,11 +67,11 @@ class OfferType extends AbstractType
                 ]
             )
             ->add(
-                'campaign',
+                'client',
                 'entity',
                 [
-                    'label'       => 'cb.newage.campaign.entity_label',
-                    'class'       => 'CBNewAgeBundle:Campaign',
+                    'label'       => 'cb.newage.client.entity_label',
+                    'class'       => 'CBNewAgeBundle:Client',
                     'property'    => 'title',
                     'required' => true
                 ]

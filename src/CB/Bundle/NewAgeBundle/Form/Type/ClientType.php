@@ -9,7 +9,7 @@
 namespace CB\Bundle\NewAgeBundle\Form\Type;
 
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
-use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\Client;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -20,7 +20,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\Router;
 
-class CampaignType extends AbstractType
+class ClientType extends AbstractType
 {
     var $router;
 
@@ -50,7 +50,7 @@ class CampaignType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label'    => 'cb.newage.campaign.title.label'
+                    'label'    => 'cb.newage.client.title.label'
                 ]
             )
             ->add(
@@ -58,7 +58,7 @@ class CampaignType extends AbstractType
                 'oro_resizeable_rich_text',
                 [
                     'required' => false,
-                    'label'    => 'cb.newage.campaign.description.label'
+                    'label'    => 'cb.newage.client.description.label'
                 ]
             )
         ;
@@ -71,8 +71,8 @@ class CampaignType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => 'CB\\Bundle\\NewAgeBundle\\Entity\\Campaign',
-                'intention' => 'cb_newage_campaign_entity',
+                'data_class' => 'CB\\Bundle\\NewAgeBundle\\Entity\\Client',
+                'intention' => 'cb_newage_client_entity',
                 'cascade_validation' => true,
                 'ownership_disabled' => true
             ]
@@ -86,6 +86,6 @@ class CampaignType extends AbstractType
      */
     public function getName()
     {
-        return 'cb_newage_campaign';
+        return 'cb_newage_client';
     }
 }

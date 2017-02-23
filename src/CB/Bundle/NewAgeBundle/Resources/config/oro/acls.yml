@@ -55,30 +55,30 @@ acls:
         group_name: ""
         bindings: ~
 
-    cb_newage_campaign_create:
+    cb_newage_client_create:
         type: entity
-        class: CBNewAgeBundle:Campaign
+        class: CBNewAgeBundle:Client
         permission: CREATE
         group_name: ""
         bindings: ~
 
-    cb_newage_campaign_view:
+    cb_newage_client_view:
         type: entity
-        class: CBNewAgeBundle:Campaign
+        class: CBNewAgeBundle:Client
         permission: VIEW
         group_name: ""
         bindings: ~
 
-    cb_newage_campaign_update:
+    cb_newage_client_update:
         type: entity
-        class: CBNewAgeBundle:Campaign
+        class: CBNewAgeBundle:Client
         permission: EDIT
         group_name: ""
         bindings: ~
 
-    cb_newage_campaign_delete:
+    cb_newage_client_delete:
         type: entity
-        class: CBNewAgeBundle:Campaign
+        class: CBNewAgeBundle:Client
         permission: DELETE
         group_name: ""
         bindings: ~

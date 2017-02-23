@@ -40,7 +40,7 @@ class SchedulerEventApiType extends SchedulerEventType
                 ]
             )
             ->add(
-                'campaign',
+                'client',
                 'integer',
                 [
                     'required' => true,
@@ -118,8 +118,8 @@ class SchedulerEventApiType extends SchedulerEventType
             return;
         }
 
-        $campaignId = $form->get('campaign')->getData();
-        if (empty($campaignId)) {
+        $clientId = $form->get('client')->getData();
+        if (empty($clientId)) {
             return;
         }
 
@@ -133,7 +133,7 @@ class SchedulerEventApiType extends SchedulerEventType
             return;
         }
 
-        $this->schedulerEventManager->setCampaign($data, (int)$campaignId);
+        $this->schedulerEventManager->setClient($data, (int)$clientId);
         $this->schedulerEventManager->setPanelView($data, (int)$panelViewId);
         $this->schedulerEventManager->setStatus($data, (int)$status);
     }

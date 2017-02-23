@@ -2,9 +2,9 @@
 
 namespace CB\Bundle\SchedulerBundle\Manager;
 
-use CB\Bundle\NewAgeBundle\Entity\Campaign;
+use CB\Bundle\NewAgeBundle\Entity\Client;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
-use CB\Bundle\NewAgeBundle\Entity\Repository\CampaignRepository;
+use CB\Bundle\NewAgeBundle\Entity\Repository\ClientRepository;
 use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
 
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
@@ -64,49 +64,49 @@ class SchedulerEventManager
     }
 
     /**
-     * Gets a list of campaigns
+     * Gets a list of clients
      *
      * @return array of [id, name]
      */
-    public function getCampaigns()
+    public function getClients()
     {
-        /** @var CampaignRepository $repo */
-        $repo      = $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:Campaign');
-        $campaigns = $repo->getCampaignsQueryBuilder($this->securityFacade->getOrganizationId())
+        /** @var ClientRepository $repo */
+        $repo      = $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:Client');
+        $clients = $repo->getClientsQueryBuilder($this->securityFacade->getOrganizationId())
             ->select('c.id, c.title as name')
             ->getQuery()
             ->getArrayResult();
 
-        return $campaigns;
+        return $clients;
     }
 
     /**
-     * Links an event with a campaign by its id
+     * Links an event with a client by its id
      *
      * @param SchedulerEvent $event
-     * @param int           $campaignId
+     * @param int           $clientId
      *
      * @throws \LogicException
      * @throws ForbiddenException
      */
-    public function setCampaign(SchedulerEvent $event, $campaignId)
+    public function setClient(SchedulerEvent $event, $clientId)
     {
-        $campaign = $event->getCampaign();
-        if (!$campaign || $campaign->getId() !== $campaignId) {
-            $event->setCampaign($this->findCampaign($campaignId));
+        $client = $event->getClient();
+        if (!$client || $client->getId() !== $clientId) {
+            $event->setClient($this->findClient($clientId));
         }
 
     }
 
     /**
-     * @param int $campaignId
+     * @param int $clientId
      *
-     * @return Campaign|null
+     * @return Client|null
      */
-    protected function findCampaign($campaignId)
+    protected function findClient($clientId)
     {
-        return $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:Campaign')
-            ->find($campaignId);
+        return $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:Client')
+            ->find($clientId);
     }
 
     /**
