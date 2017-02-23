@@ -162,20 +162,6 @@ class Panel
     protected $addresses;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="url", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $url;
-
-    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -197,24 +183,6 @@ class Panel
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
-
-    /**
-     * @var File
-     *
-     * @ConfigField(
-     *      defaultValues={
-     *          "attachment"={
-     *              "maxsize"=20,
-     *              "width"=480,
-     *              "height"=480
-     *          }
-     *      }
-     * )
-     * @Assert\Valid()
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AttachmentBundle\Entity\File", cascade={"persist"})
-     * @ORM\JoinColumn(name="photo_file_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $photo;
 
     /**
      * @var User
@@ -497,22 +465,6 @@ class Panel
     }
 
     /**
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-    }
-
-    /**
      * @param User $owningUser
      *
      * @return Panel
@@ -553,22 +505,6 @@ class Panel
     public function getOrganization()
     {
         return $this->organization;
-    }
-
-    /**
-     * @return File
-     */
-    public function getPhoto()
-    {
-        return $this->photo;
-    }
-
-    /**
-     * @param File $photo
-     */
-    public function setPhoto($photo)
-    {
-        $this->photo = $photo;
     }
 
     /**

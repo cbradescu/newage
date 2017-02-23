@@ -20,8 +20,6 @@ cb:
                 gps.label:                 GPS coords
             dimensions.label:              Dimensions
             neighborhoods.label:           Neighborhoods
-            photo.label:                   Photo
-            url.label:                     Photo url
             owner.label:                   Owner
             organization.label:            Organization
             created_by.label:              Created By
@@ -57,11 +55,11 @@ cb:
             name.label:                    Name
             owner.label:                   Owner
             organization.label:            Organization
-            # ORM relations
-            clients.label:               Clients
+            clients.label:                 Clients
             events.label:                  Events
             panel.label:                   Panel
-            url.label:                     Photo
+            url.label:                     Url
+            sketch.label:                     Sketch
             add:
                 label:                     Add Panel View
                 title:                     Add Panel View

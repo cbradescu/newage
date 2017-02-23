@@ -53,6 +53,15 @@
 
             {{ UI.renderProperty('cb.newage.panelview.name.label'|trans, entity.name) }}
 
+            {%- set scketchingData -%}
+                {%- if entity.sketch -%}
+                    <a href="{{ entity.sketch }}" target="_blank">
+                        {{ entity.sketch }}
+                    </a>
+                {%- endif -%}
+            {%- endset -%}
+            {{ UI.renderhtmlProperty('cb.newage.panelview.sketch.label'|trans, scketchingData) }}
+
             {%- set urlData -%}
                 {%- if entity.url -%}
                     <a href="{{ entity.url }}" target="_blank">

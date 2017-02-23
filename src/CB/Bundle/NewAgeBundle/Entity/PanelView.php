@@ -100,6 +100,20 @@ class PanelView
     /**
      * @var string
      *
+     * @ORM\Column(name="sketch", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $sketch;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="url", type="string", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
@@ -195,6 +209,21 @@ class PanelView
         $this->panel = $panel;
     }
 
+    /**
+     * @return string
+     */
+    public function getSketch()
+    {
+        return $this->sketch;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setSketch($sketch)
+    {
+        $this->sketch = $sketch;
+    }
 
     /**
      * @return string

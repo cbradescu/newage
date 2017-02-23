@@ -602,118 +602,6 @@ datagrids:
     offer-grid:
         extends: base-offer-grid
 
-    selected-panel_view-grid:
-        source:
-            type: orm
-            acl_resource: cb_newage_panel_view_view
-            query:
-                select:
-                    - pv.id
-                    - pv.name
-                    - pv.url as panelViewUrl
-                    - p.name as panel
-                    - p.dimensions
-                    - st.name as support
-                    - lt.name as lighting
-                    - ct.name as city
-                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
-                    - >
-                        MAX(CASE WHEN (ev.id IS NULL) THEN
-                            0
-                          ELSE
-                            ev.status
-                          END) as available
-                from:
-                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
-                join:
-                    left:
-                        -
-                            join: pv.panel
-                            alias: p
-                        -
-                            join: p.supportType
-                            alias: st
-                        -
-                            join: p.lightingType
-                            alias: lt
-                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
-                        -
-                            join: addr.city
-                            alias: ct
-                        -
-                            join: pv.offers
-                            alias: o
-                        -
-                            join: pv.events
-                            alias: ev
-                            conditionType: WITH
-                            condition: (ev.start >= o.start AND ev.start <= o.end) OR (ev.end >= o.start AND ev.end <= o.end) OR (ev.start >= o.start AND ev.end <= o.end) OR (ev.start <= o.start AND ev.end >= o.end)
-                where:
-                    and:
-                        - :offer MEMBER OF pv.offers
-            bind_parameters:
-                - offer
-
-        columns:
-            available:
-                label:        cb.newage.reservation.datagrid.status.label
-                type: twig
-                frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/available.html.twig
-            panelViewUrl:
-                label:        cb.newage.panelview.url.label
-                type: twig
-                frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
-            city:
-                label:        oro.address.city.label
-            address:
-                label:        cb.newage.panel.address.label
-            panel:
-                label:        cb.newage.panel.entity_label
-            support:
-                label:        cb.newage.supporttype.entity_label
-            dimensions:
-                label:        cb.newage.panel.dimensions.label
-            lighting:
-                label:        cb.newage.lightingtype.entity_label
-            name:
-                label:        cb.newage.panelview.name.label
-
-        sorters:
-            columns:
-                panel:
-                    data_name: p.name
-                name:
-                    data_name: pv.name
-            default:
-                panel: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-
-        properties:
-            id: ~
-
-        filters:
-            columns:
-
-        action_configuration:
-            delete: false
-        options:
-            export: true
-            mass_actions:
-                delete:
-                    enabled: false
-
-    select-panel_view-grid:
-        extends: selected-panel_view-grid
-        mass_actions:
-            reserve:
-                type: reserve
-                entity_name: %cb_newage_panel_view.entity.class%
-                data_identifier: pv.id
-                label: cb.newage.reservation.datagrid.action.reserve
-                icon: random
-
     offer-items-grid:
         source:
             type: orm
@@ -725,12 +613,14 @@ datagrids:
                     - i.end
                     - pv.id as panelViewId
                     - pv.name as panelView
-                    - pv.url
+                    - pv.url as url
+                    - pv.sketch as sketch
                     - p.name as panel
                     - p.dimensions
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
+                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
                 from:
                     - { table: %cb_newage.offer_item.entity.class%, alias: i }
                 join:
@@ -767,24 +657,31 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
+            city:
+                label:        oro.address.city.label
+            address:
+                label:        oro.address.entity_label
             panel:
                 label:        cb.newage.panel.entity_label
+            support:
+                label:        cb.newage.supporttype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
             panelView:
-                label:        cb.newage.panelview.name.label
+                label:        cb.newage.panelview.entity_label
+            sketch:
+                label:        cb.newage.panelview.sketch.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
             start:
                 label:         cb.newage.offer.start.label
                 frontend_type: date
             end:
                 label:         cb.newage.offer.end.label
                 frontend_type: date
-            support:
-                label:        cb.newage.supporttype.entity_label
-            lighting:
-                label:        cb.newage.lightingtype.entity_label
-            dimensions:
-                label:        cb.newage.panel.dimensions.label
-            city:
-                label:        oro.address.city.label
         sorters:
             columns:
                 city:
@@ -850,7 +747,7 @@ datagrids:
                 entity_name: %cb_newage.offer_item.entity.class%
                 data_identifier: i.id
                 label: cb.newage.offer.datagrid.action.reserve
-                icon: external-link
+                icon: check-square-o
 
     available-panel_view-grid:
         source:
@@ -859,8 +756,9 @@ datagrids:
             query:
                 select:
                     - pv.id
-                    - pv.name
+                    - pv.name as panelView
                     - pv.url
+                    - pv.sketch
                     - p.name as panel
                     - p.dimensions
                     - st.name as support
@@ -899,27 +797,35 @@ datagrids:
             city:
                 label:        oro.address.city.label
             address:
-                label:        cb.newage.panel.address.label
+                label:        oro.address.entity_label
             panel:
                 label:        cb.newage.panel.entity_label
-            name:
-                label:        cb.newage.panelview.name.label
             support:
                 label:        cb.newage.supporttype.entity_label
             dimensions:
                 label:        cb.newage.panel.dimensions.label
             lighting:
                 label:        cb.newage.lightingtype.entity_label
+            panelView:
+                label:        cb.newage.panelview.entity_label
+            sketch:
+                label:        cb.newage.panelview.sketch.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
 
         sorters:
             columns:
+                city:
+                    data_name: ct.name
                 panel:
                     data_name: p.name
-                name:
+                panelView:
                     data_name: pv.name
             default:
-                panel: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-                name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
         filters:
             columns:
@@ -965,14 +871,13 @@ datagrids:
             mass_actions:
                 delete:
                     enabled: false
-#            routerEnabled: false
         mass_actions:
             offer:
                 type: offer
                 entity_name: %cb_newage_panel_view.entity.class%
                 data_identifier: pv.id
                 label: cb.newage.offer.datagrid.action.offer
-                icon: expand-alt
+                icon: check
 
     reservation-items-grid:
         source:
@@ -984,12 +889,14 @@ datagrids:
                     - ri.start
                     - ri.end
                     - pv.name as panelView
-                    - pv.url
+                    - pv.url as url
+                    - pv.sketch as sketch
                     - p.name as panel
                     - p.dimensions
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
+                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
                 from:
                     - { table: %cb_newage.reservation-item.entity.class%, alias: ri }
                 join:
@@ -1022,24 +929,31 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
+            city:
+                label:        oro.address.city.label
+            address:
+                label:        oro.address.entity_label
             panel:
                 label:        cb.newage.panel.entity_label
+            support:
+                label:        cb.newage.supporttype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
             panelView:
-                label:        cb.newage.panelview.name.label
+                label:        cb.newage.panelview.entity_label
+            sketch:
+                label:        cb.newage.panelview.sketch.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
             start:
                 label:         cb.newage.offer.start.label
                 frontend_type: date
             end:
                 label:         cb.newage.offer.end.label
                 frontend_type: date
-            support:
-                label:        cb.newage.supporttype.entity_label
-            lighting:
-                label:        cb.newage.lightingtype.entity_label
-            dimensions:
-                label:        cb.newage.panel.dimensions.label
-            city:
-                label:        oro.address.city.label
         sorters:
             columns:
                 city:
@@ -1112,7 +1026,7 @@ datagrids:
                 entity_name: %cb_newage.reservation-item.entity.class%
                 data_identifier: ri.id
                 label: cb.newage.offer.datagrid.action.confirm
-                icon: check
+                icon: check-square
 
     confirmed-items-grid:
         source:
@@ -1124,12 +1038,15 @@ datagrids:
                     - ev.start
                     - ev.end
                     - pv.name as panelView
-                    - pv.url
+                    - pv.url as url
+                    - pv.sketch as sketch
+                    - p.url as panelUrl
                     - p.name as panel
                     - p.dimensions
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
+                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
                 from:
                     - { table: %cb_newage.reservation-item.entity.class%, alias: ri }
                 join:
@@ -1166,24 +1083,31 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
+            city:
+                label:        oro.address.city.label
+            address:
+                label:        oro.address.entity_label
             panel:
                 label:        cb.newage.panel.entity_label
+            support:
+                label:        cb.newage.supporttype.entity_label
+            dimensions:
+                label:        cb.newage.panel.dimensions.label
+            lighting:
+                label:        cb.newage.lightingtype.entity_label
             panelView:
-                label:        cb.newage.panelview.name.label
+                label:        cb.newage.panelview.entity_label
+            sketch:
+                label:        cb.newage.panelview.sketch.label
+                type: twig
+                frontend_type: html
+                template: CBNewAgeBundle:Datagrid:Property/url.html.twig
             start:
                 label:         cb.newage.offer.start.label
                 frontend_type: date
             end:
                 label:         cb.newage.offer.end.label
                 frontend_type: date
-            support:
-                label:        cb.newage.supporttype.entity_label
-            lighting:
-                label:        cb.newage.lightingtype.entity_label
-            dimensions:
-                label:        cb.newage.panel.dimensions.label
-            city:
-                label:        oro.address.city.label
         sorters:
             columns:
                 city:
@@ -1356,7 +1280,7 @@ datagrids:
                 - end
         columns:
             name:
-                label:  cb.newage.offer.name.label
+                label:  cb.newage.offer.entity_label
             title:
                 label:  cb.newage.client.entity_label
             start:

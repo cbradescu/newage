@@ -47,6 +47,14 @@ class PanelViewType extends AbstractType
                 ]
             )
             ->add(
+                'sketch',
+                'text',
+                [
+                    'label' => 'cb.newage.panelview.sketch.label',
+                    'required' => false
+                ]
+            )
+            ->add(
                 'url',
                 'text',
                 [
