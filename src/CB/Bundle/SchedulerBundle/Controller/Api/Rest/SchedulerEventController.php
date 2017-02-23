@@ -95,58 +95,11 @@ class SchedulerEventController extends RestController implements ClassResourceIn
      */
     public function cgetAction()
     {
-//        $extendFields = $this->getExtendFieldNames('CB\Bundle\SchedulerBundle\Entity\SchedulerEvent');
-//        $qb           = null;
-//        if ($this->getRequest()->get('start') && $this->getRequest()->get('end')) {
-//            $result = $this->get('cb_scheduler.scheduler_manager')->getSchedulerEvents(
-//                $this->get('oro_security.security_facade')->getOrganization()->getId(),
-//                $this->getUser()->getId(),
-//                $schedulerId,
-//                new \DateTime($this->getRequest()->get('start')),
-//                new \DateTime($this->getRequest()->get('end')),
-//                $subordinate,
-//                $extendFields
-//            );
-//        } elseif ($this->getRequest()->get('page') && $this->getRequest()->get('limit')) {
-//            $dateParamFilter  = new HttpDateTimeParameterFilter();
-//            $filterParameters = ['createdAt' => $dateParamFilter, 'updatedAt' => $dateParamFilter];
-//            $filterCriteria   = $this->getFilterCriteria(['createdAt', 'updatedAt'], $filterParameters);
-//
-//            /** @var SchedulerEventRepository $repo */
-//            $repo  = $this->getManager()->getRepository();
-//            $qb    = $repo->getUserEventListQueryBuilder($filterCriteria, $extendFields);
-//            $page  = (int)$this->getRequest()->get('page', 1);
-//            $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
-//            $qb
-//                ->andWhere('c.id = :schedulerId')
-//                ->setParameter('schedulerId', $schedulerId);
-//            $qb->setMaxResults($limit)
-//                ->setFirstResult($page > 0 ? ($page - 1) * $limit : 0);
-//
-//            $result = $this->get('oro_scheduler.scheduler_event_normalizer.user')->getSchedulerEvents(
-//                $schedulerId,
-//                $qb->getQuery()
-//            );
-//
-//            return $this->buildResponse($result, self::ACTION_LIST, ['result' => $result, 'query' => $qb]);
-//        } else {
-//            throw new BadRequestHttpException(
-//                'Time interval ("start" and "end") or paging ("page" and "limit") parameters should be specified.'
-//            );
-//        }
-//
-//        return new Response(json_encode($result), Codes::HTTP_OK);
-
         /** @var SchedulerEventRepository $repo */
         $repo  = $this->getManager()->getRepository();
         $qb = $repo->getEventListQueryBuilder();
-//        $page  = (int)$this->getRequest()->get('page', 1);
-//        $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
-//        $qb->setMaxResults($limit)
-//            ->setFirstResult($page > 0 ? ($page - 1) * $limit : 0);
 
         $panelViewId  = (int)$this->getRequest()->get('panelView', 0);
-
         if ($panelViewId > 0)
             $qb->andWhere('pv.id=:panelViewId')
                 ->setParameter('panelViewId', $panelViewId);
@@ -160,12 +113,13 @@ class SchedulerEventController extends RestController implements ClassResourceIn
                 $item['title'] = $row['clientName'];
 
                 // For correct display in Js Scheduler.
-                $startDate = clone $row['start'];
-                $startDate->modify("+1 day");
-                $item['start'] = $startDate->format('c');
+                $item['start'] = $row['start']->format('c');
+//                $startDate = clone $row['start'];
+//                $startDate->modify("+1 day");
+//                $item['start'] = $startDate->format('c');
 
                 $endDate = clone $row['end'];
-                $endDate->modify("+2 day");
+                $endDate->modify("+1 day");
                 $item['end'] = $endDate->format('c');
 
                 $item['resourceId'] = $row['panelViewId'];
@@ -192,11 +146,6 @@ class SchedulerEventController extends RestController implements ClassResourceIn
             }
 
             return $this->buildResponse($events, self::ACTION_LIST, ['result' => $result, 'query' => $qb]);
-
-//        $page  = (int)$this->getRequest()->get('page', 1);
-//        $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
-
-//        return $this->handleGetListRequest($page, $limit);
     }
 
     /**
