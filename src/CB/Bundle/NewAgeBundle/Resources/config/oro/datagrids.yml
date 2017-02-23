@@ -1040,7 +1040,6 @@ datagrids:
                     - pv.name as panelView
                     - pv.url as url
                     - pv.sketch as sketch
-                    - p.url as panelUrl
                     - p.name as panel
                     - p.dimensions
                     - st.name as support
