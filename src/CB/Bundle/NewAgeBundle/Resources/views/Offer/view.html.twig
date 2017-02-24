@@ -1,10 +1,36 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%entity.name%": entity.name|default('N/A') }}) %}
 
 {% block navButtons %}
+    <div class="btn-group">
+        {% set buttonsHtml %}
+            {% if entity.hasConfirmedItems %}
+                <a type="button" class="btn import-validation-btn icons-holder-text no-hash" href="{{ path('cb_datagrid_export_action', { 'gridName': 'confirmed-items-grid', 'offerId': entity.id}) }}">
+                    <i class="icon-download-alt hide-text">{{ 'cb.newage.offer.export.confirmed_items.label'|trans }}</i> {{ 'cb.newage.offer.export.confirmed_items.label'|trans }}
+                </a>
+            {% endif %}
+            {% if entity.reservationItems and entity.reservationItems|length > 0%}
+                <a type="button" class="btn import-validation-btn icons-holder-text no-hash" href="{{ path('cb_datagrid_export_action', { 'gridName': 'reservation-items-grid', 'offerId': entity.id}) }}">
+                    <i class="icon-download-alt hide-text">{{ 'cb.newage.offer.export.reservation_items.label'|trans }}</i> {{ 'cb.newage.offer.export.reservation_items.label'|trans }}
+                </a>
+            {% endif %}
+            {% if entity.offerItems and entity.offerItems|length > 0%}
+                <a type="button" class="btn import-validation-btn icons-holder-text no-hash" href="{{ path('cb_datagrid_export_action', { 'gridName': 'offer-items-grid', 'offerId': entity.id}) }}">
+                    <i class="icon-download-alt hide-text">{{ 'cb.newage.offer.export.offer_items.label'|trans }}</i> {{ 'cb.newage.offer.export.offer_items.label'|trans }}
+                </a>
+            {% endif %}
+        {% endset %}
+
+        {% set parameters = {
+        'html': buttonsHtml
+        } %}
+        {{ UI.pinnedDropdownButton(parameters) }}
+    </div>
+
     {% if resource_granted('EDIT', entity) %}
         {% if not entity.offerItems or entity.offerItems|length==0%}
             {{ UI.editButton({
@@ -74,7 +100,7 @@
     ] %}
 
     {% if entity.reservationItems and entity.reservationItems|length>0%}
-        {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+        {#{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}#}
 
         {% set gridName = 'confirmed-items-grid' %}
 
@@ -106,7 +132,7 @@
     {% endif %}
 
     {% if entity.reservationItems and entity.reservationItems|length>0%}
-        {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+        {#{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}#}
 
         {% set gridName = 'reservation-items-grid' %}
 
@@ -138,7 +164,7 @@
     {% endif %}
 
     {% if entity.offerItems and entity.offerItems|length>0 %}
-        {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+        {#{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}#}
 
         {% set gridName = 'offer-items-grid' %}
 

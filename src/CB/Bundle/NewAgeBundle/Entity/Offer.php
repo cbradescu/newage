@@ -8,6 +8,7 @@
 
 namespace CB\Bundle\NewAgeBundle\Entity;
 
+use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -214,7 +215,7 @@ class Offer
      * )
      */
     protected $updatedBy;
-    
+
     /**
      * @var \DateTime $createdAt
      *
@@ -552,7 +553,7 @@ class Offer
     {
         return $this->updatedBy;
     }
-    
+
     /**
      * Get contact last update date/time
      *
@@ -600,6 +601,24 @@ class Offer
     public function isGreaterThanStart($days)
     {
         $start = clone $this->start;
-        return $this->end >= $start->modify('+' . $days. ' days');
+        return $this->end >= $start->modify('+' . $days . ' days');
+    }
+
+    public function hasConfirmedItems()
+    {
+        /** @var ReservationItem $ri */
+        foreach ($this->getReservationItems() as $ri)
+        {
+            /** @var SchedulerEvent $event */
+            foreach ($ri->getEvents() as $event)
+            {
+                if ($event->getStatus() == SchedulerEvent::CONFIRMED)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

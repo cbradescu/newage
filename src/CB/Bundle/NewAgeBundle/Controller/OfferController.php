@@ -7,11 +7,15 @@
  */
 namespace CB\Bundle\NewAgeBundle\Controller;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
+use Oro\Bundle\ImportExportBundle\Formatter\FormatterProvider;
+use Akeneo\Bundle\BatchBundle\Item\ItemWriterInterface;
+
 use CB\Bundle\NewAgeBundle\Entity\Client;
 use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
-use CB\Bundle\NewAgeBundle\Entity\Repository\OfferRepository;
 use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
 use CB\Bundle\NewAgeBundle\Entity\Repository\ReservationItemRepository;
 
@@ -34,6 +38,8 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
  */
 class OfferController extends Controller
 {
+    const EXPORT_BATCH_SIZE = 200;
+
     /**
      * @Route("/index", name="cb_newage_offer_index")
      * @Template()
@@ -903,5 +909,63 @@ class OfferController extends Controller
             'panelView' => $panelView,
             'offerItem' => $offerItem
         ];
+    }
+
+    /**
+     * @Route(
+     *      "/{gridName}/export/{offerId}",
+     *      name="cb_datagrid_export_action",
+     *      requirements={
+     *          "gridName"="[\w\:-]+",
+     *          "offerId"="\d+"
+     *      }
+     * )
+     *
+     * @param string $gridName
+     * @param integer $offerId
+     *
+     * @return BinaryFileResponse
+     */
+    public function exportAction($gridName, $offerId)
+    {
+        // Export time execution depends on a size of data
+        ignore_user_abort(false);
+        set_time_limit(0);
+
+        $request     = $this->getRequest();
+        $format      = 'xlsx';
+        $csvWriterId = 'oro_importexport.writer.csv';
+        $xlsWriterId    = 'oro_importexport.writer.xlsx';
+
+
+        $gridParameters['originalRoute'] = 'cb_newage_offer_view';
+        $gridParameters['offer']=$offerId;
+        $gridParameters['pager']['_page']=1;
+        $gridParameters['pager']['_per_page']=25;
+        $gridParameters['parameters']['view']='__all__';
+        $gridParameters['appearance']['_type']='grid';
+        $gridParameters['sort_by']['city']='ASC';
+        $gridParameters['sort_by']['panel']='ASC';
+        $gridParameters['sort_by']['panelView']='ASC';
+        $gridParameters['sort_by']['start']='ASC';
+        $gridParameters['columns']='url1.city1.address1.panel1.support1.dimensions1.lighting1.panelView1.sketch1.start1.end1';
+
+        /** @var ItemWriterInterface $writer */
+        $writer = $this->has($xlsWriterId) ? $this->get($xlsWriterId) : $this->get($csvWriterId);
+
+        $response = $this->get('cb_datagrid.handler.export')->handle(
+            $this->get('oro_datagrid.importexport.export_connector'),
+            $this->get('oro_datagrid.importexport.processor.export'),
+            $writer,
+            [
+                'gridName'                     => $gridName,
+                'gridParameters'               => $gridParameters,
+                FormatterProvider::FORMAT_TYPE => $request->query->get('format_type', 'excel')
+            ],
+            self::EXPORT_BATCH_SIZE,
+            $format
+        );
+
+        return $response;
     }
 }

@@ -201,3 +201,10 @@ services:
             - '@doctrine'
             - '@oro_security.acl_helper'
             - '@translator'
+
+    cb_datagrid.handler.export:
+        class: CB\Bundle\NewAgeBundle\Datagrid\ExportHandler
+        arguments:
+            - '@oro_importexport.file.file_system_operator'
+        calls:
+            - [setLogger, ['@logger']]

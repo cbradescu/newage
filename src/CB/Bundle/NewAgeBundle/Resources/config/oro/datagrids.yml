@@ -740,7 +740,7 @@ datagrids:
                 delete:
                     enabled: false
             routerEnabled: false
-            export: true
+#            export: true
         mass_actions:
             reserve:
                 type: reserve
@@ -1019,7 +1019,7 @@ datagrids:
                 delete:
                     enabled: false
             routerEnabled: false
-            export: true
+#            export: true
         mass_actions:
             confirm:
                 type: confirm
@@ -1171,7 +1171,7 @@ datagrids:
                 delete:
                     enabled: false
             routerEnabled: false
-            export: true
+#            export: true
 
     old_offers-grid:
         source:
