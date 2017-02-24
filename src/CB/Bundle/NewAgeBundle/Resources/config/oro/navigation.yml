@@ -1,12 +1,18 @@
 navigation:
     menu_config:
         items:
-            customers_tab: ~
-            sales_tab: ~
-            activities_tab: ~
-            marketing_tab: ~
-            reports_tab: ~
-            system_tab: ~
+            customers_tab:
+                display: false
+            sales_tab:
+                display: false
+            activities_tab:
+                display: false
+            marketing_tab:
+                display: false
+            reports_tab:
+                display: false
+            system_tab:
+                display: false
 
             offer_tab:
                 label: 'cb.newage.offer.entity_plural_label'
