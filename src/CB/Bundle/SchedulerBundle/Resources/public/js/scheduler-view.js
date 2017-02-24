@@ -974,6 +974,9 @@ define(function(require) {
                 preferredLayout = 'scroll';
             }
             this.setLayout(preferredLayout);
+
+            // Pentru scroll la ziua curenta.
+            $('.fc-scroller').animate({scrollLeft: $('.fc-scroller').scrollLeft() + $('.fc-past').width() * new Date().getDate() - 1 });
         },
 
         /**
