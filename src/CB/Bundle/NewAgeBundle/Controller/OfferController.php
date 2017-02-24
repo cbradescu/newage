@@ -955,7 +955,7 @@ class OfferController extends Controller
 
         $response = $this->get('cb_datagrid.handler.export')->handle(
             $this->get('oro_datagrid.importexport.export_connector'),
-            $this->get('oro_datagrid.importexport.processor.export'),
+            $this->get('cb_datagrid.importexport.processor.export'),
             $writer,
             [
                 'gridName'                     => $gridName,

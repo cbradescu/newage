@@ -1,0 +1,18 @@
+parameters:
+    cb_datagrid.importexport.data_converter.class:             CB\Bundle\NewAgeBundle\Datagrid\DatagridDataConverter
+
+services:
+    cb_datagrid.importexport.processor.export:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+             - [setDataConverter, ['@cb_datagrid.importexport.data_converter']]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: datagrid, alias: oro_datagrid }
+
+    cb_datagrid.importexport.data_converter:
+        class: %cb_datagrid.importexport.data_converter.class%
+        arguments:
+            - '@oro_datagrid.datagrid.manager.link'
+            - '@translator'
+            - '@oro_datagrid.columns.helper'
+            - '@oro_importexport.formatter.formatter_provider'

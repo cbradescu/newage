@@ -15,7 +15,7 @@ use Oro\Bundle\BatchBundle\Step\StepExecutionWarningHandlerInterface;
 
 use Oro\Bundle\BatchBundle\Step\StepExecutor;
 use Oro\Bundle\DataGridBundle\Exception\InvalidArgumentException;
-use Oro\Bundle\ImportExportBundle\Processor\ExportProcessor;
+use oro\Bundle\ImportExportBundle\Processor\ExportProcessor;
 use Oro\Bundle\ImportExportBundle\Context\ContextAwareInterface;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 

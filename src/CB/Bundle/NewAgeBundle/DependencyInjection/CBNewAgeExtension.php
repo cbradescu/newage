@@ -26,5 +26,6 @@ class CBNewAgeExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form.yml');
         $loader->load('mass_actions.yml');
+        $loader->load('importexport.yml');
     }
 }
