@@ -62,6 +62,7 @@ class PanelViewType extends AbstractType
                     'required' => false
                 ]
             )
+            ->add('price', 'oro_money', ['required' => false]);
         ;
     }
 

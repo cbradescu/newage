@@ -126,6 +126,20 @@ class PanelView
     protected $url;
 
     /**
+     * @var double
+     *
+     * @ORM\Column(name="price", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $price;
+
+    /**
      * @var ArrayCollection|SchedulerEvent[]
      *
      * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="panelView", cascade={"persist"})
@@ -239,6 +253,26 @@ class PanelView
     public function setUrl($url)
     {
         $this->url = $url;
+    }
+
+    /**
+     * @param float $price
+     *
+     * @return $this
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrice()
+    {
+        return $this->price;
     }
 
     /**
