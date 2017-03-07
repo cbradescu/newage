@@ -890,24 +890,22 @@ class OfferController extends Controller
 
     /**
      * @Route(
-     *     "/{offerItemId}/{panelViewId}",
-     *     name="cb_newage_panel_view_reservations",
-     *     requirements={"offerItemId"="\d+","panelViewId"="\d+"}
+     *     "/{id}",
+     *     name="cb_newage_offer_reservations",
+     *     requirements={"id"="\d+"}
      * )
      * @Template
-     * @ParamConverter("offerItem", class="CBNewAgeBundle:OfferItem", options={"id"="offerItemId"})
-     * @ParamConverter("panelView", class="CBNewAgeBundle:PanelView", options={"id"="panelViewId"})
-     * @AclAncestor("cb_newage_panel_view_view")
-     * @param OfferItem $offerItem
-     * @param PanelView $panelView
+     * @AclAncestor("cb_newage_offer_view")
      *
      * @return array
      */
-    public function reservationsAction(OfferItem $offerItem, PanelView $panelView)
+    public function reservationsAction(OfferItem $offerItem)
     {
+        /** @var OfferRepository $offerRepository */
+        $offerRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer');
+
         return [
-            'panelView' => $panelView,
-            'offerItem' => $offerItem
+            'rows' => $offerRepository->getOfferItemOverlapsInfo($offerItem)
         ];
     }
 

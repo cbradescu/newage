@@ -1,0 +1,31 @@
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+
+            {% if rows|length>0 %}
+                <table class="grid table-hover table table-bordered table-condensed">
+                    <thead class="grid-header">
+                        <tr class="grid-header-row">
+                            <th>ID</th>
+                            <th>Offer</th>
+                            <th>Client</th>
+                            <th>Start</th>
+                            <th>End</th>
+                        </tr>
+                    </thead>
+                    {% for row in rows %}
+                        <tr>
+                            <td>{{ row.id }}</td>
+                            <td>{{ row.name }}</td>
+                            <td>{{ row.title }}</td>
+                            <td>{{ row.start|oro_format_date }}</td>
+                            <td>{{ row.end|oro_format_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <div class="no-data"><span>No records found<span></span></span></div>
+                {% endif %}
+        </div>
+    </div>
+</div>

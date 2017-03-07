@@ -621,6 +621,7 @@ datagrids:
                     - lt.name as lighting
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                    - SUM(CASE WHEN ev.status IS NULL THEN 0 ELSE CASE WHEN ev.status=0 THEN 1 ELSE 0 END END) as reservations
                 from:
                     - { table: %cb_newage.offer_item.entity.class%, alias: i }
                 join:
@@ -641,17 +642,41 @@ datagrids:
                         -
                             join: addr.city
                             alias: ct
+                        -
+                            join: pv.events
+                            alias: ev
+                            conditionType: WITH
+                            condition: ev.status = %cb_scheduler.scheduler_event.entity.class%::RESERVED AND ((ev.start >= i.start AND ev.start <= i.end) OR (ev.end >= i.start AND ev.end <= i.end) OR (ev.start >= i.start AND ev.end <= i.end) OR (ev.start <= i.start AND ev.end >= i.end))
                 where:
                     and:
                         - i.offer = :offer
             bind_parameters:
                 - offer
+        properties:
+            id: ~
+            reservations_link:
+                type:         url
+                route:        cb_newage_offer_reservations
+                params:       [ id ]
+        actions:
+            reservations_view:
+                type:         dialog
+                label:        cb.newage.offer.reservations.label
+                link:         reservations_link
+                icon:         map-marker
+                widgetOptions:
+                    options:
+                        dialogOptions:
+                            title: "Reservations"
+                widget:
+                    reload-grid-name: popup-reservations-grid
+                    options:
+                        dialogOptions:
+                            width: 750
+                rowAction:    true
         columns:
             reservations:
                 label:        cb.newage.offer.reservations.label
-                type: twig
-                frontend_type: html
-                template: CBNewAgeBundle:Datagrid:Property/reservationsUrl.html.twig
             url:
                 label:        cb.newage.panelview.url.label
                 type: twig
@@ -1241,62 +1266,3 @@ datagrids:
                 pageSize:
                     items: [10]
                     default_per_page: 10
-
-    # Pentru pop-ul in care arata rezervarile care mai exista pe o fata, intr-o perioada anume.
-    popup-reservations-grid:
-        source:
-            type: orm
-            acl_resource: cb_newage_offer_view
-            query:
-                select:
-                    - o.id
-                    - o.start
-                    - o.end
-                    - o.name
-                    - c.title
-                from:
-                    - { table: %cb_newage_offer.entity.class%, alias: o }
-                join:
-                    left:
-                        -
-                            join: o.client
-                            alias: c
-                        -
-                            join: o.reservationItems
-                            alias: ri
-                        -
-                            join: ri.events
-                            alias: ev
-                            conditionType: WITH
-                            condition: (ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)
-                where:
-                    and:
-                        - ri.panelView = :panelView
-                        - ev.status <> %cb_scheduler.scheduler_event.entity.class%::CONFIRMED
-            bind_parameters:
-                - panelView
-                - start
-                - end
-        columns:
-            name:
-                label:  cb.newage.offer.entity_label
-            title:
-                label:  cb.newage.client.entity_label
-            start:
-                label: cb.newage.offer.start.label
-                frontend_type: date
-            end:
-                label: cb.newage.offer.end.label
-                frontend_type: date
-        action_configuration:
-            delete: false
-        options:
-            entityHint: offer
-            toolbarOptions:
-                hide: true
-                pageSize:
-                    items: [10]
-                    default_per_page: 10
-            mass_actions:
-                delete:
-                    enabled: false
