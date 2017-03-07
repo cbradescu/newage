@@ -21,13 +21,13 @@ CB\Bundle\NewAgeBundle\Entity\Offer:
             - Length:
                 min:    3
                 max:    255
-        start:
-            - Date: ~
-            - GreaterThanOrEqual:
-                value: today
-                message: Start date should be greater or equal than current date
-        end:
-            - Date: ~
-            - Expression:
-                expression: "this.isGreaterThanStart(7)"
-                message: End date should be greater with 7 days than start date
+#        start:
+#            - Date: ~
+#            - GreaterThanOrEqual:
+#                value: today
+#                message: Start date should be greater or equal than current date
+#        end:
+#            - Date: ~
+#            - Expression:
+#                expression: "this.isGreaterThanStart(7)"
+#                message: End date should be greater with 7 days than start date

@@ -56,9 +56,9 @@
     } %}
     {{ parent() }}
 
-    <script type="text/javascript">
-        require(['cbnewage/js/offer-dates-interval'], function(OfferDatesInterval){
-            OfferDatesInterval.init();
-        });
-    </script>
+    {#<script type="text/javascript">#}
+        {#require(['cbnewage/js/offer-dates-interval'], function(OfferDatesInterval){#}
+            {#OfferDatesInterval.init();#}
+        {#});#}
+    {#</script>#}
 {% endblock content_data %}
