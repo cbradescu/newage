@@ -617,10 +617,12 @@ datagrids:
                     - pv.sketch as sketch
                     - p.name as panel
                     - p.dimensions
+                    - p.neighborhoods
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
                     - SUM(CASE WHEN ev.status IS NULL THEN 0 ELSE CASE WHEN ev.status=0 THEN 1 ELSE 0 END END) as reservations
                 from:
                     - { table: %cb_newage.offer_item.entity.class%, alias: i }
@@ -676,7 +678,13 @@ datagrids:
                 rowAction:    true
         columns:
             reservations:
-                label:        cb.newage.offer.reservations.label
+                label:        "R"
+            start:
+                label:         cb.newage.offer.start.label
+                frontend_type: date
+            end:
+                label:         cb.newage.offer.end.label
+                frontend_type: date
             url:
                 label:        cb.newage.panelview.url.label
                 type: twig
@@ -701,12 +709,10 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
-            start:
-                label:         cb.newage.offer.start.label
-                frontend_type: date
-            end:
-                label:         cb.newage.offer.end.label
-                frontend_type: date
+            neighborhoods:
+                label:        cb.newage.panel.neighborhoods.label
+            gps:
+                label:        cb.newage.panel.address.gps.label
         sorters:
             columns:
                 city:
@@ -918,10 +924,12 @@ datagrids:
                     - pv.sketch as sketch
                     - p.name as panel
                     - p.dimensions
+                    - p.neighborhoods
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
                 from:
                     - { table: %cb_newage.reservation-item.entity.class%, alias: ri }
                 join:
@@ -949,6 +957,12 @@ datagrids:
                 - offer
 
         columns:
+            start:
+                label:         cb.newage.offer.start.label
+                frontend_type: date
+            end:
+                label:         cb.newage.offer.end.label
+                frontend_type: date
             url:
                 label:        cb.newage.panelview.url.label
                 type: twig
@@ -973,12 +987,11 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
-            start:
-                label:         cb.newage.offer.start.label
-                frontend_type: date
-            end:
-                label:         cb.newage.offer.end.label
-                frontend_type: date
+            neighborhoods:
+                label:        cb.newage.panel.neighborhoods.label
+            gps:
+                label:        cb.newage.panel.address.gps.label
+
         sorters:
             columns:
                 city:
@@ -1067,10 +1080,12 @@ datagrids:
                     - pv.sketch as sketch
                     - p.name as panel
                     - p.dimensions
+                    - p.neighborhoods
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
                 from:
                     - { table: %cb_newage.reservation-item.entity.class%, alias: ri }
                 join:
@@ -1102,6 +1117,12 @@ datagrids:
                 - offer
 
         columns:
+            start:
+                label:         cb.newage.offer.start.label
+                frontend_type: date
+            end:
+                label:         cb.newage.offer.end.label
+                frontend_type: date
             url:
                 label:        cb.newage.panelview.url.label
                 type: twig
@@ -1126,12 +1147,11 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
-            start:
-                label:         cb.newage.offer.start.label
-                frontend_type: date
-            end:
-                label:         cb.newage.offer.end.label
-                frontend_type: date
+            neighborhoods:
+                label:        cb.newage.panel.neighborhoods.label
+            gps:
+                label:        cb.newage.panel.address.gps.label
+
         sorters:
             columns:
                 city:
