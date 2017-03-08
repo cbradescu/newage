@@ -627,9 +627,9 @@ class OfferController extends Controller
         $stmt->execute();
         $results = $stmt->fetchAll();
 
+        $affectedOffers = [];
         try {
             $entitiesCount = 0;
-            $affectedOffers = [];
 
             /** @var ReservationItem $reservationItem */
             foreach ($results as $row) {
@@ -668,7 +668,8 @@ class OfferController extends Controller
                              * Cautam rezervari in aceeasi perioda cu intervalul.
                              */
                             $aff = $this->processOverlapReservations($em, $offer, $panelView, $freeInterval['start'], $freeInterval['end']);
-                            $affectedOffers = array_merge($affectedOffers, $aff);
+//                            $affectedOffers = array_merge($affectedOffers, $aff);
+                            $affectedOffers[] = ['panel_view' => $panelView, 'offers' => $aff];
                         }
                     }
                 } else { // In caz contrar fata este libera pentru toata perioada ofertei
@@ -687,7 +688,8 @@ class OfferController extends Controller
                      * Cautam rezervari in aceeasi perioda cu intervalul.
                      */
                     $aff = $this->processOverlapReservations($em, $offer, $panelView, clone $reservationItem->getStart(),clone  $reservationItem->getEnd());
-                    $affectedOffers = array_merge($affectedOffers, $aff);
+//                    $affectedOffers = array_merge($affectedOffers, $aff);
+                    $affectedOffers[] = ['panel_view' => $panelView, 'offers' => $aff];
                 }
             }
 
@@ -701,23 +703,43 @@ class OfferController extends Controller
             );
         } catch (\Exception $e) {
             $em->rollback();
+            $affectedOffers = [];
             throw $e;
         }
 
         $em->flush();
         $em->commit();
 
-        $affectedOffers = array_unique($affectedOffers);
-        if (count($affectedOffers)>0) {
+        $results = [];
+        foreach ($affectedOffers as $item) {
+            $currentPanelView = $item['panel_view'];
+            $currentOffers = $item['offers'];
 
-            foreach ($affectedOffers as $aff) {
-                try {
-                    $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $aff);
-                } catch (\Exception $e) {
-                    throw $e;
-                }
+            foreach ($currentOffers as $currentOffer)
+                $results[$currentOffer->getId()][] = $currentPanelView;
+        }
+
+        foreach ($results as $affectedOfferId => $affectedPanelViews) {
+            $affectedOffer = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id' => $affectedOfferId]);
+
+            try {
+                $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $affectedOffer, $affectedPanelViews);
+            } catch (\Exception $e) {
+                throw $e;
             }
         }
+
+//        $affectedOffers = array_unique($affectedOffers);
+//        if (count($affectedOffers)>0) {
+//
+//            foreach ($affectedOffers as $aff) {
+//                try {
+//                    $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $aff);
+//                } catch (\Exception $e) {
+//                    throw $e;
+//                }
+//            }
+//        }
 
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
     }

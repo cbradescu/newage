@@ -7,4 +7,15 @@
         <a href="{{ url('cb_newage_offer_view', { 'id': confirmedOffer.id}) }}">{{ confirmedOffer.name }}</a>,
         initiata de {{ confirmedOffer.owner|oro_format_name }} pentru clientul {{ confirmedOffer.client.title|upper }}!
     </p>
+
+    <table>
+        {% for affectedPanelView in affectedPanelViews %}
+            <tr>
+                <td>{{ affectedPanelView.id }}</td>
+                <td>{{ affectedPanelView.panel.name }}</td>
+                <td>{{ affectedPanelView.name }}</td>
+            </tr>
+        {% endfor %}
+        <tr></tr>
+    </table>
 {% endblock %}

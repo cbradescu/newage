@@ -41,7 +41,7 @@ class Processor
      * @param Offer $confirmedOffer
      * @param Offer $affectedOffer
      */
-    public function sendReservationChangeEmail(Offer $confirmedOffer, Offer $affectedOffer)
+    public function sendReservationChangeEmail(Offer $confirmedOffer, Offer $affectedOffer, array $affectedPanelViews)
     {
         $senderEmail = $this->configManager->get('oro_notification.email_notification_sender_email');
         $senderName  = $this->configManager->get('oro_notification.email_notification_sender_name');
@@ -53,7 +53,7 @@ class Processor
             ->setBody(
                 $this->templating->render(
                     'CBNewAgeBundle:Mail:reservationChange.html.twig',
-                    ['confirmedOffer' => $confirmedOffer, 'affectedOffer' => $affectedOffer]
+                    ['confirmedOffer' => $confirmedOffer, 'affectedOffer' => $affectedOffer, 'affectedPanelViews' => $affectedPanelViews]
                 ),
                 'text/html'
             );
