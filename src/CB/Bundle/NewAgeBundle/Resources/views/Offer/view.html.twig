@@ -99,9 +99,7 @@
     }
     ] %}
 
-    {% if entity.reservationItems and entity.reservationItems|length>0%}
-        {#{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}#}
-
+    {% if entity.hasConfirmedItems %}
         {% set gridName = 'confirmed-items-grid' %}
 
         {% set params = {
@@ -132,8 +130,6 @@
     {% endif %}
 
     {% if entity.reservationItems and entity.reservationItems|length>0%}
-        {#{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}#}
-
         {% set gridName = 'reservation-items-grid' %}
 
         {% set params = {
@@ -164,8 +160,6 @@
     {% endif %}
 
     {% if entity.offerItems and entity.offerItems|length>0 %}
-        {#{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}#}
-
         {% set gridName = 'offer-items-grid' %}
 
         {% set params = {

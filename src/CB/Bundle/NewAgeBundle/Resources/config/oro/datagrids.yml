@@ -792,10 +792,12 @@ datagrids:
                     - pv.sketch
                     - p.name as panel
                     - p.dimensions
+                    - p.neighborhoods
                     - st.name as support
                     - lt.name as lighting
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
                 from:
                     - { table: %cb_newage_panel_view.entity.class%, alias: pv }
                 join:
@@ -844,6 +846,10 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
+            neighborhoods:
+                label:        cb.newage.panel.neighborhoods.label
+            gps:
+                label:        cb.newage.panel.address.gps.label
 
         sorters:
             columns:
