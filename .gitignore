@@ -8,6 +8,7 @@ app/bootstrap.php.cache
 atlassian-ide-plugin.xml
 composer.phar
 composer.lock
+behat.yml
 /vendor
 build/
 /cov
@@ -17,8 +18,11 @@ build/
 /web/uploads/users/*
 /web/media/cache
 /web/build.js
+/web/tracking.php
 /app/config/parameters.yml
 /app/config/parameters_test.yml
+behat.yml
 *~
+bin
 
 /app/SymfonyRequirements.php
