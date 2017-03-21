@@ -126,6 +126,20 @@ class PanelView
     protected $url;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="poster", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $poster;
+
+    /**
      * @var double
      *
      * @ORM\Column(name="price", type="money", nullable=true)
@@ -331,6 +345,22 @@ class PanelView
     public function getLighting()
     {
         return $this->panel->getLightingType()->getName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPoster()
+    {
+        return $this->poster;
+    }
+
+    /**
+     * @param string $poster
+     */
+    public function setPoster($poster)
+    {
+        $this->poster = $poster;
     }
 
     /**
