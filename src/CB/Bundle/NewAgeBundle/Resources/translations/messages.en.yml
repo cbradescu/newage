@@ -60,6 +60,7 @@ cb:
             panel.label:                   Panel
             url.label:                     Url
             sketch.label:                  Sketch
+            poster.label:                  Poster
             price.label:                   Price
             add:
                 label:                     Add Panel View

@@ -70,6 +70,7 @@
                 {%- endif -%}
             {%- endset -%}
             {{ UI.renderhtmlProperty('cb.newage.panelview.url.label'|trans, urlData) }}
+            {{ UI.renderhtmlProperty('cb.newage.panelview.poster.label'|trans, entity.poster) }}
             {{ UI.renderhtmlProperty('cb.newage.panelview.price.label'|trans, entity.price|oro_format_currency) }}
         </div>
         <div class="responsive-block">

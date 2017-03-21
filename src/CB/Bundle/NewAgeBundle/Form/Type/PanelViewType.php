@@ -62,6 +62,14 @@ class PanelViewType extends AbstractType
                     'required' => false
                 ]
             )
+            ->add(
+                'poster',
+                'text',
+                [
+                    'label' => 'cb.newage.panelview.poster.label',
+                    'required' => false
+                ]
+            )
             ->add('price', 'oro_money', ['required' => false]);
         ;
     }

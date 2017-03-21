@@ -133,6 +133,8 @@ datagrids:
                     - panelView.id
                     - panelView.name
                     - panel.name as panelName
+                    - panelView.poster
+                    - panelView.price
                 from:
                     - { table: %cb_newage_panel_view.entity.class%, alias: panelView }
                 join:
@@ -141,12 +143,24 @@ datagrids:
                             join: panelView.panel
                             alias: panel
         columns:
+            panelName:
+                label:        cb.newage.panel.entity_label
             name:
                 label:        cb.newage.panelview.name.label
+            poster:
+                label:        cb.newage.panelview.poster.label
+            price:
+                label:        cb.newage.panelview.price.label
+                type:             localized_number
+                method:           formatCurrency
+                context_resolver: Oro\Bundle\MagentoBundle\Grid\FormatterContextResolver::getResolverCurrencyClosure
+                align:            left
         sorters:
             columns:
                 name:
                     data_name: panelView.name
+                panelName:
+                    data_name: panel.name
         properties:
             id: ~
             view_link:
@@ -182,15 +196,6 @@ datagrids:
                 icon:         trash
                 link:         delete_link
 
-    panel_view-grid:
-        extends: base-panel_view-grid
-        columns:
-            panelName:
-                label:        cb.newage.panel.entity_label
-        sorters:
-            columns:
-                panelName:
-                    data_name: panel.name
         filters:
             columns:
                 panelName:
@@ -199,6 +204,14 @@ datagrids:
                     options:
                         field_options:
                             class: CBNewAgeBundle:Panel
+                poster:
+                    type: string
+                    data_name: panelView.poster
+                price:
+                    type:             currency
+                    data_name:        panelView.price
+                    options:
+                        data_type:    Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType::DATA_DECIMAL
 
     panel-panel_views-grid:
         extends: base-panel_view-grid
