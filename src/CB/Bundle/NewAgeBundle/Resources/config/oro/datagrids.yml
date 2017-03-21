@@ -213,6 +213,9 @@ datagrids:
                     options:
                         data_type:    Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType::DATA_DECIMAL
 
+    panel_view-grid:
+        extends: base-panel_view-grid
+
     panel-panel_views-grid:
         extends: base-panel_view-grid
         source:
