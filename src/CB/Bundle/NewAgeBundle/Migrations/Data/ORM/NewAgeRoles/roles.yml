@@ -1,0 +1,28 @@
+ROLE_SALES_REP:
+    label: Sales Representative
+    permissions:
+        entity|CB\Bundle\NewAgeBundle\Entity\City: [VIEW_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\Client: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|Oro\Bundle\DashboardBundle\Entity\Dashboard: [VIEW_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\LightingType: [VIEW_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\Offer: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\OfferItem: [CREATE_SYSTEM, VIEW_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\Panel: [VIEW_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\PanelView: [VIEW_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\ReservationItem: [CREATE_SYSTEM, VIEW_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\SchedulerBundle\Entity\SchedulerEvent: [VIEW_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\SupportType: [VIEW_SYSTEM]
+ROLE_AVAILABLE_MANAGER:
+    label: Available Manager
+    permissions:
+        entity|CB\Bundle\NewAgeBundle\Entity\City: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\Client: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|Oro\Bundle\DashboardBundle\Entity\Dashboard: [VIEW_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\LightingType: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\Offer: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\OfferItem: [CREATE_SYSTEM, VIEW_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\Panel: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\PanelView: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\ReservationItem: [CREATE_SYSTEM, VIEW_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\SchedulerBundle\Entity\SchedulerEvent: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\SupportType: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
