@@ -121,8 +121,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                1: Reserved
-                                2: Confirmed
+                                0: Reserved
+                                1: Confirmed
                 client:
                     type: entity
                     data_name: se.client

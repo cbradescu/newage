@@ -505,22 +505,6 @@ define(function(require) {
         },
 
         updateEventsWithoutReload: function() {
-            var oldOffer = this.offer;
-            var oldPanel = this.panel;
-            var oldPanelView = this.panelView;
-            var oldSupportType = this.supportType;
-            var oldLightingType = this.lightingType;
-            var oldCity = this.city;
-
-            var offer = this.filters.filter( function (obj) {
-                return obj.name == 'offer';
-            });
-            var panel = this.filters.filter( function (obj) {
-                return obj.name == 'panel';
-            });
-            var panelView = this.filters.filter( function (obj) {
-                return obj.name == 'panelView';
-            });
             var supportType = this.filters.filter( function (obj) {
                 return obj.name == 'supportType';
             });
@@ -530,21 +514,6 @@ define(function(require) {
             var city = this.filters.filter( function (obj) {
                 return obj.name == 'city';
             });
-
-            if (offer.length==1)
-                this.offer = offer[0].value;
-            else
-                this.offer = null;
-
-            if (panel.length==1)
-                this.panel = panel[0].value;
-            else
-                this.panel = null;
-
-            if (panelView.length==1)
-                this.panelView = panelView[0].value;
-            else
-                this.panelView = null;
 
             if (supportType.length==1)
                 this.supportType = supportType[0].value;
@@ -561,12 +530,7 @@ define(function(require) {
             else
                 this.city = null;
 
-            // if (this.offer || this.panel || this.panelView || this.supportType || this.lightingType || this.city) {
-            //     this.getCalendarElement().fullCalendar('refetchResources');
-            // } else if (oldOffer != this.offer || oldPanel != this.panel || oldPanelView != this.panelView || this.supportType != oldSupportType
-            // || this.lightingType != oldLightingType || this.city != oldCity) {
-                this.getCalendarElement().fullCalendar('refetchResources');
-            // }
+            this.getCalendarElement().fullCalendar('refetchResources');
 
             var oldEnableEventLoading = this.enableEventLoading;
             this.enableEventLoading = true;
@@ -663,8 +627,10 @@ define(function(require) {
         filterEvents: function(events) {
             _.each(this.filters, function (filter) {
                 events = _.filter(events, function(event) {
-                    // return event.get(filter.name)==filter.value;
-                    return $.inArray(event.get(filter.name),filter.value);
+                    if (filter.name=='status' || filter.name=='client')
+                        return event.get(filter.name)==filter.value;
+                    else
+                        return $.inArray(event.get(filter.name),filter.value);
                 })
             });
 

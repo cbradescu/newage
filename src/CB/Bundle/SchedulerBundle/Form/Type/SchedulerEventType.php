@@ -62,8 +62,8 @@ class SchedulerEventType extends AbstractType
                 array(
                     'label'       => 'cb.scheduler.scheduler_event.status.label',
                     'choices'     => [
-                        1 => 'Reserved',
-                        2 => 'Confirmed'
+                        0 => 'Reserved',
+                        1 => 'Confirmed'
                     ],
                     'expanded' => false,
                     'translatable_options' => false
