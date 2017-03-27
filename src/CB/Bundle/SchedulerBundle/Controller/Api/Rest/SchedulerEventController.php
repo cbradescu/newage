@@ -110,7 +110,7 @@ class SchedulerEventController extends RestController implements ClassResourceIn
             foreach ($result as $row)
             {
                 $item['id'] = $row['id'];
-                $item['title'] = $row['clientName'];
+                $item['title'] = $row['offerName'] . ' / ' . $row['clientName'];
 
                 // For correct display in Js Scheduler.
                 $item['start'] = $row['start']->format('c');
@@ -125,7 +125,7 @@ class SchedulerEventController extends RestController implements ClassResourceIn
                 $item['resourceId'] = $row['panelViewId'];
                 $item['resourceName'] = $row['panelName'] . ' ' . $row['panelViewName'];
                 $item['panelView'] = $row['panelViewId'];
-                $item['client'] = $row['clientId'];
+                $item['client'] = $row['clientId'] ;
                 $item['panel'] = $row['panelId'];
                 $item['supportType'] = $row['supportTypeId'];
                 $item['lightingType'] = $row['lightingTypeId'];
