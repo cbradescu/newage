@@ -19,7 +19,7 @@ ROLE_AVAILABLE_MANAGER:
         entity|CB\Bundle\NewAgeBundle\Entity\Client: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
         entity|Oro\Bundle\DashboardBundle\Entity\Dashboard: [VIEW_SYSTEM]
         entity|CB\Bundle\NewAgeBundle\Entity\LightingType: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
-        entity|CB\Bundle\NewAgeBundle\Entity\Offer: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM]
+        entity|CB\Bundle\NewAgeBundle\Entity\Offer: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
         entity|CB\Bundle\NewAgeBundle\Entity\OfferItem: [CREATE_SYSTEM, VIEW_SYSTEM, DELETE_SYSTEM]
         entity|CB\Bundle\NewAgeBundle\Entity\Panel: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
         entity|CB\Bundle\NewAgeBundle\Entity\PanelView: [CREATE_SYSTEM, VIEW_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
