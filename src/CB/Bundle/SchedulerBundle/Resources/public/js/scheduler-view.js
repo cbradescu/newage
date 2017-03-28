@@ -755,6 +755,7 @@ define(function(require) {
                 resources: _.bind(this.loadResources, this),
                 // select: _.bind(this.onFcSelect, this),
                 // eventClick: _.bind(this.onFcEventClick, this),
+                viewRender: _.bind(this.scrollToCurrentDay, this),
                 loading: _.bind(function(show) {
                     if (show) {
                         this.showLoadingMask();
@@ -940,9 +941,24 @@ define(function(require) {
                 preferredLayout = 'scroll';
             }
             this.setLayout(preferredLayout);
+        },
 
+        scrollToCurrentDay: function() {
             // Pentru scroll la ziua curenta.
-            $('.fc-scroller').animate({scrollLeft: $('.fc-scroller').scrollLeft() + $('.fc-past').width() * new Date().getDate() - 1 });
+            var calendarElement = this.getCalendarElement();
+            var currentView = calendarElement.fullCalendar('getView');
+
+            if (currentView.name === 'timelineMonth') {
+                $('.fc-scroller').animate({scrollLeft: $('.fc-scroller').scrollLeft() + $('.fc-past').width() * new Date().getDate()});
+            } else if (currentView.name === 'timelineYear') {
+                var now = new Date();
+                var start = new Date(now.getFullYear(), 0, 0);
+                var diff = now - start;
+                var oneDay = 1000 * 60 * 60 * 24;
+                var day = Math.floor(diff/oneDay);
+
+                $('.fc-scroller').animate({scrollLeft: $('.fc-scroller').scrollLeft() + $('.fc-past').width() * day});
+            }
         },
 
         /**
