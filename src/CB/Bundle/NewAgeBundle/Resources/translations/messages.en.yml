@@ -156,7 +156,7 @@ cb:
                 offer_items.removed:       Removed old panel views from current Offer
                 reservation_items.removed: Removed old panel views from current Reservation
             id.label:                      Id
-            name.label:                    Name
+            name.label:                    Campaign Name
             owner.label:                   Owner
             organization.label:            Organization
             start.label:                   Start

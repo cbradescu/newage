@@ -55,6 +55,7 @@
             {{ UI.renderProperty('cb.newage.panel_view.entity_label'|trans, entity.panelView.name) }}
             {{ UI.renderProperty('cb.newage.client.entity_label'|trans, entity.client.title) }}
             {{ UI.renderProperty('Reservation Item'|trans, entity.reservationItem ? entity.reservationItem.id : 'N/A') }}
+            {{ UI.renderProperty('cb.newage.offer.name.label'|trans, entity.reservationItem ? entity.reservationItem.offer.name : 'N/A') }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

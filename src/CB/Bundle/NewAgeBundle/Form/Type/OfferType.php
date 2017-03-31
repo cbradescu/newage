@@ -45,7 +45,7 @@ class OfferType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label'    => 'cb.newage.city.name.label'
+                    'label'    => 'cb.newage.offer.name.label'
                 ]
             )
             ->add(
