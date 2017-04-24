@@ -208,3 +208,11 @@ services:
             - '@oro_importexport.file.file_system_operator'
         calls:
             - [setLogger, ['@logger']]
+
+    cb_newage.repository.panel_view:
+        class: 'CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%cb_newage_panel_view.entity.class%'
+        calls:
+            - [ setRequestStack, [ '@request_stack' ] ]

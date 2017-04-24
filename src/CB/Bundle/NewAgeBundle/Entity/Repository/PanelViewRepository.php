@@ -2,13 +2,24 @@
 
 namespace CB\Bundle\NewAgeBundle\Entity\Repository;
 
+use CB\Bundle\NewAgeBundle\Entity\Offer;
+use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
-use CB\Bundle\SchedulerBundle\Form\Type\SchedulerEventType;
+
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class PanelViewRepository extends EntityRepository
 {
+    /** @var RequestStack $requestStack */
+    protected $requestStack;
+
+    public function setRequestStack(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
     /**
      * Returns a query builder which can be used to get list of panel views
      *
@@ -150,6 +161,90 @@ class PanelViewRepository extends EntityRepository
             ->andWhere('ev.status=' . SchedulerEvent::CONFIRMED)
             ->setParameter('start', $start)
             ->setParameter('end', $end);
+
+        return $qb;
+    }
+
+    /**
+     * @param Offer $offer
+     * @return array
+     */
+    public function getForbiddenPanelViewIds(Offer $offer)
+    {
+        $forbiddenPanelViewsIds = [];
+
+        $results = $this->getConfirmedPanelViews($offer->getStart(), $offer->getEnd())->getQuery()->getResult();
+
+        $confirmedPanelViews = [];
+        foreach ($results as $row) {
+
+            $confirmedPanelViews[$row['panelView']][] = [
+                'start' => $row['start'],
+                'end' => $row['end']
+            ];
+        }
+
+        foreach ($confirmedPanelViews as $panelViewId => $intervals) {
+            $panelView = $this->findOneBy(['id' => $panelViewId]);
+
+            /** @var PanelView $panelView */
+            $freeIntervals = $panelView->getFreeIntervals($intervals, $offer->getStart(), $offer->getEnd());
+
+            $forbidden = true;
+
+            if (count($freeIntervals) > 0) {
+                /** @var array $freeInterval */
+                foreach ($freeIntervals as $freeInterval) {
+                    /** @var \DateInterval $interval */
+                    $interval = $freeInterval['end']->diff($freeInterval['start']);
+                    if ($interval->format('%a') >= 7)
+                        $forbidden = false;
+                }
+            }
+
+            if ($forbidden)
+                $forbiddenPanelViewsIds[] = $panelView->getId();
+        }
+
+        return $forbiddenPanelViewsIds;
+    }
+
+    /**
+     * @param Offer $id
+     * @return QueryBuilder
+     */
+    public function getAvailablePanelViewsQueryBuilder()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $offer  = $request->get('offer');
+
+        $qb = $this->createQueryBuilder('pv')
+            ->select(
+                'pv.id',
+                'pv.name as panelView',
+                'pv.url',
+                'pv.sketch',
+                'p.name as panel',
+                'p.dimensions',
+                'p.neighborhoods',
+                'st.name as support',
+                'lt.name as lighting',
+                'c.name as city',
+                'CONCAT(addr.street,  CONCAT(\' \', addr.street2)) as address',
+                'CONCAT(addr.latitude,  CONCAT(\',\', addr.longitude)) as gps'
+            )
+            ->leftJoin('pv.panel', 'p')
+            ->leftJoin('p.supportType', 'st')
+            ->leftJoin('p.lightingType', 'lt')
+            ->leftJoin('p.addresses', 'addr')
+            ->leftJoin('addr.city', 'c');
+
+        if ($offer) {
+            $forbiddenPanelViewsIds = $this->getForbiddenPanelViewIds($offer);
+
+            if (count($forbiddenPanelViewsIds) > 0)
+                $qb->where($qb->expr()->notIn('pv.id', $forbiddenPanelViewsIds));
+        }
 
         return $qb;
     }

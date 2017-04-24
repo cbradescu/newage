@@ -799,43 +799,45 @@ datagrids:
     available-panel_view-grid:
         source:
             type: orm
+            entity: CBNewAgeBundle:PanelView # The name of your entity
+            repository_method: getAvailablePanelViewsQueryBuilder # The function name for query builder
             acl_resource: cb_newage_panel_view_view
-            query:
-                select:
-                    - pv.id
-                    - pv.name as panelView
-                    - pv.url
-                    - pv.sketch
-                    - p.name as panel
-                    - p.dimensions
-                    - p.neighborhoods
-                    - st.name as support
-                    - lt.name as lighting
-                    - ct.name as city
-                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
-                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
-                from:
-                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
-                join:
-                    left:
-                        -
-                            join: pv.panel
-                            alias: p
-                        -
-                            join: p.supportType
-                            alias: st
-                        -
-                            join: p.lightingType
-                            alias: lt
-                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
-                        -
-                            join: addr.city
-                            alias: ct
-                where:
-                    and:
-                        - pv.id NOT IN (:forbidden)
-            bind_parameters:
-                - forbidden
+#            query:
+#                select:
+#                    - pv.id
+#                    - pv.name as panelView
+#                    - pv.url
+#                    - pv.sketch
+#                    - p.name as panel
+#                    - p.dimensions
+#                    - p.neighborhoods
+#                    - st.name as support
+#                    - lt.name as lighting
+#                    - ct.name as city
+#                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+#                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
+#                from:
+#                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
+#                join:
+#                    left:
+#                        -
+#                            join: pv.panel
+#                            alias: p
+#                        -
+#                            join: p.supportType
+#                            alias: st
+#                        -
+#                            join: p.lightingType
+#                            alias: lt
+#                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
+#                        -
+#                            join: addr.city
+#                            alias: ct
+#                where:
+#                    and:
+#                        - pv.id NOT IN (:forbidden)
+#            bind_parameters:
+#                - forbidden
 
         columns:
             url:
@@ -867,18 +869,18 @@ datagrids:
             gps:
                 label:        cb.newage.panel.address.gps.label
 
-        sorters:
-            columns:
-                city:
-                    data_name: ct.name
-                panel:
-                    data_name: p.name
-                panelView:
-                    data_name: pv.name
-            default:
-                city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-                panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-                panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+#        sorters:
+#            columns:
+#                city:
+#                    data_name: ct.name
+#                panel:
+#                    data_name: p.name
+#                panelView:
+#                    data_name: pv.name
+#            default:
+#                city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+#                panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+#                panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
         filters:
             columns:

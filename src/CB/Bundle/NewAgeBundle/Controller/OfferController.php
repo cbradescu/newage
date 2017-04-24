@@ -102,12 +102,14 @@ class OfferController extends Controller
      * @Route("/select/{id}", name="cb_newage_offer_select", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("cb_newage_offer_select")
+     *
+     * @param Offer $offer
+     * @return array
      */
     public function selectAction(Offer $offer)
     {
         return [
-            'entity' => $offer,
-            'forbidden' => $this->getForbiddenPanelViews($offer) ?: 0
+            'entity' => $offer
         ];
     }
 
