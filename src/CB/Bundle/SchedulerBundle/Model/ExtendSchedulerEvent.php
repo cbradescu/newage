@@ -2,7 +2,9 @@
 
 namespace CB\Bundle\SchedulerBundle\Model;
 
-class ExtendSchedulerEvent
+use CB\Bundle\NewAgeBundle\Entity\Item;
+
+class ExtendSchedulerEvent extends Item
 {
     /**
      * Constructor

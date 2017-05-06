@@ -7,31 +7,30 @@
  */
 namespace CB\Bundle\NewAgeBundle\Controller;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 use Oro\Bundle\ImportExportBundle\Formatter\FormatterProvider;
 use Akeneo\Bundle\BatchBundle\Item\ItemWriterInterface;
 
-use CB\Bundle\NewAgeBundle\Entity\Client;
 use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\Repository\PanelViewRepository;
+use CB\Bundle\NewAgeBundle\Entity\Repository\OfferRepository;
 use CB\Bundle\NewAgeBundle\Entity\Repository\ReservationItemRepository;
 
 use CB\Bundle\NewAgeBundle\Entity\ReservationItem;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 
-use Doctrine\ORM\EntityManager;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use WebDriver\Exception;
 
 /**
  * @Route("/offer")
@@ -56,6 +55,10 @@ class OfferController extends Controller
      * @Route("/view/{id}", name="cb_newage_offer_view", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("cb_newage_offer_view")
+     *
+     * @param Offer $offer
+     *
+     * @return array
      */
     public function viewAction(Offer $offer)
     {
@@ -80,6 +83,8 @@ class OfferController extends Controller
      * @Route("/create", name="cb_newage_offer_create")
      * @AclAncestor("cb_newage_offer_create")
      * @Template("CBNewAgeBundle:Offer:update.html.twig")
+     *
+     * @return array
      */
     public function createAction()
     {
@@ -92,6 +97,10 @@ class OfferController extends Controller
      * @Route("/update/{id}", name="cb_newage_offer_update", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("cb_newage_offer_update")
+     *
+     * @param Offer $offer
+     *
+     * @return array
      */
     public function updateAction(Offer $offer)
     {
@@ -147,13 +156,16 @@ class OfferController extends Controller
      * @param string $actionName
      *
      * @return RedirectResponse
+     *
+     * @throws \Exception
      */
     public function offerMassActionAction($gridName, $actionName)
     {
         /** @var MassActionDispatcher $massActionDispatcher */
         $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
 
-        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+//        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->container->get('request_stack')->getCurrentRequest());
 
         $offer = $response->getOption('offer');
         $isAllSelected = $response->getOption('isAllSelected');
@@ -161,6 +173,7 @@ class OfferController extends Controller
         $filters = $response->getOption('filters');
 
         /** A trebuit sa folosesc native sql pentru ca $querybuilder intorcea doar o parte din inregistrari */
+        /** @var \Doctrine\DBAL\Connection $conn */
         $conn = $this->getDoctrine()->getManager()->getConnection();
         $query = '
               SELECT 
@@ -176,7 +189,21 @@ class OfferController extends Controller
         $hasWhere = false;
 
         if ($isAllSelected) {
-            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
+//            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
+            /** @var PanelViewRepository $panelViewRepository */
+            $panelViewRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView');
+            $forbiddenPanelViewIds = $panelViewRepository->getForbiddenPanelViewIds($offer->getStart(), $offer->getEnd());
+
+            $offeredPanelViewIds = [];
+            /** @var OfferItem $offerItem */
+            foreach ($offer->getOfferItems() as $offerItem)
+            {
+                $offeredPanelViewIds[] = $offerItem->getPanelView()->getId();
+            }
+
+            $combinedForbiddenPanelViewIds = array_merge($forbiddenPanelViewIds, $offeredPanelViewIds);
+            $forbiddenPanelViewIds = array_unique($combinedForbiddenPanelViewIds);
+
             if (count($forbiddenPanelViewIds) > 0) {
                 $query .= ' WHERE pv.id NOT IN (' . implode(",", $forbiddenPanelViewIds) . ')';
                 $hasWhere = true;
@@ -189,7 +216,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' a.city_id IN (' . implode(",",$filters['city']['value']) . ')';
+                $query .= ' a.city_id IN (' . implode(",", $filters['city']['value']) . ')';
             }
 
             if (isset($filters['support']['value'])) {
@@ -199,7 +226,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' p.support_type_id IN (' . implode(",",$filters['support']['value']) . ')';
+                $query .= ' p.support_type_id IN (' . implode(",", $filters['support']['value']) . ')';
             }
 
             if (isset($filters['lighting']['value'])) {
@@ -209,7 +236,7 @@ class OfferController extends Controller
                     $query .= ' WHERE';
                     $hasWhere = true;
                 }
-                $query .= ' p.lighting_type_id IN (' . implode(",",$filters['lighting']['value']) . ')';
+                $query .= ' p.lighting_type_id IN (' . implode(",", $filters['lighting']['value']) . ')';
             }
 
 
@@ -230,17 +257,20 @@ class OfferController extends Controller
 
             $query .= ' pv.id IN (' . $values . ')';
         }
+        /** @var \Doctrine\DBAL\Driver\Statement $stmt */
         $stmt = $conn->prepare($query);
         $stmt->execute();
         $results = $stmt->fetchAll();
 
-        $em = $this->getDoctrine()->getEntityManager();
+//        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->beginTransaction();
 
         try {
-            foreach ($offer->getOfferItems() as $item) {
-                $offer->removeOfferItem($item);
-            }
+            /* Adaugam la cele existente. */
+//            foreach ($offer->getOfferItems() as $item) {
+//                $offer->removeOfferItem($item);
+//            }
 
             $entitiesCount = 0;
             /** @var PanelView $panelView */
@@ -255,33 +285,36 @@ class OfferController extends Controller
                         $offer->getEnd()
                     );
 
+                    /** @var array $freeInterval */
                     foreach ($freeIntervals as $freeInterval) {
                         $interval = $freeInterval['end']->diff($freeInterval['start']);
+
+                        /** @var \DateInterval $interval */
                         if ($interval->format('%a') >= 7) {
-                            $item = new OfferItem();
+                            $offerItem = new OfferItem();
 
-                            $item->setOffer($offer);
-                            $item->setPanelView($panelView);
-                            $item->setStart($freeInterval['start']);
-                            $item->setEnd($freeInterval['end']);
-                            $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
-                            $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+                            $offerItem->setOffer($offer);
+                            $offerItem->setPanelView($panelView);
+                            $offerItem->setStart($freeInterval['start']);
+                            $offerItem->setEnd($freeInterval['end']);
+                            $offerItem->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+                            $offerItem->setOrganization($this->get('oro_security.security_facade')->getOrganization());
 
-                            $em->persist($item);
+                            $em->persist($offerItem);
                             $entitiesCount++;
                         }
                     }
                 } else { // In caz contrar fata este libera pentru toata perioada ofertei
-                    $item = new OfferItem();
+                    $offerItem = new OfferItem();
 
-                    $item->setOffer($offer);
-                    $item->setPanelView($panelView);
-                    $item->setStart($offer->getStart());
-                    $item->setEnd($offer->getEnd());
-                    $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
-                    $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+                    $offerItem->setOffer($offer);
+                    $offerItem->setPanelView($panelView);
+                    $offerItem->setStart($offer->getStart());
+                    $offerItem->setEnd($offer->getEnd());
+                    $offerItem->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+                    $offerItem->setOrganization($this->get('oro_security.security_facade')->getOrganization());
 
-                    $em->persist($item);
+                    $em->persist($offerItem);
                     $entitiesCount++;
                 }
             }
@@ -289,12 +322,12 @@ class OfferController extends Controller
             $em->flush();
             $em->commit();
 
-            $this->get('session')->getFlashBag()->add(
-                'warning',
-                $this->get('translator')->trans(
-                    'cb.newage.offer.message.offer_items.removed'
-                )
-            );
+//            $this->get('session')->getFlashBag()->add(
+//                'warning',
+//                $this->get('translator')->trans(
+//                    'cb.newage.offer.message.offer_items.removed'
+//                )
+//            );
 
             $this->get('session')->getFlashBag()->add(
                 'success',
@@ -321,188 +354,311 @@ class OfferController extends Controller
      * @param string $actionName
      *
      * @return RedirectResponse
+     *
+     * @throws \Exception
      */
     public function reserveMassActionAction($gridName, $actionName)
     {
         /** @var MassActionDispatcher $massActionDispatcher */
         $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
 
-        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+//        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->container->get('request_stack')->getCurrentRequest());
 
+        /** @var Offer $offer */
         $offer = $response->getOption('offer');
         $isAllSelected = $response->getOption('isAllSelected');
         $values = $response->getOption('values');
         $filters = $response->getOption('filters');
 
-        /** A trebuit sa folosesc native sql pentru ca $querybuilder intorcea doar o parte din inregistrari */
-        $conn = $this->getDoctrine()->getManager()->getConnection();
-        $query = '
-              SELECT 
-                  DISTINCT pv.id as id
-              FROM 
-                  cb_newage_offer_item oi
-              LEFT JOIN
-                  cb_newage_panel_view pv ON pv.id=oi.panel_view_id 
-              LEFT JOIN 
-                  cb_newage_panel p ON p.id=pv.panel_id
-              LEFT JOIN 
-                  cb_newage_panel_address a ON a.owner_id = p.id AND (a.is_primary = 1)
-        ';
-
-        $hasWhere = false;
-
-        if ($isAllSelected) {
-            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
-            if (count($forbiddenPanelViewIds) > 0) {
-                $query .= ' WHERE oi.id NOT IN (' . implode(",", $forbiddenPanelViewIds) . ')';
-                $hasWhere = true;
-            }
-
-            if (isset($filters['city']['value'])) {
-                if ($hasWhere) {
-                    $query .= ' AND';
-                } else {
-                    $query .= ' WHERE';
-                    $hasWhere = true;
-                }
-                $query .= ' a.city_id IN (' . implode(",",$filters['city']['value']) . ')';
-            }
-
-            if (isset($filters['support']['value'])) {
-                if ($hasWhere) {
-                    $query .= ' AND';
-                } else {
-                    $query .= ' WHERE';
-                    $hasWhere = true;
-                }
-                $query .= ' p.support_type_id IN (' . implode(",",$filters['support']['value']) . ')';
-            }
-
-            if (isset($filters['lighting']['value'])) {
-                if ($hasWhere) {
-                    $query .= ' AND';
-                } else {
-                    $query .= ' WHERE';
-                    $hasWhere = true;
-                }
-                $query .= ' p.lighting_type_id IN (' . implode(",",$filters['lighting']['value']) . ')';
-            }
-
-
-            if (isset($filters['dimensions']['value'])) {
-                if ($hasWhere) {
-                    $query .= ' AND';
-                } else {
-                    $query .= ' WHERE';
-                }
-                $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
-            }
-        } else {
-            if ($hasWhere) {
-                $query .= ' AND';
-            } else {
-                $query .= ' WHERE';
-            }
-
-            $query .= ' oi.id IN (' . $values . ')';
-            $hasWhere = true;
-        }
-
-        if ($hasWhere) {
-            $query .= ' AND';
-        } else {
-            $query .= ' WHERE';
-        }
-        $query .= ' oi.offer_id =' . $offer->getId();
-
-//        $logger = $this->get('logger');
-//        $logger->crit($query);
-
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
-        $results = $stmt->fetchAll();
-
-        $em = $this->getDoctrine()->getEntityManager();
+//        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $em->beginTransaction();
 
+        /** @var PanelViewRepository $panelViewRepository */
+        $panelViewRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView');
+
         try {
-            // delete old reservation items
-            foreach ($offer->getReservationItems() as $item) {
-                $offer->removeReservationItem($item);
-            }
-            $em->flush();
-
             $entitiesCount = 0;
-            /** @var PanelView $panelView */
-            foreach ($results as $row) {
-                $panelView = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView')->findOneBy(['id' => $row['id']]);
 
-                $confirmedEvents = $panelView->getConfirmedEvents($offer->getStart(), $offer->getEnd());
-                if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
-                    $freeIntervals = $panelView->getFreeIntervals(
-                        $confirmedEvents,
-                        $offer->getStart(),
-                        $offer->getEnd()
-                    );
+            /** @var OfferItem $offerItem */
+            foreach ($offer->getOfferItems() as $offerItem) {
+                $forbiddenPanelViewIds = $panelViewRepository->getForbiddenPanelViewIds($offerItem->getStart(), $offerItem->getEnd());
 
-                    foreach ($freeIntervals as $freeInterval) {
-                        $interval = $freeInterval['end']->diff($freeInterval['start']);
-                        if ($interval->format('%a') >= 7) {
-                            $item = new ReservationItem();
+                $panelView = $offerItem->getPanelView();
 
-                            $item->setOffer($offer);
-                            $item->setPanelView($panelView);
-                            $item->setStart($freeInterval['start']);
-                            $item->setEnd($freeInterval['end']);
-                            $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
-                            $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+                // Verificam daca fata se gaseste printre cele confirmate
+                if (in_array($panelView->getId(), $forbiddenPanelViewIds)) {
+                    continue;
+                }
 
-                            $item->addDefaultEvent();
-
-                            $em->persist($item);
-                            $entitiesCount++;
+                if ($isAllSelected) { // toate mai putin cele care nu satisfac filtrele
+                    if (isset($filters['city']['value'])) {
+                        if (!in_array($panelView->getPanel()->getAddresses()->first()->getCity()->getId(), $filters['city']['value'])) {
+                            continue;
                         }
                     }
-                } else { // In caz contrar fata este libera pentru toata perioada ofertei
-                    $item = new ReservationItem();
 
-                    $item->setOffer($offer);
-                    $item->setPanelView($panelView);
-                    $item->setStart($offer->getStart());
-                    $item->setEnd($offer->getEnd());
-                    $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
-                    $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+                    if (isset($filters['support']['value'])) {
+                        if (!in_array($panelView->getPanel()->getSupportType()->getId(), $filters['support']['value']))
+                            continue;
+                    }
 
-                    $item->addDefaultEvent();
+                    if (isset($filters['lighting']['value'])) {
+                        if (!in_array($panelView->getPanel()->getLightingType()->getId(), $filters['lighting']['value']))
+                            continue;
+                    }
 
-                    $em->persist($item);
-                    $entitiesCount++;
+                    if (isset($filters['dimensions']['value'])) {
+                        if (stripos($panelView->getPanel()->getDimensions(), $filters['dimensions']['value']) === false) {
+                            continue;
+                        }
+                    }
+                } else { // doar ce a fost selectat
+                    if (!in_array($offerItem->getId(), explode(',', $values))) { // daca NU se regaseste printre cele selectate
+                        continue;
+                    }
+                }
+
+                if (count($offerItem->getReservationItems()) == 0) { // daca nu are rezervari - nu a mai fost adaugat.
+                    $confirmedEvents = $panelView->getConfirmedEvents($offerItem->getStart(), $offerItem->getEnd());
+                    if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
+                        $freeIntervals = $panelView->getFreeIntervals(
+                            $confirmedEvents,
+                            $offer->getStart(),
+                            $offer->getEnd()
+                        );
+
+                        /** @var array $freeInterval */
+                        foreach ($freeIntervals as $freeInterval) {
+                            $interval = $freeInterval['end']->diff($freeInterval['start']);
+
+                            /** @var \DateInterval $interval */
+                            if ($interval->format('%a') >= 7) {
+                                $item = $this->createReservationItemObject($offerItem, $freeInterval['start'], $freeInterval['end']);
+
+                                $em->persist($item);
+                                $entitiesCount++;
+                            }
+                        }
+                    } else { // In caz contrar fata este libera pentru toata perioada ofertei
+                        $item = $this->createReservationItemObject($offerItem);
+                        $em->persist($item);
+                        $entitiesCount++;
+                    }
                 }
             }
 
-            $em->flush();
-            $em->commit();
+            if ($entitiesCount>0) {
+                $em->flush();
+                $em->commit();
 
-            $this->get('session')->getFlashBag()->add(
-                'warning',
-                $this->get('translator')->trans(
-                    'cb.newage.offer.message.reservation_items.removed'
-                )
-            );
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    $this->get('translator')->transChoice(
+                        'cb.newage.offer.message.items.added',
+                        $entitiesCount,
+                        ['%count%' => $entitiesCount]
+                    )
+                );
+            } else {
+                $this->get('session')->getFlashBag()->add(
+                    'warning',
+                    $this->get('translator')->transChoice(
+                        'No Panel Views where added.',
+                        $entitiesCount,
+                        ['%count%' => $entitiesCount]
+                    )
+                );
 
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                $this->get('translator')->transChoice(
-                    'cb.newage.offer.message.items.added',
-                    $entitiesCount,
-                    ['%count%' => $entitiesCount]
-                )
-            );
+                $em->rollback();
+            }
         } catch (\Exception $e) {
             $em->rollback();
             throw $e;
         }
 
+//        /** @var MassActionDispatcher $massActionDispatcher */
+//        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+//
+//        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+//
+//        $offer = $response->getOption('offer');
+//        $isAllSelected = $response->getOption('isAllSelected');
+//        $values = $response->getOption('values');
+//        $filters = $response->getOption('filters');
+//
+//        /** A trebuit sa folosesc native sql pentru ca $querybuilder intorcea doar o parte din inregistrari */
+//        $conn = $this->getDoctrine()->getManager()->getConnection();
+//        $query = '
+//              SELECT
+//                  DISTINCT pv.id as id
+//              FROM
+//                  cb_newage_offer_item oi
+//              LEFT JOIN
+//                  cb_newage_panel_view pv ON pv.id=oi.panel_view_id
+//              LEFT JOIN
+//                  cb_newage_panel p ON p.id=pv.panel_id
+//              LEFT JOIN
+//                  cb_newage_panel_address a ON a.owner_id = p.id AND (a.is_primary = 1)
+//        ';
+//
+//        $hasWhere = false;
+//
+//        if ($isAllSelected) {
+//            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
+//            if (count($forbiddenPanelViewIds) > 0) {
+//                $query .= ' WHERE oi.id NOT IN (' . implode(",", $forbiddenPanelViewIds) . ')';
+//                $hasWhere = true;
+//            }
+//
+//            if (isset($filters['city']['value'])) {
+//                if ($hasWhere) {
+//                    $query .= ' AND';
+//                } else {
+//                    $query .= ' WHERE';
+//                    $hasWhere = true;
+//                }
+//                $query .= ' a.city_id IN (' . implode(",", $filters['city']['value']) . ')';
+//            }
+//
+//            if (isset($filters['support']['value'])) {
+//                if ($hasWhere) {
+//                    $query .= ' AND';
+//                } else {
+//                    $query .= ' WHERE';
+//                    $hasWhere = true;
+//                }
+//                $query .= ' p.support_type_id IN (' . implode(",", $filters['support']['value']) . ')';
+//            }
+//
+//            if (isset($filters['lighting']['value'])) {
+//                if ($hasWhere) {
+//                    $query .= ' AND';
+//                } else {
+//                    $query .= ' WHERE';
+//                    $hasWhere = true;
+//                }
+//                $query .= ' p.lighting_type_id IN (' . implode(",", $filters['lighting']['value']) . ')';
+//            }
+//
+//
+//            if (isset($filters['dimensions']['value'])) {
+//                if ($hasWhere) {
+//                    $query .= ' AND';
+//                } else {
+//                    $query .= ' WHERE';
+//                }
+//                $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
+//            }
+//        } else {
+//            if ($hasWhere) {
+//                $query .= ' AND';
+//            } else {
+//                $query .= ' WHERE';
+//            }
+//
+//            $query .= ' oi.id IN (' . $values . ')';
+//            $hasWhere = true;
+//        }
+//
+//        if ($hasWhere) {
+//            $query .= ' AND';
+//        } else {
+//            $query .= ' WHERE';
+//        }
+//        $query .= ' oi.offer_id =' . $offer->getId();
+//
+////        $logger = $this->get('logger');
+////        $logger->crit($query);
+//
+//        $stmt = $conn->prepare($query);
+//        $stmt->execute();
+//        $results = $stmt->fetchAll();
+//
+//        $em = $this->getDoctrine()->getEntityManager();
+//        $em->beginTransaction();
+//
+//        try {
+////            // delete old reservation items
+////            foreach ($offer->getReservationItems() as $item) {
+////                $offer->removeReservationItem($item);
+////            }
+////            $em->flush();
+//
+//            $entitiesCount = 0;
+//            /** @var PanelView $panelView */
+//            foreach ($results as $row) {
+//                $panelView = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView')->findOneBy(['id' => $row['id']]);
+//
+//                $confirmedEvents = $panelView->getConfirmedEvents($offer->getStart(), $offer->getEnd());
+//                if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
+//                    $freeIntervals = $panelView->getFreeIntervals(
+//                        $confirmedEvents,
+//                        $offer->getStart(),
+//                        $offer->getEnd()
+//                    );
+//
+//                    foreach ($freeIntervals as $freeInterval) {
+//                        $interval = $freeInterval['end']->diff($freeInterval['start']);
+//                        if ($interval->format('%a') >= 7) {
+////                            $item = new ReservationItem();
+////
+////                            $item->setOffer($offer);
+////                            $item->setPanelView($panelView);
+////                            $item->setStart($freeInterval['start']);
+////                            $item->setEnd($freeInterval['end']);
+////                            $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+////                            $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+////
+////                            $item->addDefaultEvent();
+//
+//                            $item = $this->createReservationItemObject($offer, $panelView, $freeInterval['start'], $freeInterval['end']);
+//                            $em->persist($item);
+//                            $entitiesCount++;
+//                        }
+//                    }
+//                } else { // In caz contrar fata este libera pentru toata perioada ofertei
+////                    $item = new ReservationItem();
+////
+////                    $item->setOffer($offer);
+////                    $item->setPanelView($panelView);
+////                    $item->setStart($offer->getStart());
+////                    $item->setEnd($offer->getEnd());
+////                    $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+////                    $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+////
+////                    $item->addDefaultEvent();
+//
+//                    $item = $this->createReservationItemObject($offer, $panelView);
+//                    $em->persist($item);
+//                    $entitiesCount++;
+//                }
+//            }
+//
+//            $em->flush();
+//            $em->commit();
+//
+//            $this->get('session')->getFlashBag()->add(
+//                'warning',
+//                $this->get('translator')->trans(
+//                    'cb.newage.offer.message.reservation_items.removed'
+//                )
+//            );
+//
+//            $this->get('session')->getFlashBag()->add(
+//                'success',
+//                $this->get('translator')->transChoice(
+//                    'cb.newage.offer.message.items.added',
+//                    $entitiesCount,
+//                    ['%count%' => $entitiesCount]
+//                )
+//            );
+//        } catch (\Exception $e) {
+//            $em->rollback();
+//            throw $e;
+//        }
+//
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
     }
 
@@ -515,13 +671,15 @@ class OfferController extends Controller
      * @param string $actionName
      *
      * @return RedirectResponse
+     * @throws \Exception
      */
     public function confirmMassActionAction($gridName, $actionName)
     {
         /** @var MassActionDispatcher $massActionDispatcher */
         $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
 
-        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+//        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->container->get('request_stack')->getCurrentRequest());
 
         /** @var Offer $offer */
         $offer = $response->getOption('offer');
@@ -529,286 +687,435 @@ class OfferController extends Controller
         $values = $response->getOption('values');
         $filters = $response->getOption('filters');
 
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
+//        $em = $this->getDoctrine()->getEntityManager();
         $em->beginTransaction();
 
-        /**
-         * Removing all events attached to current offer reservation items.
-         */
-        foreach ($offer->getReservationItems() as $ri) {
-            /** @var ReservationItem $ri */
-            foreach ($ri->getEvents() as $event)
-                $ri->removeEvent($event);
-        }
-
-        $em->flush();
-
-
-        /** A trebuit sa folosesc native sql pentru ca $querybuilder intorcea doar o parte din inregistrari */
-        $conn = $this->getDoctrine()->getManager()->getConnection();
-        $query = '
-              SELECT 
-                  DISTINCT ri.id as id
-              FROM 
-                  cb_newage_reservation_item ri
-              LEFT JOIN
-                  cb_newage_panel_view pv ON pv.id=ri.panel_view_id 
-              LEFT JOIN 
-                  cb_newage_panel p ON p.id=pv.panel_id
-              LEFT JOIN 
-                  cb_newage_panel_address a ON a.owner_id = p.id AND (a.is_primary = 1)
-        ';
-
-        $hasWhere = false;
-
-        if ($isAllSelected) {
-            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
-            if (count($forbiddenPanelViewIds) > 0) {
-                $query .= ' WHERE ri.id NOT IN (' . implode(",", $forbiddenPanelViewIds) . ')';
-                $hasWhere = true;
-            }
-
-            if (isset($filters['city']['value'])) {
-                if ($hasWhere) {
-                    $query .= ' AND';
-                } else {
-                    $query .= ' WHERE';
-                    $hasWhere = true;
-                }
-                $query .= ' a.city_id IN (' . implode(",",$filters['city']['value']) . ')';
-            }
-
-            if (isset($filters['support']['value'])) {
-                if ($hasWhere) {
-                    $query .= ' AND';
-                } else {
-                    $query .= ' WHERE';
-                    $hasWhere = true;
-                }
-                $query .= ' p.support_type_id IN (' . implode(",",$filters['support']['value']) . ')';
-            }
-
-            if (isset($filters['lighting']['value'])) {
-                if ($hasWhere) {
-                    $query .= ' AND';
-                } else {
-                    $query .= ' WHERE';
-                    $hasWhere = true;
-                }
-                $query .= ' p.lighting_type_id IN (' . implode(",",$filters['lighting']['value']) . ')';
-            }
-
-            if (isset($filters['dimensions']['value'])) {
-                if ($hasWhere) {
-                    $query .= ' AND';
-                } else {
-                    $query .= ' WHERE';
-                    $hasWhere = true;
-                }
-                $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
-            }
-        } else {
-            if ($hasWhere) {
-                $query .= ' AND';
-            } else {
-                $query .= ' WHERE';
-            }
-
-            $query .= ' ri.id IN (' . $values . ')';
-            $hasWhere = true;
-        }
-
-        if ($hasWhere) {
-            $query .= ' AND';
-        } else {
-            $query .= ' WHERE';
-        }
-        $query .= ' ri.offer_id = ' . $offer->getId();
-
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
-        $results = $stmt->fetchAll();
+        /** @var PanelViewRepository $panelViewRepository */
+        $panelViewRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView');
 
         $affectedOffers = [];
         try {
             $entitiesCount = 0;
 
-            /** @var ReservationItem $reservationItem */
-            foreach ($results as $row) {
-                $reservationItem = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem')->findOneBy(['id' => $row['id']]);
+            /** @var OfferItem $offerItem */
+            foreach ($offer->getOfferItems() as $offerItem) {
+                $panelView = $offerItem->getPanelView();
 
-                /** @var PanelView $panelView */
-                $panelView = $reservationItem->getPanelView();
+                /** @var ReservationItem $reservationItem */
+                foreach ($offerItem->getReservationItems() as $reservationItem) {
+                    $forbiddenPanelViewIds = $panelViewRepository->getForbiddenPanelViewIds($reservationItem->getStart(), $reservationItem->getEnd());
 
-                $confirmedEvents = $panelView->getConfirmedEvents($reservationItem->getStart(), $reservationItem->getEnd());
+                    // Verificam daca fata se gaseste printre cele confirmate
+                    if (in_array($panelView->getId(), $forbiddenPanelViewIds)) {
+                        continue;
+                    }
 
-                if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
-                    $freeIntervals = $panelView->getFreeIntervals(
-                        $confirmedEvents,
-                        $reservationItem->getStart(),
-                        $reservationItem->getEnd()
-                    );
+                    if ($isAllSelected) { // toate mai putin cele care nu satisfac filtrele
+                        if (isset($filters['city']['value'])) {
+                            if (!in_array($panelView->getPanel()->getAddresses()->first()->getCity()->getId(), $filters['city']['value'])) {
+                                continue;
+                            }
+                        }
 
-                    /** @var array $freeInterval */
-                    foreach ($freeIntervals as $freeInterval) {
-                        /** @var \DateInterval $interval */
-                        $interval = $freeInterval['end']->diff($freeInterval['start']);
-                        if ($interval->format('%a') >= 7) {
+                        if (isset($filters['support']['value'])) {
+                            if (!in_array($panelView->getPanel()->getSupportType()->getId(), $filters['support']['value']))
+                                continue;
+                        }
 
-                            $event = $this->newEvent($reservationItem,
-                                $reservationItem->getOffer()->getClient(),
-                                $panelView,
-                                $freeInterval['start'],
-                                $freeInterval['end']
-                            );
-                            $reservationItem->addEvent($event);
+                        if (isset($filters['lighting']['value'])) {
+                            if (!in_array($panelView->getPanel()->getLightingType()->getId(), $filters['lighting']['value']))
+                                continue;
+                        }
 
-                            $em->persist($event);
-                            $entitiesCount++;
+                        if (isset($filters['dimensions']['value'])) {
+                            if (stripos($panelView->getPanel()->getDimensions(), $filters['dimensions']['value']) === false) {
+                                continue;
+                            }
+                        }
+                    } else { // doar ce a fost selectat
 
-                            /**
-                             * Cautam rezervari in aceeasi perioda cu intervalul.
-                             */
-                            $aff = $this->processOverlapReservations($em, $offer, $panelView, $freeInterval['start'], $freeInterval['end']);
-//                            $affectedOffers = array_merge($affectedOffers, $aff);
-                            $affectedOffers[] = ['panel_view' => $panelView, 'offers' => $aff];
+                        if (!in_array($reservationItem->getId(), explode(',', $values))) { // daca NU se regaseste printre cele selectate
+                            continue;
                         }
                     }
-                } else { // In caz contrar fata este libera pentru toata perioada ofertei
-                    $event = $this->newEvent($reservationItem,
-                        $reservationItem->getOffer()->getClient(),
-                        $panelView,
-                        $reservationItem->getStart(),
-                        $reservationItem->getEnd()
-                    );
-                    $reservationItem->addEvent($event);
 
-                    $em->persist($event);
-                    $entitiesCount++;
+                    if (count($reservationItem->getEvents()) > 0) { // daca are evenimente le stergem pentru a adauga altele noi
+                        $reservationItem->removeAllEvents();
+                    }
 
-                    /**
-                     * Cautam rezervari in aceeasi perioda cu intervalul.
-                     */
-                    $aff = $this->processOverlapReservations($em, $offer, $panelView, clone $reservationItem->getStart(),clone  $reservationItem->getEnd());
-//                    $affectedOffers = array_merge($affectedOffers, $aff);
-                    $affectedOffers[] = ['panel_view' => $panelView, 'offers' => $aff];
+                    $confirmedEvents = $panelView->getConfirmedEvents($reservationItem->getStart(), $reservationItem->getEnd());
+                    if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
+                        $freeIntervals = $panelView->getFreeIntervals(
+                            $confirmedEvents,
+                            $reservationItem->getStart(),
+                            $reservationItem->getEnd()
+                        );
+
+                        /** @var array $freeInterval */
+                        foreach ($freeIntervals as $freeInterval) {
+                            /** @var \DateInterval $interval */
+                            $interval = $freeInterval['end']->diff($freeInterval['start']);
+                            if ($interval->format('%a') >= 7) {
+                                $event = $this->newEvent($reservationItem,
+                                    $freeInterval['start'],
+                                    $freeInterval['end']
+                                );
+                                $reservationItem->addEvent($event);
+
+                                $em->persist($event);
+                                $entitiesCount++;
+
+                                /**
+                                 * Cautam rezervari in aceeasi perioda cu intervalul.
+                                 */
+                                $aff = $this->processOverlapReservations($em, $reservationItem, $panelView, $freeInterval['start'], $freeInterval['end']);
+                                $affectedOffers[] = ['panel_view' => $panelView, 'offers' => $aff];
+                            }
+                        }
+                    } else { // In caz contrar fata este libera pentru toata perioada ofertei
+                        $event = $this->newEvent($reservationItem,
+                            $reservationItem->getStart(),
+                            $reservationItem->getEnd()
+                        );
+                        $reservationItem->addEvent($event);
+
+                        $em->persist($event);
+                        $entitiesCount++;
+
+                        /**
+                         * Cautam rezervari in aceeasi perioda cu intervalul.
+                         */
+                        $aff = $this->processOverlapReservations($em, $reservationItem, $panelView, clone $reservationItem->getStart(), clone  $reservationItem->getEnd());
+                        $affectedOffers[] = ['panel_view' => $panelView, 'offers' => $aff];
+                    }
                 }
             }
+//            }
 
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                $this->get('translator')->transChoice(
-                    'cb.newage.offer.message.items.confirmed',
-                    $entitiesCount,
-                    ['%count%' => $entitiesCount]
-                )
-            );
+            if ($entitiesCount>0) {
+                $em->flush();
+                $em->commit();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    $this->get('translator')->transChoice(
+                        'cb.newage.offer.message.items.added',
+                        $entitiesCount,
+                        ['%count%' => $entitiesCount]
+                    )
+                );
+
+                $results = [];
+                foreach ($affectedOffers as $item) {
+                    $currentPanelView = $item['panel_view'];
+                    $currentOffers = $item['offers'];
+
+                    /** @var Offer $currentOffer */
+                    foreach ($currentOffers as $currentOffer)
+                        $results[$currentOffer->getId()][] = $currentPanelView;
+                }
+
+                foreach ($results as $affectedOfferId => $affectedPanelViews) {
+                    $affectedOffer = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id' => $affectedOfferId]);
+
+                    try {
+                        $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $affectedOffer, $affectedPanelViews);
+                    } catch (\Exception $e) {
+                        throw $e;
+                    }
+                }
+            } else {
+                $this->get('session')->getFlashBag()->add(
+                    'warning',
+                    $this->get('translator')->transChoice(
+                        'No Panel Views where added.',
+                        $entitiesCount,
+                        ['%count%' => $entitiesCount]
+                    )
+                );
+
+                $em->rollback();
+            }
         } catch (\Exception $e) {
             $em->rollback();
-            $affectedOffers = [];
             throw $e;
         }
 
-        $em->flush();
-        $em->commit();
-
-        $results = [];
-        foreach ($affectedOffers as $item) {
-            $currentPanelView = $item['panel_view'];
-            $currentOffers = $item['offers'];
-
-            foreach ($currentOffers as $currentOffer)
-                $results[$currentOffer->getId()][] = $currentPanelView;
-        }
-
-        foreach ($results as $affectedOfferId => $affectedPanelViews) {
-            $affectedOffer = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id' => $affectedOfferId]);
-
-            try {
-                $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $affectedOffer, $affectedPanelViews);
-            } catch (\Exception $e) {
-                throw $e;
-            }
-        }
-
-//        $affectedOffers = array_unique($affectedOffers);
-//        if (count($affectedOffers)>0) {
+//        /**
+//         * Removing all events attached to current offer reservation items.
+//         */
+//        foreach ($offer->getReservationItems() as $ri) {
+//            /** @var ReservationItem $ri */
+//            foreach ($ri->getEvents() as $event)
+//                $ri->removeEvent($event);
+//        }
 //
-//            foreach ($affectedOffers as $aff) {
-//                try {
-//                    $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $aff);
-//                } catch (\Exception $e) {
-//                    throw $e;
+//        $em->flush();
+//
+//
+//        /** A trebuit sa folosesc native sql pentru ca $querybuilder intorcea doar o parte din inregistrari */
+//        $conn = $this->getDoctrine()->getManager()->getConnection();
+//        $query = '
+//              SELECT
+//                  DISTINCT ri.id as id
+//              FROM
+//                  cb_newage_reservation_item ri
+//              LEFT JOIN
+//                  cb_newage_panel_view pv ON pv.id=ri.panel_view_id
+//              LEFT JOIN
+//                  cb_newage_panel p ON p.id=pv.panel_id
+//              LEFT JOIN
+//                  cb_newage_panel_address a ON a.owner_id = p.id AND (a.is_primary = 1)
+//        ';
+//
+//        $hasWhere = false;
+//
+//        if ($isAllSelected) {
+//            $forbiddenPanelViewIds = $this->getForbiddenPanelViews($offer);
+//            if (count($forbiddenPanelViewIds) > 0) {
+//                $query .= ' WHERE ri.id NOT IN (' . implode(",", $forbiddenPanelViewIds) . ')';
+//                $hasWhere = true;
+//            }
+//
+//            if (isset($filters['city']['value'])) {
+//                if ($hasWhere) {
+//                    $query .= ' AND';
+//                } else {
+//                    $query .= ' WHERE';
+//                    $hasWhere = true;
+//                }
+//                $query .= ' a.city_id IN (' . implode(",", $filters['city']['value']) . ')';
+//            }
+//
+//            if (isset($filters['support']['value'])) {
+//                if ($hasWhere) {
+//                    $query .= ' AND';
+//                } else {
+//                    $query .= ' WHERE';
+//                    $hasWhere = true;
+//                }
+//                $query .= ' p.support_type_id IN (' . implode(",", $filters['support']['value']) . ')';
+//            }
+//
+//            if (isset($filters['lighting']['value'])) {
+//                if ($hasWhere) {
+//                    $query .= ' AND';
+//                } else {
+//                    $query .= ' WHERE';
+//                    $hasWhere = true;
+//                }
+//                $query .= ' p.lighting_type_id IN (' . implode(",", $filters['lighting']['value']) . ')';
+//            }
+//
+//            if (isset($filters['dimensions']['value'])) {
+//                if ($hasWhere) {
+//                    $query .= ' AND';
+//                } else {
+//                    $query .= ' WHERE';
+//                    $hasWhere = true;
+//                }
+//                $query .= ' p.dimensions LIKE \'%' . $filters['dimensions']['value'] . '%\'';
+//            }
+//        } else {
+//            if ($hasWhere) {
+//                $query .= ' AND';
+//            } else {
+//                $query .= ' WHERE';
+//            }
+//
+//            $query .= ' ri.id IN (' . $values . ')';
+//            $hasWhere = true;
+//        }
+//
+//        if ($hasWhere) {
+//            $query .= ' AND';
+//        } else {
+//            $query .= ' WHERE';
+//        }
+//        $query .= ' ri.offer_id = ' . $offer->getId();
+//
+//        $stmt = $conn->prepare($query);
+//        $stmt->execute();
+//        $results = $stmt->fetchAll();
+//
+//        $affectedOffers = [];
+//        try {
+//            $entitiesCount = 0;
+//
+//            /** @var ReservationItem $reservationItem */
+//            foreach ($results as $row) {
+//                $reservationItem = $this->getDoctrine()->getRepository('CBNewAgeBundle:ReservationItem')->findOneBy(['id' => $row['id']]);
+//
+//                /** @var PanelView $panelView */
+//                $panelView = $reservationItem->getPanelView();
+//
+//                $confirmedEvents = $panelView->getConfirmedEvents($reservationItem->getStart(), $reservationItem->getEnd());
+//
+//                if (count($confirmedEvents) > 0) { // Daca are evenimente confirmate, cautam intervale libere
+//                    $freeIntervals = $panelView->getFreeIntervals(
+//                        $confirmedEvents,
+//                        $reservationItem->getStart(),
+//                        $reservationItem->getEnd()
+//                    );
+//
+//                    /** @var array $freeInterval */
+//                    foreach ($freeIntervals as $freeInterval) {
+//                        /** @var \DateInterval $interval */
+//                        $interval = $freeInterval['end']->diff($freeInterval['start']);
+//                        if ($interval->format('%a') >= 7) {
+//
+//                            $event = $this->newEvent($reservationItem,
+//                                $reservationItem->getOffer()->getClient(),
+//                                $panelView,
+//                                $freeInterval['start'],
+//                                $freeInterval['end']
+//                            );
+//                            $reservationItem->addEvent($event);
+//
+//                            $em->persist($event);
+//                            $entitiesCount++;
+//
+//                            /**
+//                             * Cautam rezervari in aceeasi perioda cu intervalul.
+//                             */
+//                            $aff = $this->processOverlapReservations($em, $offer, $panelView, $freeInterval['start'], $freeInterval['end']);
+////                            $affectedOffers = array_merge($affectedOffers, $aff);
+//                            $affectedOffers[] = ['panel_view' => $panelView, 'offers' => $aff];
+//                        }
+//                    }
+//                } else { // In caz contrar fata este libera pentru toata perioada ofertei
+//                    $event = $this->newEvent($reservationItem,
+//                        $reservationItem->getOffer()->getClient(),
+//                        $panelView,
+//                        $reservationItem->getStart(),
+//                        $reservationItem->getEnd()
+//                    );
+//                    $reservationItem->addEvent($event);
+//
+//                    $em->persist($event);
+//                    $entitiesCount++;
+//
+//                    /**
+//                     * Cautam rezervari in aceeasi perioda cu intervalul.
+//                     */
+//                    $aff = $this->processOverlapReservations($em, $offer, $panelView, clone $reservationItem->getStart(), clone  $reservationItem->getEnd());
+////                    $affectedOffers = array_merge($affectedOffers, $aff);
+//                    $affectedOffers[] = ['panel_view' => $panelView, 'offers' => $aff];
 //                }
 //            }
+//
+//            $this->get('session')->getFlashBag()->add(
+//                'success',
+//                $this->get('translator')->transChoice(
+//                    'cb.newage.offer.message.items.confirmed',
+//                    $entitiesCount,
+//                    ['%count%' => $entitiesCount]
+//                )
+//            );
+//        } catch (\Exception $e) {
+//            $em->rollback();
+//            $affectedOffers = [];
+//            throw $e;
 //        }
+//
+//        $em->flush();
+//        $em->commit();
+//
+//        $results = [];
+//        foreach ($affectedOffers as $item) {
+//            $currentPanelView = $item['panel_view'];
+//            $currentOffers = $item['offers'];
+//
+//            foreach ($currentOffers as $currentOffer)
+//                $results[$currentOffer->getId()][] = $currentPanelView;
+//        }
+//
+//        foreach ($results as $affectedOfferId => $affectedPanelViews) {
+//            $affectedOffer = $this->getDoctrine()->getRepository('CBNewAgeBundle:Offer')->findOneBy(['id' => $affectedOfferId]);
+//
+//            try {
+//                $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $affectedOffer, $affectedPanelViews);
+//            } catch (\Exception $e) {
+//                throw $e;
+//            }
+//        }
+//
+////        $affectedOffers = array_unique($affectedOffers);
+////        if (count($affectedOffers)>0) {
+////
+////            foreach ($affectedOffers as $aff) {
+////                try {
+////                    $this->get('cb_newage.mailer.processor')->sendReservationChangeEmail($offer, $aff);
+////                } catch (\Exception $e) {
+////                    throw $e;
+////                }
+////            }
+////        }
 
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
     }
 
-    /**
-     * Return Panel View ids that are not allow to be offered.
-     *
-     * @param Offer $offer
-     *
-     * @return array
-     */
-    protected function getForbiddenPanelViews(Offer $offer)
-    {
-        $forbiddenPanelViewsIds = [];
-
-        /** @var PanelViewRepository $panelViewRepository */
-        $panelViewRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView');
-        $results = $panelViewRepository->getConfirmedPanelViews($offer->getStart(), $offer->getEnd())->getQuery()->getResult();
-
-        $confirmedPanelViews = [];
-        foreach ($results as $row) {
-
-            $confirmedPanelViews[$row['panelView']][] = [
-                'start' => $row['start'],
-                'end' => $row['end']
-            ];
-        }
-
-        foreach ($confirmedPanelViews as $panelViewId => $intervals) {
-            $panelView = $panelViewRepository->findOneBy(['id' => $panelViewId]);
-
-            /** @var PanelView $panelView */
-            $freeIntervals = $panelView->getFreeIntervals($intervals, $offer->getStart(), $offer->getEnd());
-
-            $forbidden = true;
-
-            if (count($freeIntervals) > 0) {
-                /** @var array $freeInterval */
-                foreach ($freeIntervals as $freeInterval) {
-                    /** @var \DateInterval $interval */
-                    $interval = $freeInterval['end']->diff($freeInterval['start']);
-                    if ($interval->format('%a') >= 7)
-                        $forbidden = false;
-                }
-            }
-
-            if ($forbidden)
-                $forbiddenPanelViewsIds[] = $panelView->getId();
-        }
-
-        return $forbiddenPanelViewsIds;
-    }
+//    /**
+//     * Return Panel View ids that are not allow to be offered.
+//     *
+//     * @param Offer $offer
+//     *
+//     * @return array
+//     */
+//    protected function getForbiddenPanelViews(Offer $offer)
+//    {
+//        $forbiddenPanelViewsIds = [];
+//
+//        /** @var PanelViewRepository $panelViewRepository */
+//        $panelViewRepository = $this->getDoctrine()->getRepository('CBNewAgeBundle:PanelView');
+//        $results = $panelViewRepository->getConfirmedPanelViews($offer->getStart(), $offer->getEnd())->getQuery()->getResult();
+//
+//        $confirmedPanelViews = [];
+//        foreach ($results as $row) {
+//
+//            $confirmedPanelViews[$row['panelView']][] = [
+//                'start' => $row['start'],
+//                'end' => $row['end']
+//            ];
+//        }
+//
+//        foreach ($confirmedPanelViews as $panelViewId => $intervals) {
+//            $panelView = $panelViewRepository->findOneBy(['id' => $panelViewId]);
+//
+//            /** @var PanelView $panelView */
+//            $freeIntervals = $panelView->getFreeIntervals($intervals, $offer->getStart(), $offer->getEnd());
+//
+//            $forbidden = true;
+//
+//            if (count($freeIntervals) > 0) {
+//                /** @var array $freeInterval */
+//                foreach ($freeIntervals as $freeInterval) {
+//                    /** @var \DateInterval $interval */
+//                    $interval = $freeInterval['end']->diff($freeInterval['start']);
+//                    if ($interval->format('%a') >= 7)
+//                        $forbidden = false;
+//                }
+//            }
+//
+//            if ($forbidden)
+//                $forbiddenPanelViewsIds[] = $panelView->getId();
+//        }
+//
+//        return $forbiddenPanelViewsIds;
+//    }
 
     /**
      * @param ReservationItem $reservationItem
-     * @param Client $client
-     * @param PanelView $panelView
      * @param \DateTime $start
      * @param \DateTime $end
+     *
      * @return SchedulerEvent
      */
-    private function newEvent(ReservationItem $reservationItem, Client $client, PanelView $panelView, \DateTime $start, \DateTime $end)
+    private function newEvent(ReservationItem $reservationItem, \DateTime $start, \DateTime $end)
     {
         $event = new SchedulerEvent();
 
-        $event->setClient($client);
-        $event->setPanelView($panelView);
         $event->setReservationItem($reservationItem);
         $event->setStart($start);
         $event->setEnd($end);
@@ -818,15 +1125,15 @@ class OfferController extends Controller
     }
 
     /**
-     * @param EntityManager $em
-     * @param Offer $offer
+     * @param ObjectManager $em
+     * @param ReservationItem $reservationItem
      * @param PanelView $panelView
      * @param \DateTime $start
      * @param \DateTime $end
      *
      * @return array
      */
-    private function processOverlapReservations(EntityManager $em, Offer $offer, PanelView $panelView, \DateTime $start, \DateTime $end)
+    private function processOverlapReservations(ObjectManager $em, ReservationItem $reservationItem, PanelView $panelView, \DateTime $start, \DateTime $end)
     {
         $affectedOffers = [];
 
@@ -839,74 +1146,74 @@ class OfferController extends Controller
         );
 
         /** @var ReservationItem $ri */
-        foreach ($ris as $ri)
-        {
-            $localStart = clone $start;
-            $localEnd = clone $end;
+        foreach ($ris as $ri) {
+            if ($ri->getId() != $reservationItem->getId()) { // sa nu fie cea curenta
+                $localStart = clone $start;
+                $localEnd = clone $end;
 
-            if ($ri->getStart() >= $localStart) { // Incepe in cadrul intervalului
-                if ($ri->getEnd() <= $localEnd) // Incepe si se termina in cadrul intervalului (suprapunere). STERGEM!
-                {
-                    $em->remove($ri);
-                } else { // Depaseste intervalul. TRIM la inceput!
-                    /** @var \DateInterval $interval */
-                    $interval = $ri->getEnd()->diff($localStart); // Diferenta dupa micsorare.
+                if ($ri->getStart() >= $localStart) { // Incepe in cadrul intervalului
+                    if ($ri->getEnd() <= $localEnd) // Incepe si se termina in cadrul intervalului (suprapunere). STERGEM!
+                    {
+                        $em->remove($ri);
+                    } else { // Depaseste intervalul. TRIM la inceput!
+                        /** @var \DateInterval $interval */
+                        $interval = $ri->getEnd()->diff($localStart); // Diferenta dupa micsorare.
 
-                    if ($interval->format('%a') >= 7) { // Mai mare sau egala cu 7 zile, TRIM!
+                        if ($interval->format('%a') >= 7) { // Mai mare sau egala cu 7 zile, TRIM!
+                            $ri->removeAllEvents();
+
+                            $ri->setStart($localEnd->modify('+1 day'));
+                            $ri->addDefaultEvent();
+                        } else { // Mai mica, STERGEM!
+                            $em->remove($ri);
+                        }
+                    }
+                } else { // Incepe inaintea intervalului
+                    if ($ri->getEnd() <= $localEnd) // Se termina in cadrul intervalului. TRIM la sfarsit!
+                    {
+                        /** @var \DateInterval $interval */
+                        $interval = $localStart->diff($ri->getStart()); // Diferenta dupa micsorare.
+
+                        if ($interval->format('%a') >= 7) { // Mai mare sau egala cu 7 zile, TRIM!
+                            $ri->removeAllEvents();
+
+                            $ri->setEnd($localStart->modify('-1 day'));
+                            $ri->addDefaultEvent();
+                        } else { // Mai mica, STERGEM!
+                            $em->remove($ri);
+                        }
+                    } else { // Depaseste intervalul. SPLIT!
+                        /** @var \DateInterval $interval */
+                        $firstInterval = $localStart->diff($ri->getStart()); // Diferenta dupa micsorare.
+                        $secondInterval = $ri->getEnd()->diff($localStart); // Diferenta dupa micsorare.
+
                         $ri->removeAllEvents();
 
-                        $ri->setStart($localEnd->modify('+1 day'));
-                        $ri->addDefaultEvent();
-                    } else { // Mai mica, STERGEM!
-                        $em->remove($ri);
+                        $oldReservationItem = new ReservationItem();
+                        $oldReservationItem->setOfferItem($ri->getOfferItem());
+                        $oldReservationItem->setStart($ri->getStart());
+                        $oldReservationItem->setEnd($ri->getEnd());
+                        $oldReservationItem->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+                        $oldReservationItem->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+
+                        if ($firstInterval->format('%a') >= 7) { // Daca primul interval este valid, i-l adaugam.
+                            $ri->setEnd($localStart->modify('-1 day'));
+                            $ri->addDefaultEvent();
+                        } else { // Altfel stergem rezervarea
+                            $em->remove($ri);
+                        }
+
+                        if ($secondInterval->format('%a') >= 7) { // Daca al doilea este valid, adaugam o rezervare noua.
+                            $oldReservationItem->setStart($localEnd->modify("+1 day"));
+                            $oldReservationItem->addDefaultEvent();
+
+                            $reservationItem->getOfferItem()->addReservationItem($oldReservationItem);
+                            $em->persist($oldReservationItem);
+                        }
                     }
                 }
-            } else { // Incepe inaintea intervalului
-                if ($ri->getEnd() <= $localEnd) // Se termina in cadrul intervalului. TRIM la sfarsit!
-                {
-                    /** @var \DateInterval $interval */
-                    $interval = $localStart->diff($ri->getStart()); // Diferenta dupa micsorare.
-
-                    if ($interval->format('%a') >= 7) { // Mai mare sau egala cu 7 zile, TRIM!
-                        $ri->removeAllEvents();
-
-                        $ri->setEnd($localStart->modify('-1 day'));
-                        $ri->addDefaultEvent();
-                    } else { // Mai mica, STERGEM!
-                        $em->remove($ri);
-                    }
-                } else { // Depaseste intervalul. SPLIT!
-                    /** @var \DateInterval $interval */
-                    $firstInterval = $localStart->diff($ri->getStart()); // Diferenta dupa micsorare.
-                    $secondInterval = $ri->getEnd()->diff($localStart); // Diferenta dupa micsorare.
-
-                    $ri->removeAllEvents();
-
-                    $oldReservationItem = new ReservationItem();
-                    $oldReservationItem->setOffer($ri->getOffer());
-                    $oldReservationItem->setPanelView($ri->getPanelView());
-                    $oldReservationItem->setStart($ri->getStart());
-                    $oldReservationItem->setEnd($ri->getEnd());
-                    $oldReservationItem->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
-                    $oldReservationItem->setOrganization($this->get('oro_security.security_facade')->getOrganization());
-
-                    if ($firstInterval->format('%a') >= 7) { // Daca primul interval este valid, i-l adaugam.
-                        $ri->setEnd($localStart->modify('-1 day'));
-                        $ri->addDefaultEvent();
-                    } else { // Altfel stergem rezervarea
-                        $em->remove($ri);
-                    }
-
-                    if ($secondInterval->format('%a') >= 7) { // Daca al doilea este valid, adaugam o rezervare noua.
-                        $oldReservationItem->setStart($localEnd->modify("+1 day"));
-                        $oldReservationItem->addDefaultEvent();
-
-                        $offer->addReservationItem($oldReservationItem);
-                        $em->persist($oldReservationItem);
-                    }
-                }
+                $affectedOffers[] = $ri->getOfferItem()->getOffer();
             }
-            $affectedOffers[] = $ri->getOffer();
         }
 
         return $affectedOffers;
@@ -920,6 +1227,8 @@ class OfferController extends Controller
      * )
      * @Template
      * @AclAncestor("cb_newage_offer_view")
+     *
+     * @param OfferItem $offerItem
      *
      * @return array
      */
@@ -954,23 +1263,24 @@ class OfferController extends Controller
         ignore_user_abort(false);
         set_time_limit(0);
 
-        $request     = $this->getRequest();
-        $format      = 'xlsx';
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+//        $request = $this->getRequest();
+        $format = 'xlsx';
         $csvWriterId = 'oro_importexport.writer.csv';
-        $xlsWriterId    = 'oro_importexport.writer.xlsx';
+        $xlsWriterId = 'oro_importexport.writer.xlsx';
 
 
         $gridParameters['originalRoute'] = 'cb_newage_offer_view';
-        $gridParameters['offer']=$offerId;
-        $gridParameters['pager']['_page']=1;
-        $gridParameters['pager']['_per_page']=25;
-        $gridParameters['parameters']['view']='__all__';
-        $gridParameters['appearance']['_type']='grid';
-        $gridParameters['sort_by']['city']='ASC';
-        $gridParameters['sort_by']['panel']='ASC';
-        $gridParameters['sort_by']['panelView']='ASC';
-        $gridParameters['sort_by']['start']='ASC';
-        $gridParameters['columns']='url1.city1.address1.panel1.support1.dimensions1.lighting1.panelView1.sketch1.start1.end1';
+        $gridParameters['offer'] = $offerId;
+        $gridParameters['pager']['_page'] = 1;
+        $gridParameters['pager']['_per_page'] = 25;
+        $gridParameters['parameters']['view'] = '__all__';
+        $gridParameters['appearance']['_type'] = 'grid';
+        $gridParameters['sort_by']['city'] = 'ASC';
+        $gridParameters['sort_by']['panel'] = 'ASC';
+        $gridParameters['sort_by']['panelView'] = 'ASC';
+        $gridParameters['sort_by']['start'] = 'ASC';
+        $gridParameters['columns'] = 'url1.city1.address1.panel1.support1.dimensions1.lighting1.panelView1.sketch1.start1.end1';
 
         /** @var ItemWriterInterface $writer */
         $writer = $this->has($xlsWriterId) ? $this->get($xlsWriterId) : $this->get($csvWriterId);
@@ -980,8 +1290,8 @@ class OfferController extends Controller
             $this->get('cb_datagrid.importexport.processor.export'),
             $writer,
             [
-                'gridName'                     => $gridName,
-                'gridParameters'               => $gridParameters,
+                'gridName' => $gridName,
+                'gridParameters' => $gridParameters,
                 FormatterProvider::FORMAT_TYPE => $request->query->get('format_type', 'excel')
             ],
             self::EXPORT_BATCH_SIZE,
@@ -989,5 +1299,48 @@ class OfferController extends Controller
         );
 
         return $response;
+    }
+
+    /**
+     * @param OfferItem $offerItem
+     * @param \DateTime $start
+     * @param \\DateTime $end
+     *
+     * @return ReservationItem
+     */
+    public function createReservationItemObject(OfferItem $offerItem, $start = null, $end = null)
+    {
+        $item = new ReservationItem();
+
+        $item->setOfferItem($offerItem);
+//        $item->setPanelView($panelView);
+        if ($start == null) {
+            $item->setStart($offerItem->getStart());
+        } else {
+            $item->setStart($start);
+        }
+        if ($end == null) {
+            $item->setEnd($offerItem->getEnd());
+        } else {
+            $item->setEnd($end);
+        }
+
+//        /** @var OfferItem $offerItem */
+//        foreach($offer->getOfferItems() as $offerItem)
+//        {
+//            if ($offerItem->getPanelView()->getId()==$panelView->getId() &&
+//                $offerItem->getStart()==$item->getStart() && $offerItem->getEnd()==$item->getEnd()) {
+//
+//                $item->setOfferItem($offerItem);
+//            }
+//        }
+//
+
+        $item->setOwner($this->get('oro_security.security_facade')->getLoggedUser());
+        $item->setOrganization($this->get('oro_security.security_facade')->getOrganization());
+
+        $item->addDefaultEvent();
+
+        return $item;
     }
 }

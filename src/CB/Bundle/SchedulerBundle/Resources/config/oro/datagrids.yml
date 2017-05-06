@@ -15,16 +15,24 @@ datagrids:
                     - st.name as supportType
                     - lt.name as lightingType
                     - ct.name as city
-#                    - o.name as offer
                 from:
                     - { table: %cb_scheduler.scheduler_event.entity.class%, alias: se }
                 join:
                     left:
                         -
-                            join: se.panelView
+                            join: se.reservationItem
+                            alias: ri
+                        -
+                            join: ri.offerItem
+                            alias: oi
+                        -
+                            join: oi.panelView
                             alias: pv
                         -
-                            join: se.client
+                            join: oi.offer
+                            alias: o
+                        -
+                            join: o.client
                             alias: c
                         -
                             join: pv.panel
@@ -200,6 +208,6 @@ datagrids:
             query:
                 where:
                     and:
-                        - ( se.client = :client_id)
+                        - ( o.client = :client_id)
             bind_parameters:
                 - client_id

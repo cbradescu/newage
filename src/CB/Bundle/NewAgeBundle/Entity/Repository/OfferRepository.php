@@ -19,8 +19,9 @@ class OfferRepository extends EntityRepository
     {
         // List of offers with confirmed events.
         $evQb = $this->getEntityManager()->getRepository('CBSchedulerBundle:SchedulerEvent')->createQueryBuilder('ev')
-            ->select('IDENTITY(ri.offer)')
+            ->select('IDENTITY(oi.offer)')
             ->leftJoin('ev.reservationItem', 'ri')
+            ->leftJoin('ri.offerItem', 'oi')
             ->where('ev.status=' . SchedulerEvent::CONFIRMED);
 
         // List of offers that has NO confirmed events.
@@ -50,7 +51,8 @@ class OfferRepository extends EntityRepository
                 'c.title'
             )
             ->leftJoin('o.client', 'c')
-            ->leftJoin('o.reservationItems', 'ri')
+            ->leftJoin('o.offerItems', 'oi')
+            ->leftJoin('oi.reservationItems', 'ri')
             ->leftJoin(
                 'ri.events',
                 'ev',
@@ -58,7 +60,7 @@ class OfferRepository extends EntityRepository
                 '(ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)'
             )
             ->where('ev.status=' . SchedulerEvent::RESERVED)
-            ->andWhere('ri.panelView=:panelView')
+            ->andWhere('oi.panelView=:panelView')
             ->setParameter('panelView', $offerItem->getPanelView())
             ->setParameter('start', $offerItem->getStart())
             ->setParameter('end', $offerItem->getEnd())

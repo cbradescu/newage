@@ -4,6 +4,7 @@ namespace CB\Bundle\NewAgeBundle\Entity\Repository;
 
 use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
+use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
 
 use Doctrine\ORM\EntityRepository;
@@ -52,8 +53,6 @@ class PanelViewRepository extends EntityRepository
 
     /**
      * Returns a query builder which can be used to get list of reserved panel views on a specific reservation and their status.
-     *
-     * @param int $reservationId
      *
      * @return QueryBuilder
      */
@@ -153,10 +152,12 @@ class PanelViewRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->getRepository('CBSchedulerBundle:SchedulerEvent')->createQueryBuilder('ev')
             ->select(
-                'IDENTITY(ev.panelView) as panelView',
+                'IDENTITY(oi.panelView) as panelView',
                 'ev.start',
                 'ev.end'
                 )
+            ->leftJoin('ev.reservationItem', 'ri')
+            ->leftJoin('ri.offerItem', 'oi')
             ->where('(ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)')
             ->andWhere('ev.status=' . SchedulerEvent::CONFIRMED)
             ->setParameter('start', $start)
@@ -166,14 +167,15 @@ class PanelViewRepository extends EntityRepository
     }
 
     /**
-     * @param Offer $offer
+     * @param \DateTime $start
+     * @param \DateTime $end
      * @return array
      */
-    public function getForbiddenPanelViewIds(Offer $offer)
+    public function getForbiddenPanelViewIds(\DateTime $start, \DateTime $end)
     {
         $forbiddenPanelViewsIds = [];
 
-        $results = $this->getConfirmedPanelViews($offer->getStart(), $offer->getEnd())->getQuery()->getResult();
+        $results = $this->getConfirmedPanelViews($start, $end)->getQuery()->getResult();
 
         $confirmedPanelViews = [];
         foreach ($results as $row) {
@@ -188,7 +190,7 @@ class PanelViewRepository extends EntityRepository
             $panelView = $this->findOneBy(['id' => $panelViewId]);
 
             /** @var PanelView $panelView */
-            $freeIntervals = $panelView->getFreeIntervals($intervals, $offer->getStart(), $offer->getEnd());
+            $freeIntervals = $panelView->getFreeIntervals($intervals, $start, $end);
 
             $forbidden = true;
 
@@ -210,7 +212,8 @@ class PanelViewRepository extends EntityRepository
     }
 
     /**
-     * @param Offer $id
+     * Creates the datagrid for selecting available Panel Views to be added on an offer.
+     *
      * @return QueryBuilder
      */
     public function getAvailablePanelViewsQueryBuilder()
@@ -240,10 +243,18 @@ class PanelViewRepository extends EntityRepository
             ->leftJoin('addr.city', 'c');
 
         if ($offer) {
-            $forbiddenPanelViewsIds = $this->getForbiddenPanelViewIds($offer);
+            $forbiddenPanelViewsIds = $this->getForbiddenPanelViewIds($offer->getStart(), $offer->getEnd());
 
-            if (count($forbiddenPanelViewsIds) > 0)
-                $qb->where($qb->expr()->notIn('pv.id', $forbiddenPanelViewsIds));
+            $offeredPanelViewsIds = [];
+            /** @var OfferItem $item */
+            foreach ($offer->getOfferItems() as $item)
+            {
+                $offeredPanelViewsIds[] = $item->getPanelView()->getId();
+            }
+
+            $forbidden = array_unique(array_merge($forbiddenPanelViewsIds, $offeredPanelViewsIds));
+            if (count($forbidden) > 0)
+                $qb->where($qb->expr()->notIn('pv.id', $forbidden));
         }
 
         return $qb;

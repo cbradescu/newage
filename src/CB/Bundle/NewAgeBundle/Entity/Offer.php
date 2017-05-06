@@ -144,26 +144,6 @@ class Offer
     protected $offerItems;
 
     /**
-     * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\ReservationItem",
-     *    mappedBy="offer", cascade={"all"}, orphanRemoval=true
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "full"=true,
-     *              "order"=250
-     *          },
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $reservationItems;
-
-    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -252,7 +232,6 @@ class Offer
         $this->end->modify('+7 days');
 
         $this->offerItems = new ArrayCollection();
-        $this->reservationItems = new ArrayCollection();
     }
 
     /**
@@ -416,62 +395,6 @@ class Offer
     }
 
     /**
-     * Get reservationItems collection
-     *
-     * @return Collection
-     */
-    public function getReservationItems()
-    {
-        return $this->reservationItems;
-    }
-
-    /**
-     * Set reservationItems collection
-     *
-     * @param Collection $items
-     *
-     * @return Offer
-     */
-    public function setReservationItems(Collection $items)
-    {
-        $this->reservationItems = $items;
-
-        return $this;
-    }
-
-    /**
-     * Add specified reservationItem
-     *
-     * @param ReservationItem $item
-     *
-     * @return Offer
-     */
-    public function addReservationItem(ReservationItem $item)
-    {
-        if (!$this->getReservationItems()->contains($item)) {
-            $this->getReservationItems()->add($item);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove specified reservationItem
-     *
-     * @param ReservationItem $item
-     *
-     * @return Offer
-     */
-    public function removeReservationItem(ReservationItem $item)
-    {
-        if ($this->getReservationItems()->contains($item)) {
-            $this->getReservationItems()->removeElement($item);
-        }
-
-        return $this;
-    }
-
-    /**
      * @param User $owningUser
      *
      * @return Offer
@@ -607,14 +530,28 @@ class Offer
     public function hasConfirmedItems()
     {
         /** @var ReservationItem $ri */
-        foreach ($this->getReservationItems() as $ri)
-        {
-            /** @var SchedulerEvent $event */
-            foreach ($ri->getEvents() as $event)
-            {
-                if ($event->getStatus() == SchedulerEvent::CONFIRMED)
-                {
-                    return true;
+        foreach ($this->getOfferItems() as $oi) {
+            foreach ($oi->getReservationItems() as $ri) {
+                /** @var SchedulerEvent $event */
+                foreach ($ri->getEvents() as $event) {
+                    if ($event->getStatus() == SchedulerEvent::CONFIRMED)
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function hasReservationItems()
+    {
+        /** @var ReservationItem $ri */
+        foreach ($this->getOfferItems() as $oi) {
+            foreach ($oi->getReservationItems() as $ri) {
+                /** @var SchedulerEvent $event */
+                foreach ($ri->getEvents() as $event) {
+                    if ($event->getStatus() == SchedulerEvent::RESERVED)
+                        return true;
                 }
             }
         }

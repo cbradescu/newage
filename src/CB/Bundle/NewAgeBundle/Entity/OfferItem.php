@@ -1,10 +1,10 @@
 <?php
 namespace CB\Bundle\NewAgeBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -38,37 +38,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * )
  */
 
-class OfferItem
+class OfferItem extends Item
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Offer", inversedBy="offerItems", cascade={"persist"})
-     * @ORM\JoinColumn(name="offer_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $offer;
-
     /**
      * @var PanelView
      *
@@ -85,9 +56,24 @@ class OfferItem
     protected $panelView;
 
     /**
-     * @var \DateTime
+     * @ORM\ManyToOne(targetEntity="Offer", inversedBy="offerItems", cascade={"persist"})
+     * @ORM\JoinColumn(name="offer_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $offer;
+
+    /**
+     * @var ReservationItem
      *
-     * @ORM\Column(name="start_at", type="date")
+     * @ORM\OneToMany(targetEntity="ReservationItem",
+     *    mappedBy="offerItem", cascade={"all"}, orphanRemoval=true
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -96,72 +82,13 @@ class OfferItem
      *      }
      * )
      */
-    protected $start;
+    protected $reservationItems;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="end_at", type="date")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $end;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *      }
-     * )
-     */
-    protected $owner;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
+    public function __construct()
+    {
+        $this->reservationItems = new ArrayCollection();
+    }
 
     /**
      * @return string
@@ -169,62 +96,6 @@ class OfferItem
     public function __toString()
     {
         return (string) $this->panelView->getName();
-    }
-
-    /**
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Gets date an offer item begins.
-     *
-     * @return \DateTime
-     */
-    public function getStart()
-    {
-        return $this->start;
-    }
-
-    /**
-     * Sets date an offer item begins.
-     *
-     * @param \DateTime $start
-     *
-     * @return self
-     */
-    public function setStart($start)
-    {
-        $this->start = $start;
-
-        return $this;
-    }
-
-    /**
-     * Gets date an offer item ends.
-     *
-     * @return \DateTime
-     */
-    public function getEnd()
-    {
-        return $this->end;
-    }
-
-    /**
-     * Sets date an offer item ends.
-     *
-     * @param \DateTime $end
-     *
-     * @return self
-     */
-    public function setEnd($end)
-    {
-        $this->end = $end;
-
-        return $this;
     }
 
     /**
@@ -242,7 +113,7 @@ class OfferItem
      *
      * @param PanelView $panelView
      *
-     * @return OfferItem
+     * @return Item
      */
     public function setPanelView(PanelView $panelView = null)
     {
@@ -272,109 +143,58 @@ class OfferItem
     }
 
     /**
-     * @param User $owningUser
+     * Get reservationItems collection
+     *
+     * @return Collection
+     */
+    public function getReservationItems()
+    {
+        return $this->reservationItems;
+    }
+
+    /**
+     * Set reservationItems collection
+     *
+     * @param Collection $reservationItems
      *
      * @return OfferItem
      */
-    public function setOwner($owningUser)
+    public function setReservationItems(Collection $reservationItems)
     {
-        $this->owner = $owningUser;
+        $this->reservationItems = $reservationItems;
 
         return $this;
     }
 
     /**
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * Set organization
+     * Add specified reservationItem
      *
-     * @param Organization $organization
+     * @param ReservationItem $reservationItem
+     *
      * @return OfferItem
      */
-    public function setOrganization(Organization $organization = null)
+    public function addReservationItem(ReservationItem $reservationItem)
     {
-        $this->organization = $organization;
+        if (!$this->getReservationItems()->contains($reservationItem)) {
+            $this->getReservationItems()->add($reservationItem);
+        }
 
         return $this;
     }
 
     /**
-     * Get organization
+     * Remove specified reservationItem
      *
-     * @return Organization
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
-     * Get contact last update date/time
+     * @param ReservationItem $reservationItem
      *
-     * @return \DateTime
+     * @return OfferItem
      */
-    public function getUpdatedAt()
+    public function removeReservationItem(ReservationItem $reservationItem)
     {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime updatedAt
-     *
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
+        if ($this->getReservationItems()->contains($reservationItem)) {
+            $this->getReservationItems()->removeElement($reservationItem);
+        }
 
         return $this;
-    }
-
-    /**
-     * Get panel create date/time
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime createdAt
-     *
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = $this->createdAt ? $this->createdAt : new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = clone $this->createdAt;
-
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 }

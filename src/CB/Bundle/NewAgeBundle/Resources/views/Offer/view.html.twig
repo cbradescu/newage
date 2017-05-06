@@ -13,7 +13,7 @@
                     <i class="icon-download-alt hide-text">{{ 'cb.newage.offer.export.confirmed_items.label'|trans }}</i> {{ 'cb.newage.offer.export.confirmed_items.label'|trans }}
                 </a>
             {% endif %}
-            {% if entity.reservationItems and entity.reservationItems|length > 0%}
+            {% if entity.hasReservationItems%}
                 <a type="button" class="btn import-validation-btn icons-holder-text no-hash" href="{{ path('cb_datagrid_export_action', { 'gridName': 'reservation-items-grid', 'offerId': entity.id}) }}">
                     <i class="icon-download-alt hide-text">{{ 'cb.newage.offer.export.reservation_items.label'|trans }}</i> {{ 'cb.newage.offer.export.reservation_items.label'|trans }}
                 </a>
@@ -38,11 +38,11 @@
                 'entity_label': 'cb.newage.offer.entity_label'|trans
             }) }}
         {% endif %}
-        {% if not entity.reservationItems or entity.reservationItems|length==0%}
+        {% if not entity.hasReservationItems %}
             {{ UI.editButton({
                 'path': path('cb_newage_offer_select', { 'id': entity.id }),
-                'aCss': 'no-hash',
-                'iCss': 'icon-ellipsis-vertical',
+                'aCss': 'btn btn-medium add-btn',
+                'iCss': 'fa-plus',
                 'label': 'cb.newage.offer.select_panel_views.label'|trans
             }) }}
         {% endif %}
@@ -129,7 +129,7 @@
         ]) %}
     {% endif %}
 
-    {% if entity.reservationItems and entity.reservationItems|length>0%}
+    {% if entity.hasReservationItems %}
         {% set gridName = 'reservation-items-grid' %}
 
         {% set params = {
@@ -159,7 +159,7 @@
         ]) %}
     {% endif %}
 
-    {% if entity.offerItems and entity.offerItems|length>0 %}
+    {#{% if entity.offerItems and entity.offerItems|length>0 %}#}
         {% set gridName = 'offer-items-grid' %}
 
         {% set params = {
@@ -187,7 +187,7 @@
         ]
         }
         ]) %}
-    {% endif %}
+    {#{% endif %}#}
 
     {% set id = 'offerView' %}
     {% set data = { 'dataBlocks': dataBlocks } %}

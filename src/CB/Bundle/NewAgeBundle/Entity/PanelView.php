@@ -154,11 +154,11 @@ class PanelView
     protected $price;
 
     /**
-     * @var ArrayCollection|SchedulerEvent[]
+     * @var ArrayCollection|OfferItem[]
      *
-     * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="panelView", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="CB\Bundle\NewAgeBundle\Entity\OfferItem", mappedBy="panelView", cascade={"persist"})
      */
-    protected $events;
+    protected $offerItems;
 
     /**
      * @var User
@@ -186,7 +186,7 @@ class PanelView
 
     public function __construct()
     {
-        $this->events = new ArrayCollection();
+        $this->offerItems = new ArrayCollection();
     }
 
     /**
@@ -373,20 +373,24 @@ class PanelView
     public function getConfirmedEvents(\DateTime $start, \DateTime $end)
     {
         $confirmedEvents = [];
-        foreach ($this->events as $event)
-        {
-            if ($event->getStatus()==SchedulerEvent::CONFIRMED and
-                (
-                    ($event->getStart()>=$start and $event->getStart()<=$end) or
-                    ($event->getEnd()>=$start and $event->getEnd()<=$end) or
-                    ($event->getStart()>=$start and $event->getEnd()<=$end) or
-                    ($event->getStart()<=$start and $event->getEnd()>=$end)
-                )
-            )
-                $confirmedEvents[] = [
-                    'start' =>  $event->getStart(),
-                    'end'   =>  $event->getEnd()
-                ];
+        foreach ($this->offerItems as $offerItem) {
+            foreach ($offerItem->getReservationItems() as $reservationItem) {
+                /** @var SchedulerEvent $event */
+                foreach ($reservationItem->getEvents() as $event) {
+                    if ($event->getStatus() == SchedulerEvent::CONFIRMED and
+                        (
+                            ($event->getStart() >= $start and $event->getStart() <= $end) or
+                            ($event->getEnd() >= $start and $event->getEnd() <= $end) or
+                            ($event->getStart() >= $start and $event->getEnd() <= $end) or
+                            ($event->getStart() <= $start and $event->getEnd() >= $end)
+                        )
+                    )
+                        $confirmedEvents[] = [
+                            'start' => $event->getStart(),
+                            'end' => $event->getEnd()
+                        ];
+                }
+            }
         }
 
         return $confirmedEvents;

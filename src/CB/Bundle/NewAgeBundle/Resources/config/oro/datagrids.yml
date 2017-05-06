@@ -639,7 +639,8 @@ datagrids:
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
                     - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
-                    - SUM(CASE WHEN ev.status IS NULL THEN 0 ELSE CASE WHEN ev.status=0 THEN 1 ELSE 0 END END) as reservations
+                    # cu linia asta nu mai merge filtru pe city
+#                    - SUM(CASE WHEN ev.status IS NULL THEN 0 ELSE CASE WHEN ev.status=0 THEN 1 ELSE 0 END END) as reservations
                 from:
                     - { table: %cb_newage.offer_item.entity.class%, alias: i }
                 join:
@@ -660,41 +661,21 @@ datagrids:
                         -
                             join: addr.city
                             alias: ct
-                        -
-                            join: pv.events
-                            alias: ev
-                            conditionType: WITH
-                            condition: ev.status = %cb_scheduler.scheduler_event.entity.class%::RESERVED AND ((ev.start >= i.start AND ev.start <= i.end) OR (ev.end >= i.start AND ev.end <= i.end) OR (ev.start >= i.start AND ev.end <= i.end) OR (ev.start <= i.start AND ev.end >= i.end))
+#                        -
+#                            join: pv.events
+#                            alias: ev
+#                            conditionType: WITH
+#                            condition: ev.status = %cb_scheduler.scheduler_event.entity.class%::RESERVED AND ((ev.start >= i.start AND ev.start <= i.end) OR (ev.end >= i.start AND ev.end <= i.end) OR (ev.start >= i.start AND ev.end <= i.end) OR (ev.start <= i.start AND ev.end >= i.end))
                 where:
                     and:
                         - i.offer = :offer
             bind_parameters:
                 - offer
-        properties:
-            id: ~
-            reservations_link:
-                type:         url
-                route:        cb_newage_offer_reservations
-                params:       [ id ]
-        actions:
-            reservations_view:
-                type:         dialog
-                label:        cb.newage.offer.reservations.label
-                link:         reservations_link
-                icon:         map-marker
-                widgetOptions:
-                    options:
-                        dialogOptions:
-                            title: "Reservations"
-                widget:
-                    reload-grid-name: popup-reservations-grid
-                    options:
-                        dialogOptions:
-                            width: 750
-                rowAction:    true
         columns:
-            reservations:
-                label:        "R"
+            id:
+                label:        cb.newage.panel.id.label
+#            reservations:
+#                label:        "R"
             start:
                 label:         cb.newage.offer.start.label
                 frontend_type: date
@@ -775,17 +756,46 @@ datagrids:
                             translatable_options: false
                 dimensions:
                     type: string
-                    data_name: p.dimesnions
+                    data_name: p.dimensions
                     enabled: true
+
         properties:
             id: ~
-        action_configuration:
-            delete: false
+            reservations_link:
+                type:         url
+                route:        cb_newage_offer_reservations
+                params:       [ id ]
+            delete_link:
+                type:         url
+                route:        cb_newage_offer_item_api_delete_offer_item
+                params:       [ id ]
+        actions:
+            reservations_view:
+                type:         dialog
+                label:        cb.newage.offer.reservations.label
+                link:         reservations_link
+                icon:         map-marker
+                widgetOptions:
+                    options:
+                        dialogOptions:
+                            title: "Reservations"
+                widget:
+                    reload-grid-name: popup-reservations-grid
+                    options:
+                        dialogOptions:
+                            width: 750
+                rowAction:    true
+            delete:
+                type:         delete
+                acl_resource: cb_newage_offer_item_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
         options:
             entityHint: offer item
-            mass_actions:
-                delete:
-                    enabled: false
+#            mass_actions:
+#                delete:
+#                    enabled: true
             routerEnabled: false
 #            export: true
         mass_actions:
@@ -959,7 +969,10 @@ datagrids:
                 join:
                     left:
                         -
-                            join: ri.panelView
+                            join: ri.offerItem
+                            alias: oi
+                        -
+                            join: oi.panelView
                             alias: pv
                         -
                             join: pv.panel
@@ -976,11 +989,13 @@ datagrids:
                             alias: ct
                 where:
                     and:
-                        - ri.offer = :offer
+                        - oi.offer = :offer
             bind_parameters:
                 - offer
 
         columns:
+            id:
+                label:        cb.newage.panel.id.label
             start:
                 label:         cb.newage.offer.start.label
                 frontend_type: date
@@ -1073,13 +1088,22 @@ datagrids:
 
         properties:
             id: ~
-        action_configuration:
-            delete: false
+            delete_link:
+                type:         url
+                route:        cb_newage_reservation_item_api_delete_reservation_item
+                params:       [ id ]
+        actions:
+            delete:
+                type:         delete
+                acl_resource: cb_newage_reservation_item_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
         options:
             entityHint: reservation item
-            mass_actions:
-                delete:
-                    enabled: false
+#            mass_actions:
+#                delete:
+#                    enabled: false
             routerEnabled: false
 #            export: true
         mass_actions:
@@ -1096,7 +1120,7 @@ datagrids:
             acl_resource: cb_newage_offer_view
             query:
                 select:
-                    - ri.id
+                    - ev.id
                     - ev.start
                     - ev.end
                     - pv.name as panelView
@@ -1111,11 +1135,17 @@ datagrids:
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
                     - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
                 from:
-                    - { table: %cb_newage.reservation-item.entity.class%, alias: ri }
+                    - { table: %cb_scheduler.scheduler_event.entity.class%, alias: ev }
                 join:
                     left:
                         -
-                            join: ri.panelView
+                            join: ev.reservationItem
+                            alias: ri
+                        -
+                            join: ri.offerItem
+                            alias: oi
+                        -
+                            join: oi.panelView
                             alias: pv
                         -
                             join: pv.panel
@@ -1130,17 +1160,16 @@ datagrids:
                         -
                             join: addr.city
                             alias: ct
-                        -
-                            join: ri.events
-                            alias: ev
                 where:
                     and:
-                        - ri.offer = :offer
+                        - oi.offer = :offer
                         - ev.status = %cb_scheduler.scheduler_event.entity.class%::CONFIRMED
             bind_parameters:
                 - offer
 
         columns:
+            id:
+                label:        cb.newage.panel.id.label
             start:
                 label:         cb.newage.offer.start.label
                 frontend_type: date
@@ -1232,13 +1261,24 @@ datagrids:
 
         properties:
             id: ~
-        action_configuration:
-            delete: false
+            delete_link:
+                type:         url
+                route:        cb_api_delete_schedulerevent
+                params:       [ id ]
+        actions:
+            delete:
+                type:         delete
+                acl_resource: cb_scheduler_event_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
+#        action_configuration:
+#            delete: false
         options:
             entityHint: reservation item
-            mass_actions:
-                delete:
-                    enabled: false
+#            mass_actions:
+#                delete:
+#                    enabled: false
             routerEnabled: false
 #            export: true
 

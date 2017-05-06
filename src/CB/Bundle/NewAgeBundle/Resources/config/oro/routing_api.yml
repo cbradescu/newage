@@ -23,3 +23,9 @@ cb_newage_city_api:
 cb_newage_offer_api:
     resource:     "@CBNewAgeBundle/Controller/Api/Rest/OfferController.php"
     type:         rest
+cb_newage_offer_item_api:
+    resource:     "@CBNewAgeBundle/Controller/Api/Rest/OfferItemController.php"
+    type:         rest
+cb_newage_reservation_item_api:
+    resource:     "@CBNewAgeBundle/Controller/Api/Rest/ReservationItemController.php"
+    type:         rest

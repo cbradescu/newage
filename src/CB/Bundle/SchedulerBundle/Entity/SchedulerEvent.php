@@ -20,7 +20,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
  *      name="cb_scheduler_event",
  *      indexes={
  *          @ORM\Index(name="cb_scheduler_event_idx", columns={"id", "start_at", "end_at"}),
- *          @ORM\Index(name="cb_scheduler_event_up_idx", columns={"updated_at"})
+ *          @ORM\Index(name="cb_scheduler_event_up_idx", columns={"updatedAt"})
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -33,6 +33,13 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
  *          },
  *          "entity"={
  *              "icon"="icon-time"
+ *          },
+ *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "security"={
  *              "type"="ACL"
@@ -51,72 +58,6 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
         self::RESERVED,
         self::CONFIRMED
     ];
-
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-
-    /**
-     * @var PanelView
-     *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView", inversedBy="events")
-     * @ORM\JoinColumn(name="panel_view_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $panelView;
-
-    /**
-     * @var Client
-     *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Client", inversedBy="events")
-     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $client;
-
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="start_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $start;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="end_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $end;
 
     /**
      * @var string
@@ -146,7 +87,6 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      * )
      */
     protected $reservationItem;
-
 
     public function __construct()
     {
@@ -178,119 +118,6 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
     public static function getStatusLabelForIndex($value)
     {
         return self::$statuses[$value];
-    }
-
-    /**
-     * Gets an scheduler event id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Gets panel view
-     *
-     * @return PanelView View|null
-     */
-    public function getPanelView()
-    {
-        return $this->panelView;
-    }
-
-    /**
-     * Sets panel view
-     *
-     * @param PanelView $panelView
-     *
-     * @return self
-     */
-    public function setPanelView(PanelView $panelView = null)
-    {
-        $this->panelView = $panelView;
-
-        return $this;
-    }
-
-    /**
-     * Gets owning client
-     *
-     * @return Client|null
-     */
-    public function getClient()
-    {
-        return $this->client;
-    }
-
-    /**
-     * Sets owning client
-     *
-     * @param Client $client
-     *
-     * @return self
-     */
-    public function setClient(Client $client = null)
-    {
-        $this->client = $client;
-
-        return $this;
-    }
-
-    /**
-     * Gets date/time an event begins.
-     *
-     * @return \DateTime
-     */
-    public function getStart()
-    {
-        return $this->start;
-    }
-
-    /**
-     * Sets date/time an event begins.
-     *
-     * @param \DateTime $start
-     *
-     * @return self
-     */
-    public function setStart($start)
-    {
-        $this->start = $start;
-
-        return $this;
-    }
-
-    /**
-     * Gets date/time an event ends.
-     *
-     * If an event is all-day the end date is inclusive.
-     * This means an event with start Nov 10 and end Nov 12 will span 3 days on the scheduler.
-     *
-     * If an event is NOT all-day the end date is exclusive.
-     * This is only a gotcha when your end has time 00:00. It means your event ends on midnight,
-     * and it will not span through the next day.
-     *
-     * @return \DateTime
-     */
-    public function getEnd()
-    {
-        return $this->end;
-    }
-
-    /**
-     * Sets date/time an event ends.
-     *
-     * @param \DateTime $end
-     *
-     * @return self
-     */
-    public function setEnd($end)
-    {
-        $this->end = $end;
-
-        return $this;
     }
 
     /**

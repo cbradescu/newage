@@ -35,7 +35,16 @@ parameters:
     cb_newage_offer.manager.class:              CB\Bundle\NewAgeBundle\Model\OfferManager
     cb_newage_offer.manager.api.class:          CB\Bundle\NewAgeBundle\Model\OfferApiManager
 
+    cb_newage_offer_item.entity.class:          CB\Bundle\NewAgeBundle\Entity\OfferItem
+    cb_newage_offer_item.manager.class:         CB\Bundle\NewAgeBundle\Model\OfferItemManager
+    cb_newage_offer_item.manager.api.class:     CB\Bundle\NewAgeBundle\Model\OfferItemApiManager
+
+    cb_newage_reservation_item.entity.class:          CB\Bundle\NewAgeBundle\Entity\ReservationItem
+    cb_newage_reservation_item.manager.class:         CB\Bundle\NewAgeBundle\Model\ReservationItemManager
+    cb_newage_reservation_item.manager.api.class:     CB\Bundle\NewAgeBundle\Model\ReservationItemApiManager
+
     cb_newage.subscriber.offer_listener.class: CB\Bundle\NewAgeBundle\EventListener\OfferListener
+    cb_newage.subscriber.item_listener.class: CB\Bundle\NewAgeBundle\EventListener\ItemListener
     cb_newage.subscriber.panel_listener.class: CB\Bundle\NewAgeBundle\EventListener\PanelListener
 
     cb_newage.offer_item.entity.class:               CB\Bundle\NewAgeBundle\Entity\OfferItem
@@ -172,8 +181,44 @@ services:
             - @doctrine.orm.entity_manager
             - @cb_newage_offer.manager
 
+    cb_newage_offer_item.manager:
+        class: %cb_newage_offer_item.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.acl_helper
+
+    cb_newage_offer_item.manager.api:
+        class: %cb_newage_offer_item.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %cb_newage_offer_item.entity.class%
+            - @doctrine.orm.entity_manager
+            - @cb_newage_offer_item.manager
+
+    cb_newage_reservation_item.manager:
+        class: %cb_newage_reservation_item.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_security.acl_helper
+
+    cb_newage_reservation_item.manager.api:
+        class: %cb_newage_reservation_item.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %cb_newage_reservation_item.entity.class%
+            - @doctrine.orm.entity_manager
+            - @cb_newage_reservation_item.manager
+
     cb_newage.subscriber.offer_listener:
         class: %cb_newage.subscriber.offer_listener.class%
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    cb_newage.subscriber.item_listener:
+        class: %cb_newage.subscriber.item_listener.class%
         arguments:
             - "@service_container"
         tags:

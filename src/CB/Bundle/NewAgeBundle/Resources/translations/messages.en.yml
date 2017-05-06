@@ -172,7 +172,7 @@ cb:
             reserved_panel_views.label:    Reserved Panel Views
             confirmed_panel_views.label:   Confirmed Panel Views
 
-            select_panel_views.label:      Select Panel Views
+            select_panel_views.label:      Add
             view_reservation.label:        View Reservation
             reservations.label:            Reservations
             form:

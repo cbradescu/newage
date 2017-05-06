@@ -10,10 +10,10 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
-use CB\Bundle\NewAgeBundle\Entity\Offer;
+use CB\Bundle\NewAgeBundle\Entity\Item;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class OfferListener
+class ItemListener
 {
     /**
      * @var ContainerInterface
@@ -40,11 +40,11 @@ class OfferListener
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!$this->isOfferEntity($entity)) {
+        if (!$this->isItemEntity($entity)) {
             return;
         }
 
-        /** @var Offer $entity */
+        /** @var Item $entity */
         $this->setCreatedProperties($entity, $args->getEntityManager());
         $this->setUpdatedProperties($entity, $args->getEntityManager());
     }
@@ -55,11 +55,11 @@ class OfferListener
     public function preUpdate(PreUpdateEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!$this->isOfferEntity($entity)) {
+        if (!$this->isItemEntity($entity)) {
             return;
         }
 
-        /** @var Offer $entity */
+        /** @var Item $entity */
         $this->setUpdatedProperties($entity, $args->getEntityManager(), true);
     }
 
@@ -67,16 +67,16 @@ class OfferListener
      * @param object $entity
      * @return bool
      */
-    protected function isOfferEntity($entity)
+    protected function isItemEntity($entity)
     {
-        return $entity instanceof Offer;
+        return $entity instanceof Item;
     }
 
     /**
-     * @param Offer $offer
+     * @param Item $offer
      * @param EntityManager $entityManager
      */
-    protected function setCreatedProperties(Offer $offer, EntityManager $entityManager)
+    protected function setCreatedProperties(Item $offer, EntityManager $entityManager)
     {
             if (!$offer->getCreatedAt()) {
                 $offer->setCreatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
@@ -87,11 +87,11 @@ class OfferListener
     }
 
     /**
-     * @param Offer $offer
+     * @param Item $offer
      * @param EntityManager $entityManager
      * @param bool $update
      */
-    protected function setUpdatedProperties(Offer $offer, EntityManager $entityManager, $update = false)
+    protected function setUpdatedProperties(Item $offer, EntityManager $entityManager, $update = false)
     {
         $newUpdatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $newUpdatedBy = $this->getUser($entityManager);

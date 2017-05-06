@@ -127,15 +127,16 @@ class SchedulerEventRepository extends EntityRepository
                  e.status,
                  o.name as offerName'
             )
-            ->leftJoin('e.panelView', 'pv')
-            ->leftJoin('e.client', 'c')
+            ->leftJoin('e.reservationItem', 'ri')
+            ->leftJoin('ri.offerItem', 'oi')
+            ->leftJoin('oi.offer', 'o')
+            ->leftJoin('oi.panelView', 'pv')
+            ->leftJoin('o.client', 'c')
             ->leftJoin('pv.panel', 'p')
             ->leftJoin('p.supportType', 'st')
             ->leftJoin('p.lightingType', 'lt')
             ->leftJoin('p.addresses', 'a')
             ->leftJoin('a.city', 'ct')
-            ->leftJoin('e.reservationItem', 'ri')
-            ->leftJoin('ri.offer', 'o')
             ->addOrderBy('p.name', 'ASC')
             ->addOrderBy('pv.name', 'ASC')
         ;

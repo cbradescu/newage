@@ -194,6 +194,34 @@ acls:
         group_name: ""
         bindings: ~
 
+    cb_newage_offer_item_view:
+        type: entity
+        class: CBNewAgeBundle:OfferItem
+        permission: VIEW
+        group_name: ""
+        bindings: ~
+
+    cb_newage_offer_item_delete:
+        type: entity
+        class: CBNewAgeBundle:OfferItem
+        permission: DELETE
+        group_name: ""
+        bindings: ~
+
+    cb_newage_reservation_item_view:
+        type: entity
+        class: CBNewAgeBundle:ReservationItem
+        permission: VIEW
+        group_name: ""
+        bindings: ~
+
+    cb_newage_reservation_item_delete:
+        type: entity
+        class: CBNewAgeBundle:ReservationItem
+        permission: DELETE
+        group_name: ""
+        bindings: ~
+
     cb_newage_admin_menu:
         label: Access Administration menu tab
         type: action

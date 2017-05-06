@@ -23,8 +23,9 @@ class ReservationItemRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('ri')
             ->select('ri')
+            ->leftJoin('ri.offerItem', 'oi')
             ->leftJoin('ri.events', 'ev')
-            ->where('ri.panelView = :panelView')
+            ->where('oi.panelView = :panelView')
             ->andWhere('ev.status <> :confirmed')
             ->andWhere('
                 (ri.start >= :start AND ri.start <= :end) OR 
