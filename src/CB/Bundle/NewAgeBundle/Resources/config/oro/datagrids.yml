@@ -1165,7 +1165,7 @@ datagrids:
                 defaultMessages:
                     confirm_content:  cb.newage.offer.confirm.confirm_window.content
                     confirm_ok:       cb.newage.offer.confirm.confirm_window.confirm_ok
-                    confirm_cancel:   cb.newage.offer.confirm.confirm_cancel
+                    confirm_cancel:   cb.newage.offer.confirm.confirm.window.confirm_cancel
                     confirm_title:    cb.newage.offer.confirm.confirm_window.title
                     empty_selection:  cb.newage.offer.confirm.confirm_window.empty_selection
             remove:
