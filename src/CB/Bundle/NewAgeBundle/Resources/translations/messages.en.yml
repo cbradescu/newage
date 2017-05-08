@@ -141,8 +141,9 @@ cb:
                 items:
                     offered:               %count% items added to offer
                     reserved:              %count% items added to reservation
-                    confirmed:             %count% Pitems added to confirmation
-                    canceled:              %count% confirmations has been canceled
+                    confirmed:             %count% items added to confirmation
+                    canceled:              %count% confirmations have been canceled
+                    deleted:               %count% items have been deleted
             id.label:                      Id
             name.label:                    Campaign Name
             owner.label:                   Owner

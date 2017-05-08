@@ -38,14 +38,14 @@
                 'entity_label': 'cb.newage.offer.entity_label'|trans
             }) }}
         {% endif %}
-        {% if not entity.hasReservationItems %}
+        {#{% if not entity.hasReservationItems %}#}
             {{ UI.editButton({
                 'path': path('cb_newage_offer_select', { 'id': entity.id }),
                 'aCss': 'btn btn-medium add-btn',
                 'iCss': 'fa-plus',
                 'label': 'cb.newage.offer.select_panel_views.label'|trans
             }) }}
-        {% endif %}
+        {#{% endif %}#}
     {% endif %}
 {% endblock navButtons %}
 

@@ -35,6 +35,10 @@ class ReserveMassAction extends AbstractMassAction
             $options['frontend_handle'] = 'redirect';
         }
 
+        if (empty($options['confirmation'])) {
+            $options['confirmation'] = true;
+        }
+
         return parent::setOptions($options);
     }
 }

@@ -819,9 +819,9 @@ datagrids:
                 link:         delete_link
         options:
             entityHint: offer item
-#            mass_actions:
-#                delete:
-#                    enabled: true
+            mass_actions:
+                delete:
+                    enabled: false
             routerEnabled: false
 #            export: true
         mass_actions:
@@ -831,6 +831,24 @@ datagrids:
                 data_identifier: i.id
                 label: cb.newage.offer.datagrid.action.reserve
                 icon: check-square-o
+                defaultMessages:
+                    confirm_content:  cb.newage.offer.reserve.confirm_window.content
+                    confirm_ok:       cb.newage.offer.reserve.confirm_window.confirm_ok
+                    confirm_cancel:   cb.newage.offer.reserve.confirm_window.confirm_cancel
+                    confirm_title:    cb.newage.offer.reserve.confirm_window.title
+                    empty_selection:  cb.newage.offer.reserve.confirm_window.empty_selection
+            remove:
+                type: remove
+                entity_name: %cb_newage.offer_item.entity.class%
+                data_identifier: i.id
+                label: oro.grid.action.delete
+                icon: trash-o
+                defaultMessages:
+                    confirm_content:  cb.newage.offer.remove.confirm_window.content
+                    confirm_ok:       cb.newage.offer.remove.confirm_window.confirm_ok
+                    confirm_cancel:   cb.newage.offer.remove.confirm_window.confirm_cancel
+                    confirm_title:    cb.newage.offer.remove.confirm_window.title
+                    empty_selection:  cb.newage.offer.remove.confirm_window.empty_selection
 
     available-panel_view-grid:
         source:
@@ -969,7 +987,12 @@ datagrids:
                 data_identifier: pv.id
                 label: cb.newage.offer.datagrid.action.offer
                 icon: check
-
+                defaultMessages:
+                    confirm_content:  cb.newage.offer.offer.confirm_window.content
+                    confirm_ok:       cb.newage.offer.offer.confirm_window.confirm_ok
+                    confirm_cancel:   cb.newage.offer.offer.confirm_window.confirm_cancel
+                    confirm_title:    cb.newage.offer.offer.confirm_window.title
+                    empty_selection:  cb.newage.offer.offer.confirm_window.empty_selection
     reservation-items-grid:
         source:
             type: orm
@@ -1127,9 +1150,9 @@ datagrids:
                 link:         delete_link
         options:
             entityHint: reservation item
-#            mass_actions:
-#                delete:
-#                    enabled: false
+            mass_actions:
+                delete:
+                    enabled: false
             routerEnabled: false
 #            export: true
         mass_actions:
@@ -1139,6 +1162,26 @@ datagrids:
                 data_identifier: ri.id
                 label: cb.newage.offer.datagrid.action.confirm
                 icon: check-square
+                defaultMessages:
+                    confirm_content:  cb.newage.offer.confirm.confirm_window.content
+                    confirm_ok:       cb.newage.offer.confirm.confirm_window.confirm_ok
+                    confirm_cancel:   cb.newage.offer.confirm.confirm_cancel
+                    confirm_title:    cb.newage.offer.confirm.confirm_window.title
+                    empty_selection:  cb.newage.offer.confirm.confirm_window.empty_selection
+            remove:
+                type: remove
+                entity_name: %cb_newage.reservation-item.entity.class%
+                data_identifier: ri.id
+                label: oro.grid.action.delete
+                icon: trash-o
+                defaultMessages:
+                    confirm_content:  cb.newage.offer.remove.confirm_window.content
+                    confirm_ok:       cb.newage.offer.remove.confirm_window.confirm_ok
+                    confirm_cancel:   cb.newage.offer.remove.confirm_window.confirm_cancel
+                    confirm_title:    cb.newage.offer.remove.confirm_window.title
+                    empty_selection:  cb.newage.offer.remove.confirm_window.empty_selection
+
+
 
     confirmed-items-grid:
         source:

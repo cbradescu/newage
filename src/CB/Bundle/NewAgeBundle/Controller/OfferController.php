@@ -176,7 +176,7 @@ class OfferController extends Controller
         $conn = $this->getDoctrine()->getManager()->getConnection();
         $query = '
               SELECT 
-                  pv.id as id
+                  pv.id AS id
               FROM 
                   cb_newage_panel_view pv 
               LEFT JOIN 
@@ -194,8 +194,7 @@ class OfferController extends Controller
 
             $offeredPanelViewIds = [];
             /** @var OfferItem $offerItem */
-            foreach ($offer->getOfferItems() as $offerItem)
-            {
+            foreach ($offer->getOfferItems() as $offerItem) {
                 $offeredPanelViewIds[] = $offerItem->getPanelView()->getId();
             }
 
@@ -433,7 +432,7 @@ class OfferController extends Controller
                 }
             }
 
-            if ($entitiesCount>0) {
+            if ($entitiesCount > 0) {
                 $em->flush();
                 $em->commit();
 
@@ -593,7 +592,7 @@ class OfferController extends Controller
                 }
             }
 
-            if ($entitiesCount>0) {
+            if ($entitiesCount > 0) {
                 $em->flush();
                 $em->commit();
 
@@ -751,6 +750,42 @@ class OfferController extends Controller
         } catch (\Exception $e) {
             $em->rollback();
             throw $e;
+        }
+
+        return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));
+    }
+
+
+    /**
+     * @Route("/{gridName}/removeMassAction/{actionName}", name="cb_remove_mass_action")
+     * @AclAncestor("cb_newage_offer_view")
+     * @Template("CBNewAgeBundle:Offer:view.html.twig")
+     *
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return RedirectResponse
+     * @throws \Exception
+     */
+    public function removeMassActionAction($gridName, $actionName) {
+        /** @var MassActionDispatcher $massActionDispatcher */
+        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->container->get('request_stack')->getCurrentRequest());
+
+        /** @var Offer $offer */
+        $offer = $response->getOption('offer');
+        $count = $response->getOption('count');
+
+        if ($count>0) {
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                $this->get('translator')->transChoice(
+                    'cb.newage.offer.message.items.deleted',
+                    $count,
+                    ['%count%' => $count]
+                )
+            );
         }
 
         return $this->redirect($this->get('router')->generate('cb_newage_offer_view', ['id' => $offer->getId()]));

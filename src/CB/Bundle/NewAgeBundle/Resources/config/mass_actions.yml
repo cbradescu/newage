@@ -11,6 +11,9 @@ parameters:
     cb_newage.mass_action.cancel.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\CancelMassAction
     cb_newage.mass_action.cancel_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\CancelMassActionHandler
 
+    cb_newage.mass_action.remove.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\RemoveMassAction
+    cb_newage.mass_action.remove_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\RemoveMassActionHandler
+
 services:
     cb_newage.mass_action.offer:
         class: %cb_newage.mass_action.offer.class%
@@ -74,3 +77,18 @@ services:
             - '@translator'
             - '@security.context'
             - '@oro_security.security_facade.link'
+
+    cb_newage.mass_action.remove:
+        class: %cb_newage.mass_action.remove.class%
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: remove }
+
+    cb_newage.mass_action.remove_handler:
+        class: %cb_newage.mass_action.remove_handler.class%
+        arguments:
+            - '@doctrine'
+            - '@translator'
+            - '@oro_security.security_facade'
+            - '@oro_platform.optional_listeners.manager'
+            - '@oro_message_queue.client.message_producer'
