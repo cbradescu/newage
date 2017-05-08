@@ -8,6 +8,9 @@ parameters:
     cb_newage.mass_action.confirm.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\ConfirmMassAction
     cb_newage.mass_action.confirm_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\ConfirmMassActionHandler
 
+    cb_newage.mass_action.cancel.class: CB\Bundle\NewAgeBundle\Extension\MassAction\Actions\CancelMassAction
+    cb_newage.mass_action.cancel_handler.class: CB\Bundle\NewAgeBundle\Extension\MassAction\CancelMassActionHandler
+
 services:
     cb_newage.mass_action.offer:
         class: %cb_newage.mass_action.offer.class%
@@ -50,6 +53,22 @@ services:
 
     cb_newage.mass_action.confirm_handler:
         class: %cb_newage.mass_action.confirm_handler.class%
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@translator'
+            - '@security.context'
+            - '@oro_security.security_facade.link'
+
+    cb_newage.mass_action.cancel:
+        class: %cb_newage.mass_action.cancel.class%
+        arguments:
+            - '@translator'
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: cancel }
+
+    cb_newage.mass_action.cancel_handler:
+        class: %cb_newage.mass_action.cancel_handler.class%
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@translator'

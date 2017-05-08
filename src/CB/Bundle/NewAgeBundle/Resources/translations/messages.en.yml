@@ -38,13 +38,9 @@ cb:
             primary.label:                 Primary
             street.label:                  Street
             street2.label:                 Street 2
-
-
-
       panel_view:
             entity_label:                  Panel View
             entity_plural_label:           Panel Views
-
       panelview:
             entity_label:                  Panel View
             entity_plural_label:           Panel Views
@@ -67,7 +63,6 @@ cb:
                 title:                     Add Panel View
             form:
                 choose_panel_view:         Choose Panel View
-
       client:
             entity_label:                  Client
             entity_plural_label:           Clients
@@ -87,7 +82,6 @@ cb:
             add.label:                     Add Client
             form:
                 choose_client:          Choose Client
-
       # SupportType entity
       supporttype:
             entity_label:                  Support Type
@@ -99,12 +93,10 @@ cb:
                 saved:                     Support Type saved
             form:
                 choose_support_type:       Choose Support Type
-
       support_type:
             entity_label:                  Support Type
             entity_plural_label:           Support Types
             block.general:                 Support Type
-
       # LightingType entity
       lightingtype:
             entity_label:                  Lighting Type
@@ -116,19 +108,16 @@ cb:
                 saved:                     Lighting Type saved
             form:
                 choose_lighting_type:       Choose Lighting Type
-
       lighting_type:
             entity_label:                  Lighting Type
             entity_plural_label:           Lighting Types
             block.general:                 Lighting Type
-
       dashboard:
           view_all.label: View All
           title.newage_launchpad: New Age Launchpad
           title.old_offers: Unconfirmed offers < 10 days
           description.newage_launchpad_widget: This widget gives you access to most commonly used actions and pages
           description.old_offers_widget: This widget show unconfirmed offers that are older than 10 days.
-
       city:
             entity_label:                  City
             entity_plural_label:           Cities
@@ -141,7 +130,6 @@ cb:
             organization.label:            Organization
             form:
                 choose_city:               Choose City
-
       offer:
             entity_label:                  Offer
             entity_plural_label:           Offers
@@ -151,10 +139,10 @@ cb:
             message:
                 saved:                     Offer saved
                 items:
-                    added:                 %count% Panel views added
-                    confirmed:             %count% Panel views confirmed
-                offer_items.removed:       Removed old panel views from current Offer
-                reservation_items.removed: Removed old panel views from current Reservation
+                    offered:               %count% items added to offer
+                    reserved:              %count% items added to reservation
+                    confirmed:             %count% Pitems added to confirmation
+                    canceled:              %count% confirmations has been canceled
             id.label:                      Id
             name.label:                    Campaign Name
             owner.label:                   Owner
@@ -178,20 +166,19 @@ cb:
             form:
                 select_panel_views:        Select Panel Views
             datagrid:
-                action.offer:              Offer items
-                action.reserve:            Reserve items
-                action.confirm:            Confirm items
+                action.offer:              Offer
+                action.reserve:            Reserve
+                action.confirm:            Confirm
+                action.cancel:             Delete
             export:
                 offer_items.label:         Export Offer Items
                 reservation_items.label:   Export Reservation Items
                 confirmed_items.label:     Export Confirmed Items
-
       offeritem:
             entity_label:                  Offer Item
             entity_plural_label:           Offer Items
       reservationitem:
             entity_label:                  Reservation Item
             entity_plural_label:           Reservation Items
-
       menu:
           admin_tab_label:      Administration

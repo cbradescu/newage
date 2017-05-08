@@ -617,6 +617,32 @@ datagrids:
 
     offer-grid:
         extends: base-offer-grid
+#        source:
+#            query:
+#                select:
+#                    - >
+#                        CASE
+#                            WHEN (SELECT COUNT(ev1.id) FROM CBSchedulerBundle:SchedulerEvent ev1 LEFT JOIN CBNewAgeBundle:ReservationItem ri1 WITH ev1.reservationItem=ri1.id LEFT JOIN CBNewAgeBundle:OfferItem oi1 WITH ri1.offerItem=oi1.id WHERE oi1.offer=offer.id AND ev1.status=1) > 0 THEN 'confirmed'
+#                            WHEN (SELECT COUNT(ev2.id) FROM CBSchedulerBundle:SchedulerEvent ev2 LEFT JOIN CBNewAgeBundle:ReservationItem ri2 WITH ev2.reservationItem=ri2.id LEFT JOIN CBNewAgeBundle:OfferItem oi2 WITH ri2.offerItem=oi2.id WHERE oi2.offer=offer.id AND ev2.status=0) > 0 THEN 'reserved'
+#                            WHEN (SELECT COUNT(oi3.id) FROM CBNewAgeBundle:OfferItem oi3 WHERE oi3.offer=offer.id) > 0 THEN 'offered'
+#                            ELSE 'created'
+#                        END as status
+#        columns:
+#            status:
+#                label: Status
+
+#        filters:
+#            columns:
+#                status:
+#                    label: Status
+#                    type: choice
+#                    options:
+#                        field_options:
+#                            multiple: true
+#                            choices:
+#                                created: 'created'
+#                                offered: 'offered'
+#                    data_name: status
 
     offer-items-grid:
         source:
@@ -1261,17 +1287,20 @@ datagrids:
 
         properties:
             id: ~
-            delete_link:
+            cancel_link:
                 type:         url
-                route:        cb_api_delete_schedulerevent
+                route:        cb_scheduler_scheduler_event_cancel
                 params:       [ id ]
         actions:
-            delete:
-                type:         delete
-                acl_resource: cb_scheduler_event_delete
+            cancel:
+                type:         ajax
+                acl_resource: cb_scheduler_event_update
                 label:        oro.grid.action.delete
                 icon:         trash
-                link:         delete_link
+                link:         cancel_link
+                defaultMessages:
+                    success: cb.scheduler.action.success_cancel
+                    error: cb.scheduler.action.error_cancel
 #        action_configuration:
 #            delete: false
         options:
@@ -1281,6 +1310,14 @@ datagrids:
 #                    enabled: false
             routerEnabled: false
 #            export: true
+        mass_actions:
+            cancel:
+                type: cancel
+                entity_name: %cb_scheduler.scheduler_event.entity.class%
+                data_identifier: ev.id
+                label: cb.newage.offer.datagrid.action.cancel
+                icon: check-square
+
 
     old_offers-grid:
         source:

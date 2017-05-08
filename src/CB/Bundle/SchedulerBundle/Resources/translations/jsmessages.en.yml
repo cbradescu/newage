@@ -6,3 +6,6 @@ cb:
                 client_not_blank:   Client value should not be blank.
             event_model:
                 end_date_earlier_than_start: "The end date can't be earlier than start date"
+        action:
+            success_cancel: "Confirmation has been canceled."
+            error_cancel: "An error has occurred. Confirmation has NOT been canceled."

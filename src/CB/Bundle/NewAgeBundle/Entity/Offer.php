@@ -545,15 +545,18 @@ class Offer
 
     public function hasReservationItems()
     {
-        /** @var ReservationItem $ri */
+        /** @var OfferItem $oi */
         foreach ($this->getOfferItems() as $oi) {
-            foreach ($oi->getReservationItems() as $ri) {
-                /** @var SchedulerEvent $event */
-                foreach ($ri->getEvents() as $event) {
-                    if ($event->getStatus() == SchedulerEvent::RESERVED)
-                        return true;
-                }
+            if ($oi->getReservationItems() != null && count($oi->getReservationItems())>0) {
+                return true;
             }
+//            foreach ($oi->getReservationItems() as $ri) {
+//                /** @var SchedulerEvent $event */
+//                foreach ($ri->getEvents() as $event) {
+//                    if ($event->getStatus() == SchedulerEvent::RESERVED)
+//                        return true;
+//                }
+//            }
         }
 
         return false;

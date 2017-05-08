@@ -178,8 +178,9 @@ class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
      */
     public function __toString()
     {
-        if ($this->client)
-            return (string)$this->getClient()->getTitle();
+        $client = $this->reservationItem->getOfferItem()->getOffer()->getClient();
+        if ($client)
+            return (string)$client->getTitle();
         else
             return 'default';
     }

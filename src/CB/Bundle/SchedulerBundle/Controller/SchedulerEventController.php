@@ -2,7 +2,9 @@
 
 namespace CB\Bundle\SchedulerBundle\Controller;
 
+use CB\Bundle\SchedulerBundle\Manager\SchedulerEventManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -107,5 +109,32 @@ class SchedulerEventController extends Controller
             'entity' => $schedulerEvent,
             'form' => $this->get('cb_scheduler.scheduler_event.form')->createView()
         );
+    }
+
+    /**
+     * Togle user emails seen status
+     *
+     * @Route("/cancel/{id}", name="cb_scheduler_scheduler_event_cancel", requirements={"id"="\d+"})
+     * @AclAncestor("cb_scheduler_event_update")
+     *
+     * @param SchedulerEvent $event
+     *
+     * @return JsonResponse
+     */
+    public function toggleSeenAction(SchedulerEvent $event)
+    {
+        $this->getSchedulerEventManager()->toggleEventStatus($event);
+
+        return new JsonResponse(['successful' => true]);
+    }
+
+    /**
+     * Get event cache manager
+     *
+     * @return SchedulerEventManager
+     */
+    protected function getSchedulerEventManager()
+    {
+        return $this->container->get('cb_scheduler.scheduler_event.manager');
     }
 }

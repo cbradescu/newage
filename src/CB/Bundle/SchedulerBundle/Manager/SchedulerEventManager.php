@@ -2,6 +2,7 @@
 
 namespace CB\Bundle\SchedulerBundle\Manager;
 
+use Doctrine\ORM\EntityManager;
 use CB\Bundle\NewAgeBundle\Entity\Client;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\Repository\ClientRepository;
@@ -16,6 +17,9 @@ use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 
 class SchedulerEventManager
 {
+    /** @var EntityManager */
+    protected $em;
+
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
@@ -35,11 +39,13 @@ class SchedulerEventManager
      * @param SystemCalendarConfig $calendarConfig
      */
     public function __construct(
+        EntityManager $em,
         DoctrineHelper $doctrineHelper,
         SecurityFacade $securityFacade,
         EntityNameResolver $entityNameResolver,
         SystemCalendarConfig $calendarConfig
     ) {
+        $this->em                  = $em;
         $this->doctrineHelper     = $doctrineHelper;
         $this->securityFacade     = $securityFacade;
         $this->entityNameResolver = $entityNameResolver;
@@ -135,6 +141,18 @@ class SchedulerEventManager
     {
         return $this->doctrineHelper->getEntityRepository('CBNewAgeBundle:PanelView')
             ->find($panelViewId);
+    }
+    /**
+     * Toggle SchedulerEvent
+     *
+     * @param SchedulerEvent $entity
+     */
+    public function toggleEventStatus(SchedulerEvent $entity)
+    {
+        $this->setStatus($entity, SchedulerEvent::RESERVED);
+        $this->em->persist($entity);
+
+        $this->em->flush();
     }
 
     public function setStatus(SchedulerEvent $event, $status)

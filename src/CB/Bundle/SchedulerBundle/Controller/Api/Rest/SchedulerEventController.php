@@ -2,6 +2,7 @@
 
 namespace CB\Bundle\SchedulerBundle\Controller\Api\Rest;
 
+use CB\Bundle\SchedulerBundle\CBSchedulerBundle;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
 

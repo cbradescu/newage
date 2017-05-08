@@ -28,6 +28,8 @@ cb:
             panel_view.label:              Panel View
             reservation_item.label:        Reservation_item
             status.label:                  Status
+            owner.label:                   Owner
+            organization.label:            Organization
 
 
 cb.scheduler.scheduler_event.status.reserved.label: Reserved

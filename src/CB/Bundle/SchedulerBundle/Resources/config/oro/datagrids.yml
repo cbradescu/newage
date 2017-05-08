@@ -15,6 +15,7 @@ datagrids:
                     - st.name as supportType
                     - lt.name as lightingType
                     - ct.name as city
+                    - o.name as offer
                 from:
                     - { table: %cb_scheduler.scheduler_event.entity.class%, alias: se }
                 join:
@@ -67,6 +68,8 @@ datagrids:
                 label:  cb.newage.panelview.entity_label
             client:
                 label:  cb.newage.client.entity_label
+            offer:
+                label:  cb.newage.offer.entity_label
             supportType:
                 label:  cb.newage.supporttype.entity_label
             lightingType:
@@ -79,6 +82,8 @@ datagrids:
                       data_name: se.start
                   client:
                       data_name: c.title
+                  offer:
+                      data_name: o.name
               default:
                   start:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC'
 
@@ -137,6 +142,12 @@ datagrids:
                     options:
                         field_options:
                             class: CBNewAgeBundle:Client
+                offer:
+                    type: entity
+                    data_name: oi.offer
+                    options:
+                        field_options:
+                            class: CBNewAgeBundle:Offer
                 city:
                     type:      choice
                     data_name: addr.city
