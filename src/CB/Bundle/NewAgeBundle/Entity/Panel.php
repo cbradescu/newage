@@ -71,7 +71,7 @@ class Panel
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", unique=true, length=255)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
