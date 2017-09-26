@@ -139,6 +139,34 @@ acls:
         group_name: ""
         bindings: ~
 
+    cb_newage_enviroment_type_create:
+        type: entity
+        class: CBNewAgeBundle:EnviromentType
+        permission: CREATE
+        group_name: ""
+        bindings: ~
+
+    cb_newage_enviroment_type_view:
+        type: entity
+        class: CBNewAgeBundle:EnviromentType
+        permission: VIEW
+        group_name: ""
+        bindings: ~
+
+    cb_newage_enviroment_type_update:
+        type: entity
+        class: CBNewAgeBundle:EnviromentType
+        permission: EDIT
+        group_name: ""
+        bindings: ~
+
+    cb_newage_enviroment_type_delete:
+        type: entity
+        class: CBNewAgeBundle:EnviromentType
+        permission: DELETE
+        group_name: ""
+        bindings: ~
+
     cb_newage_city_create:
         type: entity
         class: CBNewAgeBundle:City

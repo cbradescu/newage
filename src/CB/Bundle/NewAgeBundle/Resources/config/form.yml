@@ -19,6 +19,10 @@ parameters:
     cb_newage_lighting_type.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\LightingTypeApiType
     cb_newage_lighting_type.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\LightingTypeHandler
 
+    cb_newage_enviroment_type.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\EnviromentTypeType
+    cb_newage_enviroment_type.form.type.entity.api.class:                  CB\Bundle\NewAgeBundle\Form\Type\EnviromentTypeApiType
+    cb_newage_enviroment_type.form.handler.entity.class:                   CB\Bundle\NewAgeBundle\Form\Handler\EnviromentTypeHandler
+
     cb_newage_panel_address_collection.form.type.entity.class:          CB\Bundle\NewAgeBundle\Form\Type\PanelAddressCollectionType
 
     cb_newage_city.form.type.entity.class:                      CB\Bundle\NewAgeBundle\Form\Type\CityType
@@ -264,6 +268,53 @@ services:
         arguments:
             - 'lighting_type'
             - 'cb_newage_lighting_type_api'
+
+    cb_newage_enviroment_type.form.type.entity:
+        class: %cb_newage_enviroment_type.form.type.entity.class%
+        arguments:
+            - @router
+            - @oro_security.security_facade
+        tags:
+            - { name: form.type, alias: cb_newage_enviroment_type }
+
+    cb_newage_enviroment_type.form.handler.entity:
+        class: %cb_newage_enviroment_type.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_enviroment_type.form.entity
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_enviroment_type.form.entity:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'cb_newage_enviroment_type_form'
+            - 'cb_newage_enviroment_type'
+
+    cb_newage_enviroment_type.form.type.entity.api:
+        class: %cb_newage_enviroment_type.form.type.entity.api.class%
+        tags:
+            - { name: form.type, alias: cb_newage_enviroment_type_api }
+
+    cb_newage_enviroment_type.form.handler.entity.api:
+        class: %cb_newage_enviroment_type.form.handler.entity.class%
+        scope: request
+        arguments:
+            - @cb_newage_enviroment_type.form.entity.api
+            - @request
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+
+    cb_newage_enviroment_type.form.entity.api:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments:
+            - 'enviroment_type'
+            - 'cb_newage_enviroment_type_api'
 
     cb_newage_panel_address_collection.form.type.entity:
         class: %cb_newage_panel_address_collection.form.type.entity.class%
