@@ -133,7 +133,7 @@ Vagrant.configure("2") do |config|
   	apt-get update
  	echo -e "\n*** Install git, nginx, php, mysql-client, mysql-server, nodejs ***\n"
  	apt-get install --assume-yes git nginx mysql-client mysql-server nodejs php php7.1-xml php7.1-intl php7.1-mysql php-mbstring php7.1-curl php7.1-gd php7.1-mcrypt php7.1-soap php7.1-tidy php7.1-zip php-ldap
-	apt-get remove apache2 apache2-bin apache2-data
+	apt-get remove --assume-yes apache2 apache2-bin apache2-data
 	
   	# --- DB installation tuning ---
 
@@ -159,18 +159,19 @@ Vagrant.configure("2") do |config|
                 fastcgi_pass unix:/run/php/php7.1-fpm.sock;
                 fastcgi_split_path_info ^(.+\.php)(/.*)$;
                 include fastcgi_params;
-                fastcgi_buffers 16 32k;
-                fastcgi_buffer_size 32k;
+                fastcgi_buffers 128 4096k;
+                fastcgi_buffer_size 4096k;
                 fastcgi_param SCRIPT_FILENAME \\$document_root\\$fastcgi_script_name;
                 fastcgi_param HTTPS off;
             }
 
-            error_log /vagrant/app/logs/nginx/${APP_HOST}_error.log;
-            access_log /vagrant/app/logs/nginx/${APP_HOST}_access.log;
+            error_log /vagrant/app/logs/${APP_HOST}_error.log;
+            access_log /vagrant/app/logs/${APP_HOST}_access.log;
         }
 ____NGINXCONFIGTEMPLATE
   	ln -s /etc/nginx/sites-available/$APP_HOST /etc/nginx/sites-enabled/$APP_HOST
- 	mkdir /vagrant/app/logs/nginx
+    rm -rf /etc/nginx/sites-enabled/default
+ 	mkdir /home/vagrant/logs/nginx
   	service nginx restart
 
   	# --- Add vagrant user to www-data group (for composer) ---
@@ -250,7 +251,8 @@ ____NGINXCONFIGTEMPLATE
 
    	echo -e "\n*** Run 'composer install' command ***\n"
 	cd /vagrant
-	composer global require fxp/composer-asset-plugin:1.2.2
+#	composer global require fxp/composer-asset-plugin:1.2.2
+	composer global require fxp/composer-asset-plugin:~1.2
  	composer install --prefer-dist --no-dev
 
  	# --- Install Oro applicatioin ---
@@ -291,10 +293,44 @@ ____NGINXCONFIGTEMPLATE
 
   SHELL
 end
+
+# Useful Oro commands:
+# ---------------------
 # php app/console doctrine:schema:update --force --dump-sql
 # php app/console oro:entity-config:update --force
 # php app/console oro:entity-extend:update-config
 # php app/console cache:clear --env=dev
 # php app/console cache:warmup --env=dev
+
+# Set git line endings for commited files:
+# ----------------------------------------
 # git config core.eol lf
 # git config core.autocrlf input
+
+# !!! Activare fiser swap pentru erori de memorie precum:
+# -------------------------------------------------------
+#  [ErrorException]
+#  proc_open(): fork failed - Cannot allocate memory
+#
+# 1. We will create a 1 GiB file (/mnt/1GiB.swap) to use as swap:
+#   sudo fallocate -l 1g /mnt/1GiB.swap
+# 1.1 If fallocate fails or it not available, you can use dd:
+#   sudo dd if=/dev/zero of=/mnt/1GiB.swap bs=1024 count=1048576# sudo chmod 600 /mnt/1GiB.swap
+# 2. We need to set the swap file permissions to 600 to prevent other users from being able to read potentially sensitive information from the swap file.
+#   sudo chmod 600 /mnt/1GiB.swap
+# 3. Format the file as swap:
+#   sudo mkswap /mnt/1GiB.swap
+# 4. Enable use of Swap File
+#   sudo swapon /mnt/1GiB.swap
+# 5. Confirm that the swap partition exists:
+#   cat /proc/swaps
+
+
+# To skip composer require-dev:
+#   composer required <xxx-package> --update-no-dev
+
+
+
+# sudo apt-get install redis-server
+# composer require snc/redis-bundle 1.1.x-dev --update-no-dev
+# composer require predis/predis ^1.0 --update-no-dev

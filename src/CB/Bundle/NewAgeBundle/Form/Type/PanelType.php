@@ -59,6 +59,17 @@ class PanelType extends AbstractType
                 )
             )
             ->add(
+                'enviromentType',
+                'entity',
+                array(
+                    'label'       => 'cb.newage.enviromenttype.entity_label',
+                    'class'       => 'CBNewAgeBundle:LightingType',
+                    'property'    => 'name',
+                    'empty_value' => 'cb.newage.enviromenttype.form.choose_enviroment_type',
+                    'required'    => true
+                )
+            )
+            ->add(
                 'dimensions',
                 'text',
                 [
@@ -88,6 +99,16 @@ class PanelType extends AbstractType
     }
 
     /**
+     * Returns the name of this type.
+     *
+     * @return string The name of this type
+     */
+    public function getName()
+    {
+        return 'cb_newage_panel';
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -100,16 +121,6 @@ class PanelType extends AbstractType
                 'ownership_disabled' => true
             ]
         );
-    }
-
-    /**
-     * Returns the name of this type.
-     *
-     * @return string The name of this type
-     */
-    public function getName()
-    {
-        return 'cb_newage_panel';
     }
 
 }

@@ -27,6 +27,7 @@ cb:
             addresses.label:               Adresses
             lighting_type.label:           Lighting Type
             support_type.label:            Support Type
+            enviroment_type.label:         Enviroment Type
       paneladdress:
             entity_label:                  Panel Address
             entity_plural_label:           Panel Addresses
@@ -112,6 +113,21 @@ cb:
             entity_label:                  Lighting Type
             entity_plural_label:           Lighting Types
             block.general:                 Lighting Type
+      # EnviromentType entity
+      enviromenttype:
+            entity_label:                  Enviroment Type
+            entity_plural_label:           Enviroment Types
+            block.general:                 Enviroment Type
+            id.label:                      Id
+            name.label:                    Name
+            message:
+                saved:                     Enviroment Type saved
+            form:
+                choose_enviroment_type:       Choose Enviroment Type
+      enviroment_type:
+            entity_label:                  Enviroment Type
+            entity_plural_label:           Enviroment Types
+            block.general:                 Enviroment Type
       dashboard:
           view_all.label: View All
           title.newage_launchpad: New Age Launchpad

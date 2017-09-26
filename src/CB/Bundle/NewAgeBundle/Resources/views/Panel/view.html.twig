@@ -81,12 +81,21 @@
         {%- endif -%}
     {%- endset -%}
 
+    {%- set enviromentTypeInformation -%}
+        {%- if entity.enviromentType -%}
+            <a href="{{ path('cb_newage_enviroment_type_view', {'id': entity.enviromentType.id}) }}">
+                {{ entity.enviromentType }}
+            </a>
+        {%- endif -%}
+    {%- endset -%}
+
     {%- set panelInformation -%}
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('cb.newage.panel.code.label'|trans, entity.name) }}
             {{ UI.renderHtmlProperty('cb.newage.supporttype.entity_label'|trans, supportTypeInformation) }}
             {{ UI.renderHtmlProperty('cb.newage.lightingtype.entity_label'|trans, lightingTypeInformation) }}
+            {{ UI.renderHtmlProperty('cb.newage.enviromenttype.entity_label'|trans, enviromentTypeInformation) }}
             {{ UI.renderProperty('cb.newage.panel.dimensions.label'|trans, entity.dimensions) }}
             {{ UI.renderHtmlProperty('cb.newage.panel.neighborhoods.label'|trans, entity.neighborhoods|escape|nl2br) }}
         </div>

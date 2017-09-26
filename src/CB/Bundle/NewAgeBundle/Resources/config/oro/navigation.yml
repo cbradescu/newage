@@ -72,6 +72,10 @@ navigation:
                 acl_resource_id: cb_newage_admin_menu
                 label: 'cb.newage.lighting_type.entity_plural_label'
                 route: cb_newage_lighting_type_index
+            panel_tab_enviroment_type_index_link:
+                acl_resource_id: cb_newage_admin_menu
+                label: 'cb.newage.enviroment_type.entity_plural_label'
+                route: cb_newage_enviroment_type_index
             panel_tab_index_link:
                 label: 'cb.newage.panel.entity_plural_label'
                 route: cb_newage_panel_index
@@ -94,6 +98,7 @@ navigation:
                                 children:
                                     panel_tab_support_type_index_link: ~
                                     panel_tab_lighting_type_index_link: ~
+                                    panel_tab_enviroment_type_index_link: ~
                             panel_view_tab: ~
                             city_divider: ~
                             city_tab: ~
@@ -122,6 +127,11 @@ navigation:
         cb_newage_lighting_type_view: '%%entity.name%%'
         cb_newage_lighting_type_create: 'oro.ui.create_entity'
         cb_newage_lighting_type_update: '%%entity.name%% - oro.ui.edit'
+
+        cb_newage_enviroment_type_index: ~
+        cb_newage_enviroment_type_view: '%%entity.name%%'
+        cb_newage_enviroment_type_create: 'oro.ui.create_entity'
+        cb_newage_enviroment_type_update: '%%entity.name%% - oro.ui.edit'
 
         cb_newage_city_index: ~
         cb_newage_city_view: '%%entity.name%%'

@@ -51,7 +51,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Panel
 {
-
     /**
      * @var integer
      *
@@ -139,6 +138,21 @@ class Panel
      * )
      */
     protected $lightingType;
+
+    /**
+     * @var EnviromentType
+     *
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\EnviromentType")
+     * @ORM\JoinColumn(name="enviroment_type_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *      }
+     * )
+     */
+    protected $enviromentType;
 
     /**
      * @var Collection
@@ -352,6 +366,26 @@ class Panel
     public function getLightingType()
     {
         return $this->lightingType;
+    }
+
+    /**
+     * @param EnviromentType $enviromentType
+     *
+     * @return Panel
+     */
+    public function setEnviromentType($enviromentType)
+    {
+        $this->enviromentType = $enviromentType;
+
+        return $this;
+    }
+
+    /**
+     * @return EnviromentType
+     */
+    public function getEnviromentType()
+    {
+        return $this->enviromentType;
     }
 
     /**
