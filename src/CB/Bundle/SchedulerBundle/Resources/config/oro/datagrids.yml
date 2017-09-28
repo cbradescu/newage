@@ -138,7 +138,7 @@ datagrids:
                                 1: Confirmed
                 client:
                     type: entity
-                    data_name: se.client
+                    data_name: c.id
                     options:
                         field_options:
                             class: CBNewAgeBundle:Client
