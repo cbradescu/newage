@@ -125,6 +125,7 @@ class SchedulerEventRepository extends EntityRepository
                  e.start,
                  e.end,
                  e.status,
+                 o.id as offerId,
                  o.name as offerName'
             )
             ->leftJoin('e.reservationItem', 'ri')

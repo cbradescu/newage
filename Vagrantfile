@@ -162,6 +162,7 @@ Vagrant.configure("2") do |config|
                 fastcgi_buffers 128 4096k;
                 fastcgi_buffer_size 4096k;
                 fastcgi_param SCRIPT_FILENAME \\$document_root\\$fastcgi_script_name;
+                fastcgi_read_timeout 300;
                 fastcgi_param HTTPS off;
             }
 

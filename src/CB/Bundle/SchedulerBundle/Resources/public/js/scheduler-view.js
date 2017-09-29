@@ -627,7 +627,7 @@ define(function(require) {
         filterEvents: function(events) {
             _.each(this.filters, function (filter) {
                 events = _.filter(events, function(event) {
-                    if (filter.name=='status' || filter.name=='client')
+                    if (filter.name=='status' || filter.name=='client' || filter.name=='offer')
                         return event.get(filter.name)==filter.value;
                     else
                         return $.inArray(event.get(filter.name),filter.value);
