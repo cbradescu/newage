@@ -63,7 +63,7 @@ class PanelType extends AbstractType
                 'entity',
                 array(
                     'label'       => 'cb.newage.enviromenttype.entity_label',
-                    'class'       => 'CBNewAgeBundle:LightingType',
+                    'class'       => 'CBNewAgeBundle:EnviromentType',
                     'property'    => 'name',
                     'empty_value' => 'cb.newage.enviromenttype.form.choose_enviroment_type',
                     'required'    => true
