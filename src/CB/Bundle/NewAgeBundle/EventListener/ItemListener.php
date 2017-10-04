@@ -46,21 +46,6 @@ class ItemListener
 
         /** @var Item $entity */
         $this->setCreatedProperties($entity, $args->getEntityManager());
-        $this->setUpdatedProperties($entity, $args->getEntityManager());
-    }
-
-    /**
-     * @param PreUpdateEventArgs $args
-     */
-    public function preUpdate(PreUpdateEventArgs $args)
-    {
-        $entity = $args->getEntity();
-        if (!$this->isItemEntity($entity)) {
-            return;
-        }
-
-        /** @var Item $entity */
-        $this->setUpdatedProperties($entity, $args->getEntityManager(), true);
     }
 
     /**
@@ -73,37 +58,14 @@ class ItemListener
     }
 
     /**
-     * @param Item $offer
+     * @param Item $item
      * @param EntityManager $entityManager
      */
-    protected function setCreatedProperties(Item $offer, EntityManager $entityManager)
+    protected function setCreatedProperties(Item $item, EntityManager $entityManager)
     {
-            if (!$offer->getCreatedAt()) {
-                $offer->setCreatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
+            if (!$item->getCreatedBy()) {
+                $item->setCreatedBy($this->getUser($entityManager));
             }
-            if (!$offer->getCreatedBy()) {
-                $offer->setCreatedBy($this->getUser($entityManager));
-            }
-    }
-
-    /**
-     * @param Item $offer
-     * @param EntityManager $entityManager
-     * @param bool $update
-     */
-    protected function setUpdatedProperties(Item $offer, EntityManager $entityManager, $update = false)
-    {
-        $newUpdatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $newUpdatedBy = $this->getUser($entityManager);
-
-        $unitOfWork = $entityManager->getUnitOfWork();
-        if ($update) {
-            $unitOfWork->propertyChanged($offer, 'updatedAt', $offer->getUpdatedAt(), $newUpdatedAt);
-            $unitOfWork->propertyChanged($offer, 'updatedBy', $offer->getUpdatedBy(), $newUpdatedBy);
-        }
-
-        $offer->setUpdatedAt($newUpdatedAt);
-        $offer->setUpdatedBy($newUpdatedBy);
     }
 
     /**

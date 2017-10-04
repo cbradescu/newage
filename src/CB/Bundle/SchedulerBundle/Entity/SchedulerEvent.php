@@ -2,8 +2,6 @@
 
 namespace CB\Bundle\SchedulerBundle\Entity;
 
-use CB\Bundle\NewAgeBundle\Entity\Client;
-use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\ReservationItem;
 use CB\Bundle\SchedulerBundle\Model\ExtendSchedulerEvent;
 
@@ -11,8 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 
 /**
  * @ORM\Entity(repositoryClass="CB\Bundle\SchedulerBundle\Entity\Repository\SchedulerEventRepository")
@@ -20,7 +16,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
  *      name="cb_scheduler_event",
  *      indexes={
  *          @ORM\Index(name="cb_scheduler_event_idx", columns={"id", "start_at", "end_at"}),
- *          @ORM\Index(name="cb_scheduler_event_up_idx", columns={"updatedAt"})
+ *          @ORM\Index(name="cb_scheduler_event_up_idx", columns={"updated_at"})
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -47,10 +43,8 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
  *      }
  * )
  */
-class SchedulerEvent extends ExtendSchedulerEvent implements DatesAwareInterface
+class SchedulerEvent extends ExtendSchedulerEvent
 {
-    use DatesAwareTrait;
-
     const RESERVED = 0;
     const CONFIRMED = 1;
 

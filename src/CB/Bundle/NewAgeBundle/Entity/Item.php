@@ -9,13 +9,20 @@
 namespace CB\Bundle\NewAgeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedByAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedByAwareTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
-abstract class Item
+abstract class Item implements DatesAwareInterface, UpdatedByAwareInterface
 {
+    use DatesAwareTrait;
+    use UpdatedByAwareTrait;
+
     /**
      * @var integer
      *
@@ -97,50 +104,6 @@ abstract class Item
      * )
      */
     protected $createdBy;
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="updated_by_user_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedBy;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
-
 
     /**
      * @return integer
@@ -257,75 +220,6 @@ abstract class Item
     public function setCreatedBy($createdBy)
     {
         $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
-    /**
-     * @param User $updatedBy
-     *
-     * @return $this
-     */
-    public function setUpdatedBy($updatedBy)
-    {
-        $this->updatedBy = $updatedBy;
-
-        return $this;
-    }
-
-    /**
-     * @return User
-     */
-    public function getUpdatedBy()
-    {
-        return $this->updatedBy;
-    }
-
-
-    /**
-     * Get create date/time
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Set create date/time
-
-     * @param \DateTime createdAt
-     *
-     * @return $this
-     */
-    public function setCreatedAt(\DateTime $createdAt = null)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get last update date/time
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * Set last update date/time
-
-     * @param \DateTime updatedAt
-     *
-     * @return $this
-     */
-    public function setUpdatedAt(\DateTime $updatedAt = null)
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }

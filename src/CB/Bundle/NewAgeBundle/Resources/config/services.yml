@@ -241,7 +241,6 @@ services:
             - "@service_container"
         tags:
             - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: preUpdate }
 
     cb_newage.subscriber.panel_listener:
         class: %cb_newage.subscriber.panel_listener.class%

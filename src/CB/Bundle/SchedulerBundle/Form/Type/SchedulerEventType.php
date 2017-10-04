@@ -37,26 +37,6 @@ class SchedulerEventType extends AbstractType
                 ]
             )
             ->add(
-                'panelView',
-                'entity',
-                array(
-                    'label'       => 'cb.newage.panelview.entity_label',
-                    'class'       => 'CBNewAgeBundle:PanelView',
-//                    'property'    => 'name',
-                    'empty_value' => 'cb.newage.panelview.form.choose_panel_view'
-                )
-            )
-            ->add(
-                'client',
-                'entity',
-                array(
-                    'label'       => 'cb.newage.client.entity_label',
-                    'class'       => 'CBNewAgeBundle:Client',
-                    'property'    => 'title',
-                    'empty_value' => 'cb.newage.client.form.choose_client'
-                )
-            )
-            ->add(
                 'status',
                 'choice',
                 array(
@@ -70,8 +50,6 @@ class SchedulerEventType extends AbstractType
                 )
             )
         ;
-
-//        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
@@ -96,58 +74,6 @@ class SchedulerEventType extends AbstractType
                 'intention'             => 'scheduler_event',
                 'cascade_validation'    => true
             ]
-        );
-    }
-
-    /**
-     * PRE_SET_DATA event handler
-     *
-     * @param FormEvent $event
-     */
-    public function preSetData(FormEvent $event)
-    {
-        $form   = $event->getForm();
-
-        /** @var SchedulerEvent $data */
-        $data = $event->getData();
-        $form->add(
-            $form->getConfig()->getFormFactory()->createNamed(
-                'client',
-                'cb_client_choice',
-                $data ? $data->getClient() : null,
-                [
-                    'required'        => true,
-                    'mapped'          => false,
-                    'auto_initialize' => false,
-                    'label'           => 'cb.newage.client.entity_label'
-                ]
-            )
-        );
-        $form->add(
-            $form->getConfig()->getFormFactory()->createNamed(
-                'panelView',
-                'cb_panel_view_choice',
-                $data ? $data->getPanelView() : null,
-                [
-                    'required'        => false,
-                    'mapped'          => false,
-                    'auto_initialize' => false,
-                    'label'           => 'cb.newage.panel_view.entity_label'
-                ]
-            )
-        );
-        $form->add(
-            $form->getConfig()->getFormFactory()->createNamed(
-                'status',
-                'cb_status_choice',
-                $data ? $data->getStatus() : null,
-                [
-                    'required'        => true,
-                    'mapped'          => false,
-                    'auto_initialize' => false,
-                    'label'           => 'cb.scheduler.scheduler_event.status.label'
-                ]
-            )
         );
     }
 
