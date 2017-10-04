@@ -16,6 +16,12 @@ CB\Bundle\NewAgeBundle\Entity\PanelAddress:
             - NotBlank: ~
         longitude:
             - NotBlank: ~
+CB\Bundle\NewAgeBundle\Entity\PanelView:
+    properties:
+        name:
+            - Length:
+                min:        1
+                max:        255
 CB\Bundle\NewAgeBundle\Entity\Offer:
     properties:
         name:
