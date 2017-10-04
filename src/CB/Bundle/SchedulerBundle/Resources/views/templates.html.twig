@@ -5,8 +5,6 @@
     <div class="widget-content">
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ UI.renderHtmlProperty('cb.newage.panel_view.entity_label'|trans, '<%= formatter.string(resourceName) %>') }}
-                {{ UI.renderHtmlProperty('cb.newage.client.entity_label'|trans, '<%= formatter.string(title) %>') }}
                 {{ UI.renderHtmlProperty('cb.scheduler.scheduler_event.start.label'|trans, '<%= formatter.date(start) %>') }}
                 {{ UI.renderHtmlProperty('cb.scheduler.scheduler_event.end.label'|trans, '<%= formatter.date(end) %>') }}
 
@@ -38,8 +36,6 @@
 <script type="text/html" id="{{ id }}">
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set data = [
-            form_row(form.panelView),
-            form_row(form.client),
             form_row(form.start),
             form_row(form.end),
             form_row(form.status),
