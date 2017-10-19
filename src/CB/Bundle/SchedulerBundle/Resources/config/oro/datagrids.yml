@@ -144,6 +144,7 @@ datagrids:
                             class: CBNewAgeBundle:Client
                 offer:
                     type: entity
+                    label:  cb.newage.offer.name.label
                     data_name: oi.offer
                     options:
                         field_options:
