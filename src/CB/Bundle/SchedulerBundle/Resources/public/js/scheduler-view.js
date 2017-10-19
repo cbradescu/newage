@@ -514,6 +514,9 @@ define(function(require) {
             var city = this.filters.filter( function (obj) {
                 return obj.name == 'city';
             });
+            var panel = this.filters.filter( function (obj) {
+                return obj.name == 'panel';
+            });
 
             if (supportType.length==1)
                 this.supportType = supportType[0].value;
@@ -529,6 +532,11 @@ define(function(require) {
                 this.city = city[0].value;
             else
                 this.city = null;
+
+            if (panel.length==1)
+                this.panel = panel[0].value;
+            else
+                this.panel = null;
 
             this.getCalendarElement().fullCalendar('refetchResources');
 

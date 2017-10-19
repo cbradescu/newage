@@ -28,6 +28,7 @@ define(function(require) {
                         case 'city':
                         case 'supportType':
                         case 'lightingType':
+                        case 'panel':
                             var value = filter.value.value.join();
 
                             if (value) {

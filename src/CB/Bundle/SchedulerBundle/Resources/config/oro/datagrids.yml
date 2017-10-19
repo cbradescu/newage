@@ -158,12 +158,14 @@ datagrids:
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_city.entity.class%)
                             translatable_options: false
                 panel:
-                    type: entity
+                    type: choice
                     data_name: pv.panel
+                    null_value: _empty_
                     options:
                         field_options:
-                            class: CBNewAgeBundle:Panel
-                    enabled: false
+                            multiple:       true
+                            choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_panel.entity.class%)
+                            translatable_options: false
                 panelView:
                     type: entity
                     data_name: se.panelView

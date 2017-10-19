@@ -96,7 +96,7 @@ class PanelViewController extends RestController implements ClassResourceInterfa
 
         $panelViewId  = (int)$this->getRequest()->get('id', 0);
         $offerId  = (int)$this->getRequest()->get('offer', 0);
-        $panelId  = (int)$this->getRequest()->get('panel', 0);
+
         $supportType  = (int)$this->getRequest()->get('supportType', null);
         if ($supportType)
             $supportTypes = explode(',', $supportType);
@@ -115,15 +115,21 @@ class PanelViewController extends RestController implements ClassResourceInterfa
         else
             $cities = [];
 
+        $panel = $this->getRequest()->get('panel', null);
+        if ($panel)
+            $panels = explode(',', $panel);
+        else
+            $panels = [];
+
         if ($panelViewId)
             $qb->andWhere('pv.id=:panelViewId')
                 ->setParameter('panelViewId', $panelViewId);
         if ($offerId)
             $qb->andWhere(':offer MEMBER OF pv.offers')
                 ->setParameter('offer', $offerId);
-        if ($panelId)
-            $qb->andWhere('p.id=:panelId')
-                ->setParameter('panelId', $panelId);
+        if (count($panels))
+            $qb->andWhere($qb->expr()->in('pv.panel', ':panels'))
+                ->setParameter('panels', $panels);
         if (count($supportTypes)!=0)
             $qb->andWhere($qb->expr()->in('p.supportType', ':supportTypes'))
                 ->setParameter('supportTypes', $supportTypes);
