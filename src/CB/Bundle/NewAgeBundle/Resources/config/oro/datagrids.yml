@@ -830,6 +830,15 @@ datagrids:
                             multiple:       true
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_city.entity.class%)
                             translatable_options: false
+                panel:
+                    type: choice
+                    data_name: pv.panel
+                    null_value: _empty_
+                    options:
+                        field_options:
+                            multiple:       true
+                            choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_panel.entity.class%)
+                            translatable_options: false
                 support:
                     type:      choice
                     label:  cb.newage.supporttype.entity_label
@@ -1018,6 +1027,15 @@ datagrids:
                             multiple:       true
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_city.entity.class%)
                             translatable_options: false
+                panel:
+                    type: choice
+                    data_name: pv.panel
+                    null_value: _empty_
+                    options:
+                        field_options:
+                            multiple:       true
+                            choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_panel.entity.class%)
+                            translatable_options: false
                 support:
                     type:      choice
                     label:  cb.newage.supporttype.entity_label
@@ -1178,7 +1196,15 @@ datagrids:
                             multiple:       true
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_city.entity.class%)
                             translatable_options: false
-
+                panel:
+                    type: choice
+                    data_name: pv.panel
+                    null_value: _empty_
+                    options:
+                        field_options:
+                            multiple:       true
+                            choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_panel.entity.class%)
+                            translatable_options: false
                 support:
                     type:      choice
                     label:  cb.newage.supporttype.entity_label
@@ -1372,7 +1398,15 @@ datagrids:
                             multiple:       true
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_city.entity.class%)
                             translatable_options: false
-
+                panel:
+                    type: choice
+                    data_name: pv.panel
+                    null_value: _empty_
+                    options:
+                        field_options:
+                            multiple:       true
+                            choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_panel.entity.class%)
+                            translatable_options: false
                 support:
                     type:      choice
                     label:  cb.newage.supporttype.entity_label
