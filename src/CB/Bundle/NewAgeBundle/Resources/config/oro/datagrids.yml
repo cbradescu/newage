@@ -737,6 +737,7 @@ datagrids:
                     - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
                     # cu linia asta nu mai merge filtru pe city
 #                    - SUM(CASE WHEN ev.status IS NULL THEN 0 ELSE CASE WHEN ev.status=0 THEN 1 ELSE 0 END END) as reservations
+                    - o.name as campaign
                 from:
                     - { table: %cb_newage.offer_item.entity.class%, alias: i }
                 join:
@@ -757,6 +758,9 @@ datagrids:
                         -
                             join: addr.city
                             alias: ct
+                        -
+                            join: i.offer
+                            alias: o
 #                        -
 #                            join: pv.events
 #                            alias: ev
@@ -785,6 +789,8 @@ datagrids:
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
             city:
                 label:        oro.address.city.label
+            campaign:
+                label:        cb.newage.offer.name.label
             address:
                 label:        oro.address.entity_label
             panel:
@@ -1101,6 +1107,7 @@ datagrids:
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
                     - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
+                    - o.name as campaign
                 from:
                     - { table: %cb_newage.reservation-item.entity.class%, alias: ri }
                 join:
@@ -1124,6 +1131,9 @@ datagrids:
                         -
                             join: addr.city
                             alias: ct
+                        -
+                            join: oi.offer
+                            alias: o
                 where:
                     and:
                         - oi.offer = :offer
@@ -1144,6 +1154,8 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
+            campaign:
+                label:        cb.newage.offer.name.label
             city:
                 label:        oro.address.city.label
             address:
@@ -1299,6 +1311,7 @@ datagrids:
                     - ct.name as city
                     - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
                     - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
+                    - o.name as campaign
                 from:
                     - { table: %cb_scheduler.scheduler_event.entity.class%, alias: ev }
                 join:
@@ -1325,6 +1338,9 @@ datagrids:
                         -
                             join: addr.city
                             alias: ct
+                        -
+                            join: oi.offer
+                            alias: o
                 where:
                     and:
                         - oi.offer = :offer
@@ -1346,6 +1362,8 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: CBNewAgeBundle:Datagrid:Property/url.html.twig
+            campaign:
+                label:        cb.newage.offer.name.label
             city:
                 label:        oro.address.city.label
             address:
