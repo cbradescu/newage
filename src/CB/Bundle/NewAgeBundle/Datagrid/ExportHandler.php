@@ -5,6 +5,8 @@ namespace CB\Bundle\NewAgeBundle\Datagrid;
 use Akeneo\Bundle\BatchBundle\Item\ItemReaderInterface;
 use Akeneo\Bundle\BatchBundle\Item\ItemWriterInterface;
 
+use CB\Bundle\NewAgeBundle\Entity\Offer;
+use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -32,11 +34,17 @@ class ExportHandler implements StepExecutionWarningHandlerInterface
     protected $logger;
 
     /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    /**
      * @param FileSystemOperator $fileSystemOperator
      */
-    public function __construct(FileSystemOperator $fileSystemOperator)
+    public function __construct(FileSystemOperator $fileSystemOperator, EntityManager $entityManager)
     {
         $this->fileSystemOperator = $fileSystemOperator;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -69,9 +77,14 @@ class ExportHandler implements StepExecutionWarningHandlerInterface
             throw new InvalidArgumentException('Parameter "gridName" must be provided.');
         }
 
+        /** @var Offer $offer */
+        $offer = $this->entityManager
+            ->getRepository('CBNewAgeBundle:Offer')
+            ->find($contextParameters['gridParameters']['offer']);
+
         $filePath = $this
             ->fileSystemOperator
-            ->generateTemporaryFileName(sprintf('datagrid_%s', $contextParameters['gridName']), $format);
+            ->generateTemporaryFileName(sprintf('Export_%s', $this->getFilename($contextParameters['gridName']) . '_' . $offer->getName()), $format);
 
         $contextParameters['filePath'] = $filePath;
 
@@ -110,5 +123,28 @@ class ExportHandler implements StepExecutionWarningHandlerInterface
     public function handleWarning($element, $name, $reason, array $reasonParameters, $item)
     {
         $this->logger->error(sprintf('[DataGridExportHandle] Error message: %s', $reason), ['element' => $element]);
+    }
+
+    /**
+     * @param string $gridName
+     * @return string
+     */
+    protected function getFilename($gridName)
+    {
+        switch ($gridName)
+        {
+            case 'confirmed-items-grid':
+                return 'Comanda_Ferma';
+                break;
+            case 'reservation-items-grid':
+                return 'Rezervare';
+                break;
+            case 'offer-items-grid':
+                return 'Ofertare';
+                break;
+            default:
+                return 'Grid';
+                break;
+        }
     }
 }
