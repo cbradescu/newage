@@ -2,6 +2,8 @@ CB\Bundle\NewAgeBundle\Entity\Panel:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
     properties:
+        enabled:
+            - NotNull:      ~
         name:
             - Length:
                 min:        3

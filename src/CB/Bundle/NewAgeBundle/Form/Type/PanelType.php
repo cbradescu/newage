@@ -27,7 +27,21 @@ class PanelType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $enabledChoices = ['oro.user.enabled.disabled', 'oro.user.enabled.enabled'];
         $builder
+            ->add(
+                'enabled',
+                'choice',
+                [
+                    'label' => 'oro.user.enabled.label',
+                    'required' => true,
+                    'disabled' => false,
+                    'choices' => $enabledChoices,
+                    'empty_value' => 'Please select',
+                    'empty_data' => '',
+                    'auto_initialize' => false
+                ]
+            )
             ->add(
                 'name',
                 'text',

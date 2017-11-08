@@ -49,24 +49,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  */
 
-class Panel
+class Panel extends AbstractEntity
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
-
     /**
      * @var string
      *
@@ -179,44 +163,6 @@ class Panel
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *      }
-     * )
-     */
-    protected $owner;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="created_by_user_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $createdBy;
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinColumn(name="updated_by_user_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -270,14 +216,6 @@ class Panel
     public function __toString()
     {
         return (string)$this->name;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -494,134 +432,6 @@ class Panel
                 }
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * @param User $owningUser
-     *
-     * @return Panel
-     */
-    public function setOwner($owningUser)
-    {
-        $this->owner = $owningUser;
-
-        return $this;
-    }
-
-    /**
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * Set organization
-     *
-     * @param Organization $organization
-     * @return Panel
-     */
-    public function setOrganization(Organization $organization = null)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * Get organization
-     *
-     * @return Organization
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
-     * @param User $createdBy
-     *
-     * @return Panel
-     */
-    public function setCreatedBy($createdBy)
-    {
-        $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
-    /**
-     * @return User
-     */
-    public function getCreatedBy()
-    {
-        return $this->createdBy;
-    }
-
-    /**
-     * @param User $updatedBy
-     *
-     * @return Panel
-     */
-    public function setUpdatedBy($updatedBy)
-    {
-        $this->updatedBy = $updatedBy;
-
-        return $this;
-    }
-
-    /**
-     * @return User
-     */
-    public function getUpdatedBy()
-    {
-        return $this->updatedBy;
-    }
-
-
-    /**
-     * Get contact last update date/time
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime updatedAt
-     *
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get panel create date/time
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime createdAt
-     *
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
 
         return $this;
     }

@@ -64,6 +64,21 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block breadcrumbs %}
+    {{ parent() }}
+    <div class="pull-left">
+        {% if entity.enabled %}
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>
+                {{- 'oro.user.enabled.enabled'|trans -}}
+            </div>
+        {% else %}
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>
+                {{- 'oro.user.enabled.disabled'|trans -}}
+            </div>
+        {% endif %}
+    </div>
+{% endblock breadcrumbs %}
+
 {% block content_data %}
     {%- set supportTypeInformation -%}
         {%- if entity.supportType -%}
