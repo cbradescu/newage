@@ -11,6 +11,7 @@ datagrids:
                     - ltype.name as lighting
                     - panel.dimensions
                     - c.name as city
+                    - panel.enabled
                 from:
                     - { table: %cb_newage_panel.entity.class%, alias: panel }
                 join:
@@ -38,6 +39,15 @@ datagrids:
                 label:        cb.newage.panel.dimensions.label
             city:
                 label:        oro.address.city.label
+            enabled:
+                label:         oro.user.enabled.label
+                frontend_type: select
+                editable:      false
+                inline_editing:
+                    enable: false
+                choices:
+                   - Disabled
+                   - Enabled
         sorters:
             columns:
                 id:
@@ -50,6 +60,8 @@ datagrids:
                     data_name: ltype.name
                 city:
                     data_name: c.name
+                enabled:
+                    data_name: panel.enabled
             default:
                 city:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
                 name:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
@@ -86,6 +98,15 @@ datagrids:
                             multiple:       true
                             choices:        @cb_newage.multiple_choice.datagrid_helper->getValues(%cb_newage_city.entity.class%)
                             translatable_options: false
+                enabled:
+                    type: choice
+                    data_name: panel.enabled
+                    null_value: _empty_
+                    options:
+                        field_options:
+                            choices:
+                                0: Disabled
+                                1: Enabled
         properties:
             id: ~
             view_link:
