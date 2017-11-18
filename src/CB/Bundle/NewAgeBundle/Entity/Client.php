@@ -95,13 +95,6 @@ class Client
     protected $description;
 
     /**
-     * @var ArrayCollection|SchedulerEvent[]
-     *
-     * @ORM\OneToMany(targetEntity="CB\Bundle\SchedulerBundle\Entity\SchedulerEvent", mappedBy="client", cascade={"persist"})
-     */
-    protected $events;
-
-    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
@@ -123,12 +116,6 @@ class Client
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
-
-
-    public function __construct()
-    {
-        $this->events = new ArrayCollection();
-    }
 
     /**
      * @return string

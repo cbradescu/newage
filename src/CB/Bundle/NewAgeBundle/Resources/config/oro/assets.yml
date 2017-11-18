@@ -1,0 +1,4 @@
+assets:
+    css:
+        frontend:
+            - 'bundles/cbnewage/css/custom.css'

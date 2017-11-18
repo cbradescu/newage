@@ -738,65 +738,16 @@ datagrids:
     offer-items-grid:
         source:
             type: orm
-            acl_resource: cb_newage_offer_view
-            query:
-                select:
-                    - i.id
-                    - i.start
-                    - i.end
-                    - pv.id as panelViewId
-                    - pv.name as panelView
-                    - pv.url as url
-                    - pv.sketch as sketch
-                    - p.name as panel
-                    - p.dimensions
-                    - p.neighborhoods
-                    - st.name as support
-                    - lt.name as lighting
-                    - ct.name as city
-                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
-                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
-                    # cu linia asta nu mai merge filtru pe city
-#                    - SUM(CASE WHEN ev.status IS NULL THEN 0 ELSE CASE WHEN ev.status=0 THEN 1 ELSE 0 END END) as reservations
-                    - o.name as campaign
-                from:
-                    - { table: %cb_newage.offer_item.entity.class%, alias: i }
-                join:
-                    left:
-                        -
-                            join: i.panelView
-                            alias: pv
-                        -
-                            join: pv.panel
-                            alias: p
-                        -
-                            join: p.supportType
-                            alias: st
-                        -
-                            join: p.lightingType
-                            alias: lt
-                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
-                        -
-                            join: addr.city
-                            alias: ct
-                        -
-                            join: i.offer
-                            alias: o
-#                        -
-#                            join: pv.events
-#                            alias: ev
-#                            conditionType: WITH
-#                            condition: ev.status = %cb_scheduler.scheduler_event.entity.class%::RESERVED AND ((ev.start >= i.start AND ev.start <= i.end) OR (ev.end >= i.start AND ev.end <= i.end) OR (ev.start >= i.start AND ev.end <= i.end) OR (ev.start <= i.start AND ev.end >= i.end))
-                where:
-                    and:
-                        - i.offer = :offer
+            entity: CBNewAgeBundle:OfferItem # The name of your entity
+            repository_method: getOfferedPanelViewsQueryBuilder # The function name for query builder
+            acl_resource: cb_newage_offer_item_view
             bind_parameters:
                 - offer
         columns:
             id:
                 label:        cb.newage.panel.id.label
-#            reservations:
-#                label:        "R"
+            reservations:
+                label:        "Reservation No."
             start:
                 label:         cb.newage.offer.start.label
                 frontend_type: date
@@ -836,7 +787,7 @@ datagrids:
         sorters:
             columns:
                 city:
-                    data_name: ct.name
+                    data_name: c.name
                 panel:
                     data_name: p.name
                 panelView:
@@ -893,6 +844,7 @@ datagrids:
 
         properties:
             id: ~
+            row_class_name: ~
             reservations_link:
                 type:         url
                 route:        cb_newage_offer_reservations
@@ -934,7 +886,7 @@ datagrids:
             reserve:
                 type: reserve
                 entity_name: %cb_newage.offer_item.entity.class%
-                data_identifier: i.id
+                data_identifier: oi.id
                 label: cb.newage.offer.datagrid.action.reserve
                 icon: check-square-o
                 defaultMessages:
@@ -946,7 +898,7 @@ datagrids:
             remove:
                 type: remove
                 entity_name: %cb_newage.offer_item.entity.class%
-                data_identifier: i.id
+                data_identifier: oi.id
                 label: oro.grid.action.delete
                 icon: trash-o
                 defaultMessages:
@@ -962,42 +914,6 @@ datagrids:
             entity: CBNewAgeBundle:PanelView # The name of your entity
             repository_method: getAvailablePanelViewsQueryBuilder # The function name for query builder
             acl_resource: cb_newage_panel_view_view
-#            query:
-#                select:
-#                    - pv.id
-#                    - pv.name as panelView
-#                    - pv.url
-#                    - pv.sketch
-#                    - p.name as panel
-#                    - p.dimensions
-#                    - p.neighborhoods
-#                    - st.name as support
-#                    - lt.name as lighting
-#                    - ct.name as city
-#                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
-#                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
-#                from:
-#                    - { table: %cb_newage_panel_view.entity.class%, alias: pv }
-#                join:
-#                    left:
-#                        -
-#                            join: pv.panel
-#                            alias: p
-#                        -
-#                            join: p.supportType
-#                            alias: st
-#                        -
-#                            join: p.lightingType
-#                            alias: lt
-#                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
-#                        -
-#                            join: addr.city
-#                            alias: ct
-#                where:
-#                    and:
-#                        - pv.id NOT IN (:forbidden)
-#            bind_parameters:
-#                - forbidden
 
         columns:
             url:
@@ -1029,18 +945,18 @@ datagrids:
             gps:
                 label:        cb.newage.panel.address.gps.label
 
-#        sorters:
-#            columns:
-#                city:
-#                    data_name: ct.name
-#                panel:
-#                    data_name: p.name
-#                panelView:
-#                    data_name: pv.name
-#            default:
-#                city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-#                panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
-#                panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+        sorters:
+            columns:
+                city:
+                    data_name: c.name
+                panel:
+                    data_name: p.name
+                panelView:
+                    data_name: pv.name
+            default:
+                city:       '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                panel:      '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                panelView:  '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
 
         filters:
             columns:

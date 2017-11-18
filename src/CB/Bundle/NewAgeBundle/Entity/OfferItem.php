@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="CB\Bundle\NewAgeBundle\Entity\Repository\OfferItemRepository")
  * @ORM\Table(
  *      name="cb_newage_offer_item"
  * )
@@ -44,8 +44,8 @@ class OfferItem extends Item
     /**
      * @var PanelView
      *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView")
-     * @ORM\JoinColumn(name="panel_view_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\PanelView", inversedBy="offerItems", cascade={"persist"})
+     * @ORM\JoinColumn(name="panel_view_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

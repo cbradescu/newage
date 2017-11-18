@@ -2,11 +2,9 @@
 
 namespace CB\Bundle\NewAgeBundle\Entity\Repository;
 
-use CB\Bundle\NewAgeBundle\Entity\Offer;
 use CB\Bundle\NewAgeBundle\Entity\PanelView;
 use CB\Bundle\NewAgeBundle\Entity\OfferItem;
 use CB\Bundle\SchedulerBundle\Entity\SchedulerEvent;
-
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;

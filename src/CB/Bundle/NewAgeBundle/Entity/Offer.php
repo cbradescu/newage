@@ -111,8 +111,8 @@ class Offer
     /**
      * @var Client
      *
-     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Client", inversedBy="events")
-     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="CB\Bundle\NewAgeBundle\Entity\Client")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
