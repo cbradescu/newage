@@ -34,8 +34,8 @@ class OfferItemRepository extends EntityRepository
                 'CONCAT(addr.street,  CONCAT(\' \', addr.street2)) as address',
                 'CONCAT(addr.latitude,  CONCAT(\',\', addr.longitude)) as gps',
                 'o.name as campaign',
-                'COUNT(oi.id)-1 as reservations',
-                'CASE WHEN (COUNT(oi.id)-1>0) THEN \'danger\' ELSE \'\' END as row_class_name'
+                'COUNT(ev.id) as reservations',
+                'CASE WHEN (COUNT(ev.id)>0) THEN \'danger\' ELSE \'\' END as row_class_name'
             )
             ->leftJoin('oi.panelView', 'pv')
             ->leftJoin('pv.panel', 'p')
@@ -45,8 +45,7 @@ class OfferItemRepository extends EntityRepository
             ->leftJoin('addr.city', 'c')
             ->leftJoin('oi.offer', 'o')
 
-            ->innerJoin('oi.panelView', 'pv2')
-            ->leftJoin('pv2.offerItems', 'oi2')
+            ->leftJoin('pv.offerItems', 'oi2')
             ->leftJoin('oi2.reservationItems', 'ri2')
             ->leftJoin(
                 'ri2.events',
@@ -55,7 +54,6 @@ class OfferItemRepository extends EntityRepository
                 'ev.status = ' . SchedulerEvent::RESERVED . ' AND ((ev.start >= oi.start AND ev.start <= oi.end) OR (ev.end >= oi.start AND ev.end <= oi.end) OR (ev.start >= oi.start AND ev.end <= oi.end) OR (ev.start <= oi.start AND ev.end >= oi.end))'
                 )
             ->where('o.id=:offer')
-            ->andWhere('ev.id IS NOT NULL')
             ->groupBy('oi.id')
         ;
 
