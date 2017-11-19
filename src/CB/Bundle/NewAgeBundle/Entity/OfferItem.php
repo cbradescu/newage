@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Entity(repositoryClass="CB\Bundle\NewAgeBundle\Entity\Repository\OfferItemRepository")
+ * @ORM\Entity
  * @ORM\Table(
  *      name="cb_newage_offer_item"
  * )

@@ -738,16 +738,63 @@ datagrids:
     offer-items-grid:
         source:
             type: orm
-            entity: CBNewAgeBundle:OfferItem # The name of your entity
-            repository_method: getOfferedPanelViewsQueryBuilder # The function name for query builder
             acl_resource: cb_newage_offer_item_view
+            query:
+                select:
+                    - oi.id
+                    - oi.start
+                    - oi.end
+                    - pv.id as panelViewId
+                    - pv.name as panelView
+                    - pv.url as url
+                    - pv.sketch as sketch
+                    - p.name as panel
+                    - p.dimensions
+                    - p.neighborhoods
+                    - st.name as support
+                    - lt.name as lighting
+                    - ct.name as city
+                    - CONCAT(addr.street,  CONCAT(' ', addr.street2)) as address
+                    - CONCAT(addr.latitude,  CONCAT(',', addr.longitude)) as gps
+                    - o.name as campaign
+                    - >
+                        (SELECT CASE WHEN COUNT(_ev.id)>0 THEN 'danger' ELSE '' END
+                        FROM CBNewAgeBundle:PanelView _pv
+                        JOIN _pv.offerItems _oi
+                        JOIN _oi.reservationItems _ri
+                        JOIN _ri.events _ev
+                        WHERE _pv.id=pv.id AND _oi.id<>oi.id AND _ev.status=0 AND ((_ev.start >= oi.start AND _ev.start <= oi.end) OR (_ev.end >= oi.start AND _ev.end <= oi.end) OR (_ev.start >= oi.start AND _ev.end <= oi.end) OR (_ev.start <= oi.start AND _ev.end >= oi.end)) AS row_class_name
+                from:
+                    - { table: %cb_newage.offer_item.entity.class%, alias: oi }
+                join:
+                    left:
+                        -
+                            join: oi.panelView
+                            alias: pv
+                        -
+                            join: pv.panel
+                            alias: p
+                        -
+                            join: p.supportType
+                            alias: st
+                        -
+                            join: p.lightingType
+                            alias: lt
+                        - { join: p.addresses, alias: addr, conditionType: WITH, condition: 'addr.primary = true' }
+                        -
+                            join: addr.city
+                            alias: ct
+                        -
+                            join: oi.offer
+                            alias: o
+                where:
+                    and:
+                        - oi.offer = :offer
             bind_parameters:
                 - offer
         columns:
             id:
                 label:        cb.newage.panel.id.label
-            reservations:
-                label:        "Reservation No."
             start:
                 label:         cb.newage.offer.start.label
                 frontend_type: date
@@ -787,7 +834,7 @@ datagrids:
         sorters:
             columns:
                 city:
-                    data_name: c.name
+                    data_name: ct.name
                 panel:
                     data_name: p.name
                 panelView:

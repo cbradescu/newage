@@ -42,16 +42,16 @@ class OfferRepository extends EntityRepository
     public function getOfferItemOverlapsInfo(OfferItem $offerItem)
     {
         // List of offers that has NO confirmed events.
-        $qb = $this->createQueryBuilder('o')
+        $qb = $this->getEntityManager()->getRepository('CBNewAgeBundle:OfferItem')->createQueryBuilder('oi')
             ->select(
-                'o.id',
+                'distinct o.id',
                 'o.start',
                 'o.end',
                 'o.name',
                 'c.title'
             )
+            ->leftJoin('oi.offer', 'o')
             ->leftJoin('o.client', 'c')
-            ->leftJoin('o.offerItems', 'oi')
             ->leftJoin('oi.reservationItems', 'ri')
             ->leftJoin(
                 'ri.events',
@@ -60,10 +60,12 @@ class OfferRepository extends EntityRepository
                 '(ev.start >= :start AND ev.start <= :end) OR (ev.end >= :start AND ev.end <= :end) OR (ev.start >= :start AND ev.end <= :end) OR (ev.start <= :start AND ev.end >= :end)'
             )
             ->where('ev.status=' . SchedulerEvent::RESERVED)
+            ->andWhere('oi.offer<>:offer')
             ->andWhere('oi.panelView=:panelView')
+            ->setParameter('offer', $offerItem->getOffer()->getId())
             ->setParameter('panelView', $offerItem->getPanelView())
-            ->setParameter('start', $offerItem->getStart())
-            ->setParameter('end', $offerItem->getEnd())
+            ->setParameter('start', $offerItem->getStart()->format('Y-m-d'))
+            ->setParameter('end', $offerItem->getEnd()->format('Y-m-d'))
             ;
 
         return $qb->getQuery()->getResult();
